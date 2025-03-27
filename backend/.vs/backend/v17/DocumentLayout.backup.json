@@ -66,8 +66,7 @@
               "RelativeToolTip": "Controllers\\UsersController.cs",
               "ViewState": "AgIAAGoAAAAAAAAAAAAuwH0AAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-25T10:42:43.464Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-03-25T10:42:43.464Z"
             },
             {
               "$type": "Document",
@@ -91,8 +90,7 @@
               "RelativeToolTip": "Program.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAC4AAAACAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-24T12:15:14.69Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-03-24T12:15:14.69Z"
             },
             {
               "$type": "Document",
@@ -104,8 +102,7 @@
               "RelativeToolTip": "Models\\User.cs",
               "ViewState": "AgIAAFsAAAAAAAAAAAAuwG4AAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-25T10:40:39.883Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-03-25T10:40:39.883Z"
             },
             {
               "$type": "Document",
@@ -117,8 +114,7 @@
               "RelativeToolTip": "Models\\Permission.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-25T12:02:58.127Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-03-25T12:02:58.127Z"
             },
             {
               "$type": "Document",
@@ -140,7 +136,7 @@
               "RelativeDocumentMoniker": "Services\\UserService.cs",
               "ToolTip": "F:\\Aarkay\\dotnet-sqlserver-reactjs-application\\backend\\Services\\UserService.cs",
               "RelativeToolTip": "Services\\UserService.cs",
-              "ViewState": "AgIAAHoAAAAAAAAAAAAuwI0AAAABAAAAAAAAAA==",
+              "ViewState": "AgIAAHsAAAAAAAAAAAAAAI0AAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-03-24T12:16:11.578Z",
               "EditorCaption": ""
