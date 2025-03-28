@@ -1,21 +1,16 @@
 import React, { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
-import {
-  Navbar as BootstrapNavbar,
-  Nav,
-  Container,
-  NavDropdown,
-  Button,
-} from "react-bootstrap";
-import { FaUser, FaSignOutAlt, FaShoppingCart } from "react-icons/fa";
+import { FaUser, FaSignOutAlt, FaShoppingCart, FaBars } from "react-icons/fa";
 import Sidebar from "./Sidebar";
+import "./Navbar.css"; // Add custom styles
 
 const Navbar = () => {
   const { currentUser, isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [showSidebar, setShowSidebar] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(null);
 
   const handleLogout = () => {
     logout();
@@ -26,75 +21,76 @@ const Navbar = () => {
     setShowSidebar(!showSidebar);
   };
 
-  // Hide Navbar on Login and Signup pages
+  const toggleDropdown = (dropdown) => {
+    setShowDropdown(showDropdown === dropdown ? null : dropdown);
+  };
+
   if (["/login", "/signup"].includes(location.pathname)) {
     return null;
   }
 
   return (
     <>
-      <BootstrapNavbar bg="primary" variant="dark" expand="lg" className="py-2 mb-4">
-        <Container fluid>
-          {isAuthenticated && (
-            <Button
-              variant="outline-light"
-              className="me-2 d-lg-none"
-              onClick={toggleSidebar}
+      <nav className="navbar">     
+        <Link to="/" className="navbar-brand">
+          <FaShoppingCart className="icon" />
+          <span>ECommerce Manager</span>
+        </Link>
+
+        {isAuthenticated && (
+          <div className="nav-links">
+            <div
+              className="dropdown"
+              onClick={() => toggleDropdown("masters")}
             >
-              <span className="navbar-toggler-icon"></span>
-            </Button>
+              Masters
+              {showDropdown === "masters" && (
+                <div className="dropdown-menu">
+                  <Link to="/master/categories">Categories</Link>
+                  <Link to="/master/brands">Brands</Link>
+                  <Link to="/master/suppliers">Suppliers</Link>
+                </div>
+              )}
+            </div>
+
+            <div
+              className="dropdown"
+              onClick={() => toggleDropdown("admin")}
+            >
+              Admin
+              {showDropdown === "admin" && (
+                <div className="dropdown-menu">
+                  <Link to="/admin/users">User Management</Link>
+                  <Link to="/admin/permissions">Permissions</Link>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        <div className="nav-auth">
+          {isAuthenticated ? (
+            <div className="dropdown" onClick={() => toggleDropdown("user")}>
+              <FaUser className="icon" />
+              {currentUser?.name || "User"}
+              {showDropdown === "user" && (
+                <div className="dropdown-menu">
+                  <Link to="/profile">My Profile</Link>
+                  <hr />
+                  <button onClick={handleLogout} className="logout-btn">
+                    <FaSignOutAlt className="icon" /> Logout
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <>
+              <Link to="/login" className="nav-link">Login</Link>
+              <Link to="/signup" className="signup-btn">Sign Up</Link>
+            </>
           )}
-
-          <BootstrapNavbar.Brand as={Link} to="/" className="d-flex align-items-center">
-            <FaShoppingCart className="me-2" size={24} />
-            <span className="fw-bold">ECommerce Manager</span>
-          </BootstrapNavbar.Brand>
-
-          <BootstrapNavbar.Toggle aria-controls="navbar-nav" />
-          <BootstrapNavbar.Collapse id="navbar-nav">
-            <Nav className="me-auto">
-              {isAuthenticated && (
-                <NavDropdown title="Masters" id="basic-nav-dropdown">
-                  <NavDropdown.Item as={Link} to="/master/categories">Categories</NavDropdown.Item>
-                  <NavDropdown.Item as={Link} to="/master/brands">Brands</NavDropdown.Item>
-                  <NavDropdown.Item as={Link} to="/master/suppliers">Suppliers</NavDropdown.Item>
-                </NavDropdown>
-              )}
-              {isAuthenticated && (
-                <NavDropdown title="Admin" id="admin-nav-dropdown">
-                  <NavDropdown.Item as={Link} to="/admin/users">User Management</NavDropdown.Item>
-                  <NavDropdown.Item as={Link} to="/admin/permissions">Permissions</NavDropdown.Item>
-                </NavDropdown>
-              )}
-            </Nav>
-
-            <Nav>
-              {isAuthenticated ? (
-                <NavDropdown
-                  title={
-                    <span>
-                      <FaUser className="me-1" /> {currentUser?.name || "User"}
-                    </span>
-                  }
-                  id="user-dropdown"
-                  align="end"
-                >
-                  <NavDropdown.Item as={Link} to="/profile">My Profile</NavDropdown.Item>
-                  <NavDropdown.Divider />
-                  <NavDropdown.Item onClick={handleLogout}>
-                    <FaSignOutAlt className="me-2" /> Logout
-                  </NavDropdown.Item>
-                </NavDropdown>
-              ) : (
-                <>
-                  <Nav.Link as={Link} to="/login" className="me-2">Login</Nav.Link>
-                  <Button as={Link} to="/signup" variant="outline-light">Sign Up</Button>
-                </>
-              )}
-            </Nav>
-          </BootstrapNavbar.Collapse>
-        </Container>
-      </BootstrapNavbar>
+        </div>
+      </nav>
 
       {isAuthenticated && <Sidebar show={showSidebar} onHide={() => setShowSidebar(false)} />}
     </>

@@ -1,0 +1,28 @@
+.dashboard {
+    position: fixed;
+    top: 45px;
+    left: 200px;
+    width: calc(100% - 200px); /* Adjust width to fit sidebar */
+    height: calc(100vh - 20px); /* Full viewport height minus the top margin */
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    background: #f3f1f1;
+    text-align: center;
+  }
+  
+  .dashboard h1 {
+    font-size: 24px;
+    color: #fff;
+  }
+  
+  .dashboard-content {
+    width: 80%;
+    max-width: 1200px;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  

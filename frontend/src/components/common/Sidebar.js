@@ -13,7 +13,7 @@ import {
   FaUsersCog,
   FaCog
 } from 'react-icons/fa';
-
+import "./Sidebar.css";
 const Sidebar = ({ show, onHide }) => {
   const { userRole } = useAuth();
   const { hasPermission } = usePermission();
@@ -24,9 +24,7 @@ const Sidebar = ({ show, onHide }) => {
 
   return (
     <Offcanvas show={show} onHide={onHide} responsive="lg" className="sidebar" style={{ backgroundColor: '#e0f7fa' }}> 
-      <Offcanvas.Header closeButton>
-        <Offcanvas.Title>ECommerce Manager</Offcanvas.Title>
-      </Offcanvas.Header>
+      
       <Offcanvas.Body className="p-0">
         <Nav className="flex-column">
           
