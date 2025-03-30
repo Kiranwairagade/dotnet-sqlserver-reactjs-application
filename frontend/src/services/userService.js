@@ -1,26 +1,23 @@
-import api from "../utils/api";
+// frontend/src/services/userService.js
+import api from '../utils/api';
 
-export const getAllUsers = async (params) => {
-  const response = await api.get("/users", { params });
-  return response.data;
-};
-
-export const getUserById = async (id) => {
-  const response = await api.get(`/users/${id}`);
-  return response.data;
-};
-
-export const updateUser = async (id, userData) => {
-  const response = await api.put(`/users/${id}`, userData);
-  return response.data;
-};
-
-export const deleteUser = async (id) => {
-  const response = await api.delete(`/users/${id}`);
-  return response.data;
+export const getUsers = async (pageNumber = 1, pageSize = 10, searchTerm = '') => {
+  try {
+    const response = await api.get(`/users?pageNumber=${pageNumber}&pageSize=${pageSize}&searchTerm=${searchTerm}`);
+    console.log("Fetched Users:", response.data); // Debugging line
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching users:', error);
+    throw error;
+  }
 };
 
 export const getUserPermissions = async (userId) => {
-  const response = await api.get(`/users/${userId}/permissions`);
-  return response.data;
+  try {
+    const response = await api.get(`/users/${userId}/permissions`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching user permissions:', error);
+    throw error;
+  }
 };

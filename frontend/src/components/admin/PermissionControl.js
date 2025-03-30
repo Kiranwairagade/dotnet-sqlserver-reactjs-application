@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { getAllUsers } from "../../services/userService"; // correct path
+import { getUsers } from '../../services/userService';
 
 const PermissionControl = () => {
   const [users, setUsers] = useState([]);
@@ -26,7 +26,7 @@ const PermissionControl = () => {
         searchTerm: searchTerm || undefined
       };
 
-      const response = await getAllUsers(params); // Pass params here
+      const response = await getUsers(params);
 
       setUsers(response.users || []); // Adjust based on API response
       setPagination((prev) => ({

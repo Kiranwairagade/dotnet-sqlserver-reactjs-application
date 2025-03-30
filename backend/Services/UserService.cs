@@ -1,12 +1,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using ECommerceAPI.Data;
-using ECommerceAPI.DTOs;
-using ECommerceAPI.Models;
+using backend.Data;
+using backend.DTOs;
+using backend.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace ECommerceAPI.Services
+namespace backend.Services
 {
     public interface IUserService
     {

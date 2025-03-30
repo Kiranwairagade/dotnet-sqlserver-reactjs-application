@@ -1,28 +1,42 @@
-.dashboard {
-    position: fixed;
-    top: 45px;
-    left: 200px;
-    width: calc(100% - 200px); /* Adjust width to fit sidebar */
-    height: calc(100vh - 20px); /* Full viewport height minus the top margin */
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    background: #f3f1f1;
-    text-align: center;
-  }
+/* frontend/src/components/admin/Dashboard.css */
+
+.dashboard-container {
+  display: flex;
+  height: 100vh;
+  background: #f3f1f1;
   
-  .dashboard h1 {
-    font-size: 24px;
-    color: #fff;
-  }
-  
-  .dashboard-content {
-    width: 80%;
-    max-width: 1200px;
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-  
+}
+
+.sidebar {
+  width: 200px;
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
+  background: #2c3e50; /* Dark sidebar */
+  color: white;
+  padding-top: 20px;
+}
+
+.dashboard-content {
+  margin-left: 200px; /* Ensures content starts after sidebar */
+  flex-grow: 1;
+  padding: 20px;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  overflow-y: auto;
+}
+
+.dashboard-content h1 {
+  font-size: 24px;
+  color: #333;
+}
+
+.dashboard-card {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-top: 20px;
+}

@@ -1,126 +1,68 @@
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
-using ECommerceAPI.DTOs;
-using ECommerceAPI.Services;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
+using System.Data;
+using backend.Data;
+using backend.Models;
+using backend.DTOs;
 
-namespace ECommerceAPI.Controllers
+namespace backend.Controllers // ✅ Ensure this namespace is correctly defined
 {
-    [ApiController]
     [Route("api/[controller]")]
-    [Authorize]
-    public class UsersController : ControllerBase
+    [ApiController]
+    public class UsersController : ControllerBase // ✅ Ensure the class is inside a namespace
     {
-        private readonly IUserService _userService;
+        private readonly ApplicationDbContext _context;
 
-        public UsersController(IUserService userService)
+        public UsersController(ApplicationDbContext context)
         {
-            _userService = userService;
+            _context = context;
         }
 
+        // Get users with pagination & search
         [HttpGet]
-        public async Task<ActionResult<UsersResponse>> GetUsers(
+        public async Task<ActionResult<IEnumerable<UserDto>>> GetUsers(
             [FromQuery] int pageNumber = 1,
             [FromQuery] int pageSize = 10,
-            [FromQuery] string? searchTerm = null) // Make searchTerm nullable
+            [FromQuery] string? searchTerm = null)
         {
-            // Check if user has permission to manage users
-            if (!User.HasClaim(c => c.Type == "Permission" && c.Value == "ManageUsers"))
+            var users = new List<UserDto>();
+            int totalCount = 0;
+
+            await using (var command = _context.Database.GetDbConnection().CreateCommand())
             {
-                return Forbid();
+                command.CommandText = "EXEC sp_GetUsers @PageNumber, @PageSize, @SearchTerm";
+                command.CommandType = CommandType.Text;
+
+                command.Parameters.Add(new SqlParameter("@PageNumber", pageNumber));
+                command.Parameters.Add(new SqlParameter("@PageSize", pageSize));
+                command.Parameters.Add(new SqlParameter("@SearchTerm", (object?)searchTerm ?? DBNull.Value));
+
+                await _context.Database.OpenConnectionAsync();
+                await using (var reader = await command.ExecuteReaderAsync())
+                {
+                    while (await reader.ReadAsync())
+                    {
+                        users.Add(new UserDto
+                        {
+                            UserId = reader.GetInt32(reader.GetOrdinal("UserId")),  // ✅ Fixed missing UserId
+                            Username = reader.GetString(reader.GetOrdinal("Username")),
+                            Email = reader.GetString(reader.GetOrdinal("Email")),
+                            FirstName = reader.IsDBNull(reader.GetOrdinal("FirstName")) ? string.Empty : reader.GetString(reader.GetOrdinal("FirstName")),
+                            LastName = reader.IsDBNull(reader.GetOrdinal("LastName")) ? string.Empty : reader.GetString(reader.GetOrdinal("LastName")),
+                            IsActive = reader.GetBoolean(reader.GetOrdinal("IsActive")),
+                            CreatedAt = reader.GetDateTime(reader.GetOrdinal("CreatedAt")),
+                            UpdatedAt = reader.GetDateTime(reader.GetOrdinal("UpdatedAt"))
+                        });
+                        totalCount = reader.GetInt32(reader.GetOrdinal("TotalCount"));
+                    }
+                }
             }
 
-            var response = await _userService.GetUsersAsync(pageNumber, pageSize, searchTerm);
-            return Ok(response);
-        }
-
-        [HttpGet("{id}")]
-        public async Task<ActionResult<UserDetailDto>> GetUserById(int id)
-        {
-            // Check if user has permission to manage users
-            if (!User.HasClaim(c => c.Type == "Permission" && c.Value == "ManageUsers"))
-            {
-                return Forbid();
-            }
-
-            var user = await _userService.GetUserByIdAsync(id);
-
-            if (user == null)
-            {
-                return NotFound(new { message = "User not found" });
-            }
-
-            return Ok(user);
-        }
-
-        [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateUser(int id, [FromBody] UpdateUserRequest request)
-        {
-            // Check if user has permission to manage users
-            if (!User.HasClaim(c => c.Type == "Permission" && c.Value == "ManageUsers"))
-            {
-                return Forbid();
-            }
-
-            var success = await _userService.UpdateUserAsync(id, request);
-
-            if (!success)
-            {
-                return NotFound(new { message = "User not found" });
-            }
-
-            return NoContent();
-        }
-
-        [HttpGet("roles")]
-        public async Task<ActionResult> GetAllRoles()
-        {
-            // Check if user has permission to assign roles
-            if (!User.HasClaim(c => c.Type == "Permission" && c.Value == "AssignRoles"))
-            {
-                return Forbid();
-            }
-
-            var roles = await _userService.GetAllRolesAsync();
-            return Ok(roles);
-        }
-
-        [HttpPost("roles/assign")]
-        public async Task<ActionResult> AssignRole([FromBody] AssignRoleRequest request)
-        {
-            // Check if user has permission to assign roles
-            if (!User.HasClaim(c => c.Type == "Permission" && c.Value == "AssignRoles"))
-            {
-                return Forbid();
-            }
-
-            var success = await _userService.AssignRoleToUserAsync(request.UserId, request.RoleId);
-
-            if (!success)
-            {
-                return BadRequest(new { message = "Failed to assign role" });
-            }
-
-            return NoContent();
-        }
-
-        [HttpPost("roles/remove")]
-        public async Task<ActionResult> RemoveRole([FromBody] AssignRoleRequest request)
-        {
-            // Check if user has permission to assign roles
-            if (!User.HasClaim(c => c.Type == "Permission" && c.Value == "AssignRoles"))
-            {
-                return Forbid();
-            }
-
-            var success = await _userService.RemoveRoleFromUserAsync(request.UserId, request.RoleId);
-
-            if (!success)
-            {
-                return BadRequest(new { message = "Failed to remove role" });
-            }
-
-            return NoContent();
+            return Ok(new { users, totalCount, pageNumber, pageSize });
         }
     }
 }

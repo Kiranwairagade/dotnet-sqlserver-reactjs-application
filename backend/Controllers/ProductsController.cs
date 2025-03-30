@@ -1,11 +1,11 @@
 using System.Threading.Tasks;
-using ECommerceAPI.DTOs;
-using ECommerceAPI.Services;
+using backend.DTOs;
+using backend.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
-namespace ECommerceAPI.Controllers
+namespace backend.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]

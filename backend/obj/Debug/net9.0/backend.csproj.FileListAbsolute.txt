@@ -1,3 +1,11 @@
+F:\Aarkay\dotnet-sqlserver-reactjs-application\backend\obj\Debug\net9.0\backend.csproj.AssemblyReference.cache
+F:\Aarkay\dotnet-sqlserver-reactjs-application\backend\obj\Debug\net9.0\backend.GeneratedMSBuildEditorConfig.editorconfig
+F:\Aarkay\dotnet-sqlserver-reactjs-application\backend\obj\Debug\net9.0\backend.AssemblyInfoInputs.cache
+F:\Aarkay\dotnet-sqlserver-reactjs-application\backend\obj\Debug\net9.0\backend.AssemblyInfo.cs
+F:\Aarkay\dotnet-sqlserver-reactjs-application\backend\obj\Debug\net9.0\backend.csproj.CoreCompileInputs.cache
+F:\Aarkay\dotnet-sqlserver-reactjs-application\backend\obj\Debug\net9.0\backend.MvcApplicationPartsAssemblyInfo.cs
+F:\Aarkay\dotnet-sqlserver-reactjs-application\backend\obj\Debug\net9.0\backend.MvcApplicationPartsAssemblyInfo.cache
+F:\Aarkay\dotnet-sqlserver-reactjs-application\backend\obj\Debug\net9.0\backend.sourcelink.json
 F:\Aarkay\dotnet-sqlserver-reactjs-application\backend\bin\Debug\net9.0\appsettings.Development.json
 F:\Aarkay\dotnet-sqlserver-reactjs-application\backend\bin\Debug\net9.0\appsettings.json
 F:\Aarkay\dotnet-sqlserver-reactjs-application\backend\bin\Debug\net9.0\backend.staticwebassets.endpoints.json
@@ -143,14 +151,6 @@ F:\Aarkay\dotnet-sqlserver-reactjs-application\backend\bin\Debug\net9.0\runtimes
 F:\Aarkay\dotnet-sqlserver-reactjs-application\backend\bin\Debug\net9.0\runtimes\win\lib\net6.0\System.Runtime.Caching.dll
 F:\Aarkay\dotnet-sqlserver-reactjs-application\backend\bin\Debug\net9.0\runtimes\win\lib\net6.0\System.Security.Cryptography.ProtectedData.dll
 F:\Aarkay\dotnet-sqlserver-reactjs-application\backend\bin\Debug\net9.0\runtimes\win\lib\net6.0\System.Windows.Extensions.dll
-F:\Aarkay\dotnet-sqlserver-reactjs-application\backend\obj\Debug\net9.0\backend.csproj.AssemblyReference.cache
-F:\Aarkay\dotnet-sqlserver-reactjs-application\backend\obj\Debug\net9.0\backend.GeneratedMSBuildEditorConfig.editorconfig
-F:\Aarkay\dotnet-sqlserver-reactjs-application\backend\obj\Debug\net9.0\backend.AssemblyInfoInputs.cache
-F:\Aarkay\dotnet-sqlserver-reactjs-application\backend\obj\Debug\net9.0\backend.AssemblyInfo.cs
-F:\Aarkay\dotnet-sqlserver-reactjs-application\backend\obj\Debug\net9.0\backend.csproj.CoreCompileInputs.cache
-F:\Aarkay\dotnet-sqlserver-reactjs-application\backend\obj\Debug\net9.0\backend.MvcApplicationPartsAssemblyInfo.cs
-F:\Aarkay\dotnet-sqlserver-reactjs-application\backend\obj\Debug\net9.0\backend.MvcApplicationPartsAssemblyInfo.cache
-F:\Aarkay\dotnet-sqlserver-reactjs-application\backend\obj\Debug\net9.0\backend.sourcelink.json
 F:\Aarkay\dotnet-sqlserver-reactjs-application\backend\obj\Debug\net9.0\scopedcss\bundle\backend.styles.css
 F:\Aarkay\dotnet-sqlserver-reactjs-application\backend\obj\Debug\net9.0\staticwebassets.build.json
 F:\Aarkay\dotnet-sqlserver-reactjs-application\backend\obj\Debug\net9.0\staticwebassets.development.json

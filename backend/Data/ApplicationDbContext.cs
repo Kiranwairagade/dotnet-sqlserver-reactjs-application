@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using ECommerceAPI.Models;
+using backend.Models;
 
-namespace ECommerceAPI.Data
+namespace backend.Data
 {
     public class ApplicationDbContext : DbContext
     {
@@ -9,7 +9,7 @@ namespace ECommerceAPI.Data
         {
         }
 
-        // DbSet properties
+        // DbSet properties for your entities
         public DbSet<User> Users { get; set; } = null!;
         public DbSet<Product> Products { get; set; } = null!;
         public DbSet<Category> Categories { get; set; } = null!;
@@ -23,21 +23,25 @@ namespace ECommerceAPI.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            // Configure relationships and constraints here
+            // UserRole: Composite Primary Key
             modelBuilder.Entity<UserRole>()
                 .HasKey(ur => new { ur.UserId, ur.RoleId });
 
+            // RolePermission: Composite Primary Key
             modelBuilder.Entity<RolePermission>()
                 .HasKey(rp => new { rp.RoleId, rp.PermissionId });
 
-            // Configure ProductImage entity
+            // ProductImage Entity Configuration
             modelBuilder.Entity<ProductImage>()
                 .HasKey(pi => pi.ImageId); // Define primary key
 
             modelBuilder.Entity<ProductImage>()
                 .HasOne(pi => pi.Product)
                 .WithMany(p => p.Images)
-                .HasForeignKey(pi => pi.ProductId);
+                .HasForeignKey(pi => pi.ProductId)
+                .OnDelete(DeleteBehavior.Cascade); // Ensure proper deletion behavior
+
+            // Additional configurations can go here
         }
     }
 }

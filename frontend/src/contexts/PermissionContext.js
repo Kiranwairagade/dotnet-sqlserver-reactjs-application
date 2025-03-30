@@ -1,7 +1,6 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { useAuth } from './AuthContext';
 import { getUserPermissions } from '../services/userService';
-
 // 1. Create Context
 const PermissionContext = createContext();
 
@@ -22,35 +21,42 @@ export const PermissionProvider = ({ children }) => {
 
   useEffect(() => {
     const fetchPermissions = async () => {
-      if (token && user) {
-        try {
-          const userPermissions = await getUserPermissions(user.id, token); // Pass token if required
-          const formattedPermissions = userPermissions.reduce((acc, permission) => {
-            const resource = permission.resourceType;
-            const action = permission.action.toLowerCase();
-            if (!acc[resource]) {
-              acc[resource] = { view: false, create: false, edit: false, delete: false };
-            }
-            acc[resource][action] = true;
-            return acc;
-          }, {});
-          setPermissions(formattedPermissions);
-        } catch (error) {
-          console.error("Failed to fetch permissions:", error);
-          setPermissions({});
-        }
-      } else {
+      if (!user || !token) {
         setPermissions({});
+        setIsLoading(false);
+        return;
       }
-      setIsLoading(false);
+
+      try {
+        const userPermissions = await getUserPermissions(user.id, token);
+        const formattedPermissions = userPermissions.reduce((acc, { resourceType, action }) => {
+          if (!acc[resourceType]) {
+            acc[resourceType] = { view: false, create: false, edit: false, delete: false };
+          }
+          acc[resourceType][action.toLowerCase()] = true;
+          return acc;
+        }, {});
+
+        // ✅ Ensure every logged-in user can view users
+        formattedPermissions['users'] = {
+          ...formattedPermissions['users'],
+          view: true,
+        };
+
+        setPermissions(formattedPermissions);
+      } catch (error) {
+        console.error("Failed to fetch permissions:", error);
+        setPermissions({ users: { view: true } }); // Default fallback
+      } finally {
+        setIsLoading(false);
+      }
     };
 
     fetchPermissions();
   }, [user, token]);
 
   const hasPermission = (resourceType, action) => {
-    if (!user) return false;
-    if (user.role === 'Admin') return true; // Admin full access
+    if (user?.role === 'Admin') return true; // Admin has full access
     return permissions[resourceType]?.[action.toLowerCase()] || false;
   };
 

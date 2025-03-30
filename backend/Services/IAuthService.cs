@@ -1,12 +1,14 @@
 using System.Threading.Tasks;
-using ECommerceAPI.DTOs;
+using backend.DTOs;
 
-namespace ECommerceAPI.Services
+namespace backend.Services
 {
     public interface IAuthService
     {
-        Task<AuthResponse> RegisterAsync(RegisterRequest request);
-        Task<AuthResponse> LoginAsync(LoginRequest request);
-        Task<UserDto> GetUserByIdAsync(int userId);
+        Task<AuthResponse?> RegisterAsync(RegisterRequest request);
+        Task<AuthResponse?> LoginAsync(LoginRequest request);
+        Task<AuthResponse?> RefreshTokenAsync(TokenRequest request);
+        Task<UserDto?> GetUserByIdAsync(int userId);
+        Task<bool> ValidateTokenAsync(string token);
     }
 }

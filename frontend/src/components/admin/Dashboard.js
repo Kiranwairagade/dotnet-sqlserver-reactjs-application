@@ -1,15 +1,19 @@
-import React from "react";
-import { useAuth } from "../../contexts/AuthContext";
-import "./Dashboard.css";
+// frontend/src/components/admin/Dashboard.js
+import React from 'react';
+import './Dashboard.css';
+import UserTable from './UserTable';
+import Sidebar from '../common/Sidebar';
 
 const Dashboard = () => {
-  const { isAuthenticated } = useAuth();
-
   return (
-    <div className="dashboard">
+    <div className="dashboard-container">
+      <Sidebar />
       <div className="dashboard-content">
-        <h1>Welcome to Dashboard</h1>
-        <p>{isAuthenticated ? "You are logged in!" : "Please log in."}</p>
+        <h1>Dashboard</h1>
+        <div className="dashboard-card">
+          <h2>Registered Users</h2>
+          <UserTable />
+        </div>
       </div>
     </div>
   );

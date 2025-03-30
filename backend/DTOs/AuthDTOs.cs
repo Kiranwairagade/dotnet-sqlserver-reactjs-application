@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace ECommerceAPI.DTOs
+namespace backend.DTOs
 {
     public class LoginRequest
     {
@@ -25,9 +25,13 @@ namespace ECommerceAPI.DTOs
         public string FirstName { get; set; } = string.Empty;
         public string LastName { get; set; } = string.Empty;
         public string Token { get; set; } = string.Empty;
+        public string RefreshToken { get; set; } = string.Empty; // Add this line
         public List<string> Roles { get; set; } = new List<string>();
         public List<PermissionDto> Permissions { get; set; } = new List<PermissionDto>();
     }
+
+
+
 
     public class PermissionDto
     {

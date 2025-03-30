@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace ECommerceAPI.Models
+namespace backend.Models
 {
     public class Product
     {

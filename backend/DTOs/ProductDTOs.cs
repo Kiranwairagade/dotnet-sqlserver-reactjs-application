@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace ECommerceAPI.DTOs
+namespace backend.DTOs
 {
     public class ProductListDto
     {
