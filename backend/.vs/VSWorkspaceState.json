@@ -1,12 +1,8 @@
 {
   "ExpandedNodes": [
     "",
-    "\\Controllers",
-    "\\DTOs",
-    "\\Middleware",
-    "\\Models",
-    "\\Services"
+    "\\Data"
   ],
-  "SelectedNode": "\\Program.cs",
+  "SelectedNode": "\\Data\\ApplicationDbContext.cs",
   "PreviewInSolutionExplorer": false
 }

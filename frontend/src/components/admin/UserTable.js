@@ -1,9 +1,8 @@
-// frontend/src/components/admin/UserTable.js
 import React, { useState, useEffect } from 'react';
-import { getUsers } from '../../services/userService';
+import { getUsers, deleteUser, updateUser } from '../../services/userService';
 import './UserTable.css';
 
-const UserTable = () => {
+const UserTable = ({ onEdit, onView, onAddNew }) => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -13,12 +12,20 @@ const UserTable = () => {
     totalCount: 0
   });
   const [searchTerm, setSearchTerm] = useState('');
+  const [deleteConfirmation, setDeleteConfirmation] = useState({ show: false, userId: null });
+
+  const permissionOptions = [
+    "None",
+    "Create", "Read", "Update", "Delete",
+    "Create, Read", "Create, Update", "Create, Delete", "Read, Update", "Read, Delete", "Update, Delete",
+    "Create, Read, Update", "Create, Read, Delete", "Create, Update, Delete", "Read, Update, Delete",
+    "Create, Read, Update, Delete"
+  ];
 
   const fetchUsers = async (page = pagination.pageNumber, search = searchTerm) => {
     try {
       setLoading(true);
       const data = await getUsers(page, pagination.pageSize, search);
-      console.log("Users in Component:", data.users); // Debugging
       setUsers(data.users);
       setPagination((prev) => ({
         ...prev,
@@ -38,35 +45,30 @@ const UserTable = () => {
     fetchUsers();
   }, [pagination.pageNumber, pagination.pageSize]);
 
-  const handleSearch = (e) => {
-    e.preventDefault();
-    setPagination((prev) => ({ ...prev, pageNumber: 1 })); // Reset to first page
-    fetchUsers(1, searchTerm);
-  };
-
-  const handlePageChange = (newPage) => {
-    if (newPage > 0 && newPage <= Math.ceil(pagination.totalCount / pagination.pageSize)) {
-      setPagination({ ...pagination, pageNumber: newPage });
+  const handlePermissionChange = async (userId, newPermissions) => {
+    try {
+      await updateUser(userId, { permissions: newPermissions });
+      fetchUsers();
+    } catch (error) {
+      console.error('Error updating permissions:', error);
     }
-  };
-
-  const formatDate = (dateString) => {
-    if (!dateString) return 'N/A';
-    return new Date(dateString).toLocaleDateString();
   };
 
   return (
     <div className="user-table-container">
-      <div className="search-container">
-        <form onSubmit={handleSearch}>
-          <input
-            type="text"
-            placeholder="Search users..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-          <button type="submit">Search</button>
-        </form>
+      <div className="table-header">
+        <div className="search-container">
+          <form onSubmit={(e) => { e.preventDefault(); fetchUsers(1, searchTerm); }}>
+            <input
+              type="text"
+              placeholder="Search users..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+            <button type="submit">Search</button>
+          </form>
+        </div>
+        <button className="btn-add" onClick={onAddNew}>Add New User</button>
       </div>
 
       {loading ? (
@@ -82,9 +84,9 @@ const UserTable = () => {
                 <th>Username</th>
                 <th>Email</th>
                 <th>Name</th>
-                <th>Status</th>
+                <th>Permissions</th>
                 <th>Created</th>
-                <th>Updated</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -96,12 +98,21 @@ const UserTable = () => {
                     <td>{user.email}</td>
                     <td>{`${user.firstName || ''} ${user.lastName || ''}`.trim()}</td>
                     <td>
-                      <span className={`status-badge ${user.isActive ? 'active' : 'inactive'}`}>
-                        {user.isActive ? 'Active' : 'Inactive'}
-                      </span>
+                      <select
+                        value={user.permissions?.join(', ') || "None"}
+                        onChange={(e) => handlePermissionChange(user.userId, e.target.value.split(', '))}
+                      >
+                        {permissionOptions.map((option) => (
+                          <option key={option} value={option}>{option}</option>
+                        ))}
+                      </select>
                     </td>
-                    <td>{formatDate(user.createdAt)}</td>
-                    <td>{formatDate(user.updatedAt)}</td>
+                    <td>{new Date(user.createdAt).toLocaleDateString()}</td>
+                    <td className="actions-cell">
+                      <button className="btn-view" onClick={() => onView(user)}>View</button>
+                      <button className="btn-edit" onClick={() => onEdit(user)}>Edit</button>
+                      <button className="btn-delete" onClick={() => setDeleteConfirmation({ show: true, userId: user.userId })}>Delete</button>
+                    </td>
                   </tr>
                 ))
               ) : (
@@ -111,24 +122,6 @@ const UserTable = () => {
               )}
             </tbody>
           </table>
-
-          <div className="pagination">
-            <button
-              onClick={() => handlePageChange(pagination.pageNumber - 1)}
-              disabled={pagination.pageNumber === 1}
-            >
-              Previous
-            </button>
-            <span>
-              Page {pagination.pageNumber} of {Math.ceil(pagination.totalCount / pagination.pageSize)}
-            </span>
-            <button
-              onClick={() => handlePageChange(pagination.pageNumber + 1)}
-              disabled={pagination.pageNumber >= Math.ceil(pagination.totalCount / pagination.pageSize)}
-            >
-              Next
-            </button>
-          </div>
         </>
       )}
     </div>
