@@ -1,8 +1,7 @@
 {
   "ExpandedNodes": [
-    "",
-    "\\Data"
+    ""
   ],
-  "SelectedNode": "\\Data\\ApplicationDbContext.cs",
+  "SelectedNode": "\\DTOs",
   "PreviewInSolutionExplorer": false
 }

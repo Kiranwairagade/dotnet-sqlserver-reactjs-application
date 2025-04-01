@@ -1,115 +1,92 @@
-// frontend/src/services/userService.js
-import api from '../utils/api';
+import { api } from '../utils/api';
 
-// Get users with pagination and search
 export const getUsers = async (pageNumber = 1, pageSize = 10, searchTerm = '') => {
   try {
     const response = await api.get('/users', {
-      params: { pageNumber, pageSize, searchTerm }
+      params: {
+        pageNumber,
+        pageSize,
+        searchTerm
+      }
     });
     return response.data;
   } catch (error) {
-    console.error(`Error fetching users:`, error);
+    console.error('Error fetching users:', error);
     throw error;
   }
 };
 
-// Get a specific user by ID
-export const getUserById = async (userId) => {
+export const getUserById = async (id) => {
   try {
-    const response = await api.get(`/api/users/${userId}`);
+    const response = await api.get(`/users/${id}`);
     return response.data;
   } catch (error) {
-    console.error(`Error fetching user ${userId}:`, error);
+    console.error(`Error fetching user with ID ${id}:`, error);
     throw error;
   }
 };
 
-// Create a new user
 export const createUser = async (userData) => {
   try {
-    const response = await api.post('/api/users', userData);
+    const response = await api.post('/users', userData);
     return response.data;
   } catch (error) {
-    console.error(`Error creating user:`, error);
+    console.error('Error creating user:', error);
     throw error;
   }
 };
 
-// Update an existing user
-export const updateUser = async (userId, userData) => {
+export const updateUser = async (id, userData) => {
   try {
-    const response = await api.put(`/api/users/${userId}`, userData);
+    const response = await api.put(`/users/${id}`, userData);
     return response.data;
   } catch (error) {
-    console.error(`Error updating user ${userId}:`, error);
+    console.error(`Error updating user with ID ${id}:`, error);
     throw error;
   }
 };
 
-// Delete a user
-export const deleteUser = async (userId) => {
+export const deleteUser = async (id) => {
   try {
-    const response = await api.delete(`/api/users/${userId}`);
+    const response = await api.delete(`/users/${id}`);
     return response.data;
   } catch (error) {
-    console.error(`Error deleting user ${userId}:`, error);
+    console.error(`Error deleting user with ID ${id}:`, error);
     throw error;
   }
 };
 
-// Toggle user active status
-export const toggleUserStatus = async (userId, isActive) => {
+export const updateUserPermissions = async (userId, permissions) => {
   try {
-    const response = await api.patch(`/api/users/${userId}/status`, { isActive });
+    // Option 1: Try to update the whole user object with the new permissions
+    const user = await getUserById(userId);
+    if (user) {
+      const updatedUser = { ...user, permissions };
+      const response = await updateUser(userId, updatedUser);
+      return response;
+    }
+    
+    // Option 2: If the API has a specific endpoint for permissions but it's different
+    // Uncomment this if Option 1 doesn't work and modify the endpoint as needed
+    /*
+    const response = await api.put(`/users/${userId}`, { permissions });
     return response.data;
+    */
+    
+    throw new Error('Could not update user permissions');
   } catch (error) {
-    console.error(`Error toggling user ${userId} status:`, error);
+    console.error(`Error updating permissions for user ${userId}:`, error);
     throw error;
   }
 };
 
-// Get user roles
-export const getUserRoles = async (userId) => {
-  try {
-    const response = await api.get(`/api/users/${userId}/roles`);
-    return response.data;
-  } catch (error) {
-    console.error(`Error fetching roles for user ${userId}:`, error);
-    throw error;
-  }
-};
-
-// Update user roles
-export const updateUserRoles = async (userId, roleIds) => {
-  try {
-    const response = await api.put(`/api/users/${userId}/roles`, { roleIds });
-    return response.data;
-  } catch (error) {
-    console.error(`Error updating roles for user ${userId}:`, error);
-    throw error;
-  }
-};
-
-// Get user permissions
 export const getUserPermissions = async (userId) => {
   try {
-    const response = await api.get(`/api/users/${userId}/permissions`);
-    return response.data;
+    // If there's no specific endpoint for permissions, just get the whole user
+    const user = await getUserById(userId);
+    return user.permissions || [];
   } catch (error) {
     console.error(`Error fetching permissions for user ${userId}:`, error);
     throw error;
   }
-};
-
-export default {
-  getUsers,
-  getUserById,
-  createUser,
-  updateUser,
-  deleteUser,
-  toggleUserStatus,
-  getUserRoles,
-  updateUserRoles,
-  getUserPermissions
 };

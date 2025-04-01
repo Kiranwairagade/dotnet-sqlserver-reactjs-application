@@ -1,185 +1,169 @@
-/* UserTable.css */
 .user-table-container {
   width: 100%;
   margin: 0 auto;
-  padding: 1rem;
-  position: relative;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .table-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
+  margin-bottom: 20px;
 }
 
 .search-container {
   display: flex;
-  margin-bottom: 1rem;
+  align-items: center;
 }
 
 .search-container form {
   display: flex;
-  width: 100%;
 }
 
 .search-container input {
-  padding: 0.5rem;
+  padding: 8px 12px;
   border: 1px solid #ddd;
   border-radius: 4px 0 0 4px;
-  flex-grow: 1;
+  font-size: 14px;
+  width: 250px;
 }
 
 .search-container button {
-  padding: 0.5rem 1rem;
-  background-color: #0056b3;
+  padding: 8px 16px;
+  background-color: #4a90e2;
   color: white;
   border: none;
   border-radius: 0 4px 4px 0;
   cursor: pointer;
+  font-size: 14px;
 }
 
-.search-container button:hover {
-  background-color: #004494;
+.btn-add {
+  padding: 8px 16px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
 }
 
 .user-table {
   width: 100%;
   border-collapse: collapse;
-  margin-bottom: 1rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .user-table th,
 .user-table td {
-  padding: 0.75rem;
+  padding: 12px 15px;
   text-align: left;
   border-bottom: 1px solid #ddd;
 }
 
 .user-table th {
-  background-color: #f5f5f5;
-  font-weight: bold;
+  background-color: #f2f2f2;
+  font-weight: 600;
 }
 
 .user-table tr:hover {
   background-color: #f9f9f9;
 }
 
-.status-badge {
-  display: inline-block;
-  padding: 0.25rem 0.5rem;
-  border-radius: 999px;
-  font-size: 0.75rem;
-  font-weight: bold;
-}
-
-.status-badge.active {
-  background-color: #d4edda;
-  color: #155724;
-}
-
-.status-badge.inactive {
-  background-color: #f8d7da;
-  color: #721c24;
-}
-
 .actions-cell {
   display: flex;
-  gap: 0.5rem;
+  gap: 5px;
 }
 
 .btn-view,
 .btn-edit,
 .btn-delete {
-  padding: 0.25rem 0.5rem;
+  padding: 6px 10px;
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  font-size: 0.8rem;
+  font-size: 12px;
 }
 
 .btn-view {
-  background-color: #17a2b8;
+  background-color: #4a90e2;
   color: white;
 }
 
 .btn-edit {
-  background-color: #ffc107;
-  color: #212529;
+  background-color: #ffa500;
+  color: white;
 }
 
 .btn-delete {
-  background-color: #dc3545;
+  background-color: #f44336;
   color: white;
-}
-
-.btn-view:hover {
-  background-color: #138496;
-}
-
-.btn-edit:hover {
-  background-color: #e0a800;
-}
-
-.btn-delete:hover {
-  background-color: #c82333;
-}
-
-.btn-add {
-  padding: 0.5rem 1rem;
-  background-color: #28a745;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.btn-add:hover {
-  background-color: #218838;
-}
-
-.pagination {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 1rem;
-}
-
-.pagination button {
-  padding: 0.5rem 1rem;
-  border: 1px solid #ddd;
-  background-color: white;
-  cursor: pointer;
-  margin: 0 0.25rem;
-}
-
-.pagination button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.pagination span {
-  margin: 0 1rem;
 }
 
 .loading,
 .error,
 .no-data {
   text-align: center;
-  padding: 2rem;
+  padding: 20px;
+  font-size: 16px;
+}
+
+.loading {
+  color: #4a90e2;
 }
 
 .error {
-  color: #dc3545;
+  color: #f44336;
 }
 
-.delete-confirmation-modal {
+.no-data {
+  color: #666;
+  font-style: italic;
+}
+
+/* Styles for permission handling */
+.select-loading {
+  opacity: 0.7;
+}
+
+.loading-indicator {
+  font-size: 12px;
+  color: #4a90e2;
+  margin-left: 8px;
+}
+
+/* Pagination styles */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+  gap: 15px;
+}
+
+.pagination button {
+  padding: 8px 12px;
+  background-color: #4a90e2;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.pagination button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+/* Modal styles for delete confirmation */
+.modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
+  right: 0;
+  bottom: 0;
   background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
@@ -189,42 +173,39 @@
 
 .modal-content {
   background-color: white;
-  padding: 2rem;
+  padding: 20px;
   border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  max-width: 400px;
-  width: 100%;
+  width: 400px;
+  max-width: 90%;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.modal-content h3 {
+  margin-top: 0;
+  color: #333;
 }
 
 .modal-actions {
   display: flex;
   justify-content: flex-end;
-  gap: 1rem;
-  margin-top: 1.5rem;
+  gap: 10px;
+  margin-top: 20px;
 }
 
 .btn-cancel {
-  padding: 0.5rem 1rem;
-  background-color: #6c757d;
-  color: white;
+  padding: 8px 16px;
+  background-color: #ccc;
+  color: #333;
   border: none;
   border-radius: 4px;
   cursor: pointer;
 }
 
 .btn-confirm-delete {
-  padding: 0.5rem 1rem;
-  background-color: #dc3545;
+  padding: 8px 16px;
+  background-color: #f44336;
   color: white;
   border: none;
   border-radius: 4px;
   cursor: pointer;
-}
-
-.btn-cancel:hover {
-  background-color: #5a6268;
-}
-
-.btn-confirm-delete:hover {
-  background-color: #c82333;
 }

@@ -1,78 +1,92 @@
 using System;
 using System.Collections.Generic;
-
 namespace backend.DTOs
 {
-    // User DTO used for API responses
+    // Existing UserDto
     public class UserDto
     {
         public int UserId { get; set; }
-        public string Username { get; set; } = string.Empty;
-        public string Email { get; set; } = string.Empty;
-        public string FirstName { get; set; } = string.Empty;
-        public string LastName { get; set; } = string.Empty;
+        public string Username { get; set; }
+        public string Email { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
         public bool IsActive { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
-        public List<string> Permissions { get; set; } = new List<string>();
+        public List<string> Roles { get; set; }
 
-        public UserDto() { }
-
-        public UserDto(int userid, string username, string email, string firstName, string lastName, bool isActive, DateTime createdAt, DateTime updatedAt, List<string> permissions)
+        // Default constructor for serialization
+        public UserDto()
         {
-            UserId = userid;
-            Username = username;
+            Roles = new List<string>();
+        }
+
+        // Constructor that matches the one being used in AuthService.cs
+        public UserDto(int userId, string email, string firstName, string lastName,
+                       string passwordHash, bool isActive, DateTime createdAt,
+                       DateTime updatedAt, List<string> roles)
+        {
+            UserId = userId;
             Email = email;
             FirstName = firstName;
             LastName = lastName;
+            // Note: passwordHash is not stored in the DTO for security
             IsActive = isActive;
             CreatedAt = createdAt;
             UpdatedAt = updatedAt;
-            Permissions = permissions;
+            Roles = roles ?? new List<string>();
+            // Username might be set to email or other value depending on your system
+            Username = email; // Default to email if username isn't provided
         }
     }
 
-    // Response object for user lists
+    // The rest of your DTOs remain unchanged
+    // DTO for creating users
+    public class CreateUserDto
+    {
+        public string Username { get; set; } = null!;
+        public string Email { get; set; } = null!;
+        public string FirstName { get; set; } = null!;
+        public string LastName { get; set; } = null!;
+        public string Password { get; set; } = null!; // Include password for new users
+    }
+    // DTO for updating users
+    public class UpdateUserDto
+    {
+        public string Username { get; set; } = null!;
+        public string Email { get; set; } = null!;
+        public string FirstName { get; set; } = null!;
+        public string LastName { get; set; } = null!;
+        public bool IsActive { get; set; }
+    }
+    // Response DTO for paginated user list
     public class UsersResponse
     {
-        public List<UserDetailDto> Users { get; set; } = new List<UserDetailDto>(); // Prevent null reference
+        public List<UserDetailDto> Users { get; set; } = null!;
         public int TotalCount { get; set; }
     }
-
-    // Detailed User DTO
+    // Detailed user DTO including roles
     public class UserDetailDto
     {
         public int Id { get; set; }
-        public string Username { get; set; } = string.Empty;
-        public string Email { get; set; } = string.Empty;
-        public string FirstName { get; set; } = string.Empty;
-        public string LastName { get; set; } = string.Empty;
-        public bool IsActive { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public DateTime UpdatedAt { get; set; }
+        public string Username { get; set; } = null!;
+        public string Email { get; set; } = null!;
+        public string FirstName { get; set; } = null!;
+        public string LastName { get; set; } = null!;
         public List<string> Roles { get; set; } = new List<string>();
     }
-
-    // Update User Request DTO
+    // Request DTO for updating users with UserService
     public class UpdateUserRequest
     {
-        public string Username { get; set; } = string.Empty;
-        public string Email { get; set; } = string.Empty;
-        public string FirstName { get; set; } = string.Empty;
-        public string LastName { get; set; } = string.Empty;
+        public string Username { get; set; } = null!;
+        public string Email { get; set; } = null!;
+        public string FirstName { get; set; } = null!;
+        public string LastName { get; set; } = null!;
     }
-
-    // DTO for assigning roles
-    public class AssignRoleRequest
-    {
-        public int UserId { get; set; }
-        public int RoleId { get; set; }
-    }
-
-    // Role DTO
+    // DTO for roles
     public class RoleDto
     {
         public int Id { get; set; }
-        public string RoleName { get; set; } = string.Empty;
+        public string RoleName { get; set; } = null!;
     }
 }

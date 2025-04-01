@@ -1,7 +1,7 @@
 // frontend/src/components/admin/Dashboard.js
 import React from 'react';
 import './Dashboard.css';
-import UserTable from './UserTable';
+import UserTable from './UsersPage.js';
 import Sidebar from '../common/Sidebar';
 
 const Dashboard = () => {

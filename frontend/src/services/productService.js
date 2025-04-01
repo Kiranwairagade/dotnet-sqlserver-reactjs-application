@@ -1,4 +1,4 @@
-import api from '../utils/api';
+import { api } from '../utils/api';
 
 // Product operations
 export const getAllProducts = async (params = {}) => {
