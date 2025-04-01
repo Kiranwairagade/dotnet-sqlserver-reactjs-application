@@ -38,22 +38,22 @@ const UserManagement = () => {
       case 'create':
         return (
           <UserForm 
-            onCancel={handleCancel}
-            onSuccess={handleSuccess}
+            onCancel={handleCancel} 
+            onSuccess={handleSuccess} 
           />
         );
       case 'edit':
         return (
           <UserForm 
-            userId={selectedUser?.userId}
-            onCancel={handleCancel}
-            onSuccess={handleSuccess}
+            userId={selectedUser?.userId} 
+            onCancel={handleCancel} 
+            onSuccess={handleSuccess} 
           />
         );
       case 'view':
         return (
           <UserDetail 
-            userId={selectedUser?.userId}
+            userId={selectedUser?.userId} 
             onClose={handleCancel}
             onEdit={() => setActiveView('edit')}
           />
@@ -73,7 +73,7 @@ const UserManagement = () => {
   return (
     <div className="user-management-container">
       <div className="user-management-header">
-        <h1>User Management</h1>
+        <h2>User Management</h2>
         {activeView !== 'list' && (
           <button className="btn-back" onClick={() => setActiveView('list')}>
             Back to List

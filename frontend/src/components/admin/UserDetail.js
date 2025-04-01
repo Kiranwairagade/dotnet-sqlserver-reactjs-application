@@ -39,13 +39,13 @@ const UserDetail = ({ userId, onClose, onEdit }) => {
   }
 
   if (!user) {
-    return <div className="error">User not found</div>;
+    return <div className="not-found">User not found</div>;
   }
 
   return (
     <div className="user-detail-container">
       <div className="user-detail-header">
-        <h2>User Details</h2>
+        <h3>User Details</h3>
         <div className="user-detail-actions">
           <button className="btn-edit" onClick={() => onEdit(user)}>Edit</button>
           <button className="btn-close" onClick={onClose}>Close</button>
@@ -53,67 +53,73 @@ const UserDetail = ({ userId, onClose, onEdit }) => {
       </div>
 
       <div className="user-detail-content">
-        <div className="detail-group">
-          <label>User ID:</label>
-          <span>{user.userId}</span>
+        <div className="detail-item">
+          <div className="detail-label">User ID:</div>
+          <div className="detail-value">{user.userId}</div>
         </div>
         
-        <div className="detail-group">
-          <label>Username:</label>
-          <span>{user.username || 'N/A'}</span>
+        <div className="detail-item">
+          <div className="detail-label">Username:</div>
+          <div className="detail-value">{user.username || 'N/A'}</div>
         </div>
         
-        <div className="detail-group">
-          <label>Email:</label>
-          <span>{user.email}</span>
+        <div className="detail-item">
+          <div className="detail-label">Email:</div>
+          <div className="detail-value">{user.email}</div>
         </div>
         
-        <div className="detail-group">
-          <label>First Name:</label>
-          <span>{user.firstName || 'N/A'}</span>
+        <div className="detail-item">
+          <div className="detail-label">First Name:</div>
+          <div className="detail-value">{user.firstName || 'N/A'}</div>
         </div>
         
-        <div className="detail-group">
-          <label>Last Name:</label>
-          <span>{user.lastName || 'N/A'}</span>
+        <div className="detail-item">
+          <div className="detail-label">Last Name:</div>
+          <div className="detail-value">{user.lastName || 'N/A'}</div>
         </div>
         
-        <div className="detail-group">
-          <label>Status:</label>
-          <span className={`status-badge ${user.isActive ? 'active' : 'inactive'}`}>
-            {user.isActive ? 'Active' : 'Inactive'}
-          </span>
+        <div className="detail-item">
+          <div className="detail-label">Status:</div>
+          <div className="detail-value">
+            <span className={user.isActive ? 'status-active' : 'status-inactive'}>
+              {user.isActive ? 'Active' : 'Inactive'}
+            </span>
+          </div>
         </div>
         
-        <div className="detail-group">
-          <label>Created At:</label>
-          <span>{formatDate(user.createdAt)}</span>
+        <div className="detail-item">
+          <div className="detail-label">Created At:</div>
+          <div className="detail-value">{formatDate(user.createdAt)}</div>
         </div>
         
-        <div className="detail-group">
-          <label>Updated At:</label>
-          <span>{formatDate(user.updatedAt)}</span>
+        <div className="detail-item">
+          <div className="detail-label">Updated At:</div>
+          <div className="detail-value">{formatDate(user.updatedAt)}</div>
         </div>
         
         {user.roles && user.roles.length > 0 && (
-          <div className="detail-group">
-            <label>Roles:</label>
-            <ul className="role-list">
-              {user.roles.map(role => (
-                <li key={role.id}>{role.name}</li>
-              ))}
-            </ul>
+          <div className="detail-item">
+            <div className="detail-label">Roles:</div>
+            <div className="detail-value">
+              <ul className="detail-list">
+                {user.roles.map(role => (
+                  <li key={role.id || role.name}>{role.name}</li>
+                ))}
+              </ul>
+            </div>
           </div>
         )}
         
         {user.permissions && user.permissions.length > 0 && (
-          <div className="detail-group">
-            <label>Permissions:</label>
-            <ul className="permission-list">
-              {user.permissions.map(permission => (
-                <li key={permission.id}>{permission.name}</li>
-              ))}
-            </ul>
+          <div className="detail-item">
+            <div className="detail-label">Permissions:</div>
+            <div className="detail-value">
+              <ul className="detail-list">
+                {user.permissions.map(permission => (
+                  <li key={permission.id || permission.name}>{permission.name}</li>
+                ))}
+              </ul>
+            </div>
           </div>
         )}
       </div>

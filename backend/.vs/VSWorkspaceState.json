@@ -1,7 +1,8 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\Models"
   ],
-  "SelectedNode": "\\DTOs",
+  "SelectedNode": "\\Models\\Permission.cs",
   "PreviewInSolutionExplorer": false
 }
