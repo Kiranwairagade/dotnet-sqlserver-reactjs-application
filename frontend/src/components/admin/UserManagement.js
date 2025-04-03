@@ -71,16 +71,7 @@ const UserManagement = () => {
   };
 
   return (
-    <div className="user-management-container">
-      <div className="user-management-header">
-        <h2>User Management</h2>
-        {activeView !== 'list' && (
-          <button className="btn-back" onClick={() => setActiveView('list')}>
-            Back to List
-          </button>
-        )}
-      </div>
-      
+    <div className="user-management-container">          
       <div className="user-management-content">
         {renderContent()}
       </div>

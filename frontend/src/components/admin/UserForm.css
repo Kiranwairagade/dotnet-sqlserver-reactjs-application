@@ -1,86 +1,121 @@
 .user-form-container {
-  max-width: 100%;
-  width: 80%;
-  margin: 0 auto;
-  padding: 0.75rem;
+  width: 75%; /* Slightly smaller width */
+  max-width: 800px; /* Ensure it fits well */
+  margin: auto;
+  padding: 8px;
   background-color: #ffffff;
   border-radius: 6px;
-  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
   box-sizing: border-box;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* Spread form elements evenly */
+}
+
+/* Remove global scrolling */
+body, html {
+  overflow: hidden;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f8f9fa;
 }
 
 .user-form-container h2 {
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.4rem;
   color: #333;
   text-align: center;
-  font-size: 1rem;
+  font-size: 0.9rem; /* Smaller font */
 }
 
 .error-message {
-  padding: 0.5rem;
-  margin-bottom: 0.5rem;
+  padding: 0.4rem;
+  margin-bottom: 0.4rem;
   background-color: #f8d7da;
   color: #721c24;
-  border-radius: 3px;
-  font-size: 0.75rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
 }
 
 .user-form {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.3rem; /* Reduced spacing */
+  flex-grow: 1;
+}
+
+/* Form row for First Name & Last Name */
+.form-row {
+  display: flex;
+  gap: 0.6rem; /* Reduced spacing */
+  flex-wrap: nowrap;
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
+  flex: 1;
 }
 
 .form-group label {
-  margin-bottom: 0.2rem;
+  margin-bottom: 0.15rem;
   font-weight: 500;
   color: #495057;
-  font-size: 0.75rem;
-}
-
-/* First Name & Last Name in the same row */
-.form-row {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.form-row .form-group {
-  flex: 1;
+  font-size: 0.75rem; /* Smaller font */
 }
 
 .form-group input[type="text"],
 .form-group input[type="email"],
 .form-group input[type="password"] {
-  padding: 0.4rem;
+  padding: 0.4rem; /* Reduced padding */
   border: 1px solid #ced4da;
   border-radius: 3px;
-  font-size: 0.75rem;
+  font-size: 0.75rem; /* Smaller text */
   width: 100%;
   box-sizing: border-box;
+  height: 28px; /* Smaller input box */
 }
 
 .checkbox-group {
   display: flex;
   align-items: center;
-  font-size: 0.75rem;
+  font-size: 0.75rem; /* Smaller text */
 }
 
 .checkbox-group input {
   margin-right: 0.3rem;
 }
 
+.permissions-group {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.3rem; /* Reduced margin */
+}
+
+.permissions-group select {
+  padding: 0.4rem;
+  border: 1px solid #ced4da;
+  border-radius: 3px;
+  font-size: 0.75rem;
+  width: 55%;
+}
+
+/* Ensure the form actions are visible */
 .form-actions {
   display: flex;
   justify-content: flex-end;
-  gap: 0.5rem;
-  margin-top: 0.5rem;
+  gap: 0.8rem;
+  margin-top: 0.6rem; /* Reduced margin */
+  position: relative;
 }
 
+/* Buttons */
 .btn-cancel,
 .btn-submit {
   padding: 0.4rem 1rem;
@@ -105,9 +140,38 @@
 }
 
 /* Responsive adjustments */
-@media (max-width: 500px) {
+@media (max-width: 1024px) {
   .user-form-container {
-    width: 95%;
+    width: 80%;
+    max-width: 750px;
+    height: 45vh; /* Slightly reduced height */
+  }
+
+  .form-row {
+    gap: 0.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .user-form-container {
+    width: 85%;
+    max-width: 700px;
+    height: 45vh;
+  }
+
+  .form-row {
+    flex-direction: column;
+  }
+
+  .permissions-group select {
+    width: 100%;
+  }
+}
+
+@media (max-width: 600px) {
+  .user-form-container {
+    width: 90%;
+    height: auto; /* Adaptive height */
   }
 
   .form-row {

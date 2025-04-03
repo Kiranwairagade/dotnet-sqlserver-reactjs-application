@@ -305,3 +305,24 @@
   padding: 4px; /* Smaller padding */
   width: 100%;
 }
+.header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.header-row h2 {
+  margin: 0;
+  font-size: 16px;
+}
+
+.btn-back {
+  padding: 6px 12px;
+  background-color: #4a90e2;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+}

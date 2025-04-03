@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { getUsers, deleteUser, updateUserPermissions } from '../../services/userService';
+import { getUsers, deleteUser } from '../../services/userService';
 import './UserTable.css';
 
-const UserTable = ({ onEdit, onView, onAddNew }) => {
+const UserTable = ({ onEdit, onView, onAddNew, onBack }) => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -13,21 +13,12 @@ const UserTable = ({ onEdit, onView, onAddNew }) => {
   });
   const [searchTerm, setSearchTerm] = useState('');
   const [deleteConfirmation, setDeleteConfirmation] = useState({ show: false, userId: null });
-  const [updatingPermissions, setUpdatingPermissions] = useState(null);
-
-  const permissionOptions = [
-    "None",
-    "Create", "Read", "Update", "Delete",
-    "Create, Read", "Create, Update", "Create, Delete", "Read, Update", "Read, Delete", "Update, Delete",
-    "Create, Read, Update", "Create, Read, Delete", "Create, Update, Delete", "Read, Update, Delete",
-    "Create, Read, Update, Delete"
-  ];
 
   const fetchUsers = async (page = pagination.pageNumber, search = searchTerm) => {
     try {
       setLoading(true);
       const data = await getUsers(page, pagination.pageSize, search);
-      setUsers(data.users || data); // Handle different response formats
+      setUsers(data.users || data);
       setPagination((prev) => ({
         ...prev,
         pageNumber: data.pageNumber || page,
@@ -46,41 +37,13 @@ const UserTable = ({ onEdit, onView, onAddNew }) => {
     fetchUsers();
   }, [pagination.pageNumber, pagination.pageSize]);
 
-  const handlePermissionChange = async (userId, permissionString) => {
-    try {
-      setUpdatingPermissions(userId);
-      
-      // Convert permission string to array or empty array if "None"
-      const permissions = permissionString === "None" ? [] : permissionString.split(', ');
-      
-      // Update user data with new permissions
-      await updateUserPermissions(userId, permissions);
-      
-      // Update user in local state to avoid full refetch
-      setUsers(users.map(user => 
-        user.userId === userId ? { ...user, permissions } : user
-      ));
-      
-      // Show success feedback
-      alert(`Permissions updated successfully for user ID: ${userId}`);
-    } catch (error) {
-      console.error('Error updating permissions:', error);
-      alert(`Failed to update permissions: ${error.message || 'Unknown error'}`);
-    } finally {
-      setUpdatingPermissions(null);
-    }
-  };
-
   const handleDeleteConfirm = async () => {
     if (!deleteConfirmation.userId) return;
     
     try {
       setLoading(true);
       await deleteUser(deleteConfirmation.userId);
-      
-      // Remove user from local state
       setUsers(users.filter(user => user.userId !== deleteConfirmation.userId));
-      
       setDeleteConfirmation({ show: false, userId: null });
       alert('User deleted successfully');
     } catch (err) {
@@ -97,36 +60,11 @@ const UserTable = ({ onEdit, onView, onAddNew }) => {
     }
   };
 
-  // Safe handler functions that check if callbacks exist
-  const handleView = (user) => {
-    if (typeof onView === 'function') {
-      onView(user);
-    } else {
-      console.warn('onView callback is not defined');
-      alert('View functionality is not implemented yet.');
-    }
-  };
-
-  const handleEdit = (user) => {
-    if (typeof onEdit === 'function') {
-      onEdit(user);
-    } else {
-      console.warn('onEdit callback is not defined');
-      alert('Edit functionality is not implemented yet.');
-    }
-  };
-
-  const handleAddNew = () => {
-    if (typeof onAddNew === 'function') {
-      onAddNew();
-    } else {
-      console.warn('onAddNew callback is not defined');
-      alert('Add new user functionality is not implemented yet.');
-    }
-  };
-
   return (
     <div className="user-table-container">
+      <div className="header-row">
+        <h2>User Management</h2>       
+      </div>
       <div className="table-header">
         <div className="search-container">
           <form onSubmit={(e) => { e.preventDefault(); fetchUsers(1, searchTerm); }}>
@@ -139,10 +77,10 @@ const UserTable = ({ onEdit, onView, onAddNew }) => {
             <button type="submit">Search</button>
           </form>
         </div>
-        <button className="btn-add" onClick={handleAddNew}>Add New User</button>
+        <button className="btn-add" onClick={onAddNew}>Add New User</button>
       </div>
 
-      {loading && !updatingPermissions ? (
+      {loading ? (
         <div className="loading">Loading users...</div>
       ) : error ? (
         <div className="error">{error}</div>
@@ -155,7 +93,6 @@ const UserTable = ({ onEdit, onView, onAddNew }) => {
                 <th>Username</th>
                 <th>Email</th>
                 <th>Name</th>
-                <th>Permissions</th>
                 <th>Created</th>
                 <th>Actions</th>
               </tr>
@@ -168,25 +105,10 @@ const UserTable = ({ onEdit, onView, onAddNew }) => {
                     <td>{user.username || 'N/A'}</td>
                     <td>{user.email}</td>
                     <td>{`${user.firstName || ''} ${user.lastName || ''}`.trim()}</td>
-                    <td>
-                      <select
-                        value={user.permissions?.join(', ') || "None"}
-                        onChange={(e) => handlePermissionChange(user.userId, e.target.value)}
-                        disabled={updatingPermissions === user.userId}
-                        className={updatingPermissions === user.userId ? "select-loading" : ""}
-                      >
-                        {permissionOptions.map((option) => (
-                          <option key={option} value={option}>{option}</option>
-                        ))}
-                      </select>
-                      {updatingPermissions === user.userId && (
-                        <span className="loading-indicator">Updating...</span>
-                      )}
-                    </td>
                     <td>{new Date(user.createdAt || Date.now()).toLocaleDateString()}</td>
                     <td className="actions-cell">
-                      <button className="btn-view" onClick={() => handleView(user)}>View</button>
-                      <button className="btn-edit" onClick={() => handleEdit(user)}>Edit</button>
+                      <button className="btn-view" onClick={() => onView(user)}>View</button>
+                      <button className="btn-edit" onClick={() => onEdit(user)}>Edit</button>
                       <button 
                         className="btn-delete" 
                         onClick={() => setDeleteConfirmation({ show: true, userId: user.userId })}
@@ -198,13 +120,12 @@ const UserTable = ({ onEdit, onView, onAddNew }) => {
                 ))
               ) : (
                 <tr>
-                  <td colSpan="7" className="no-data">No users found</td>
+                  <td colSpan="6" className="no-data">No users found</td>
                 </tr>
               )}
             </tbody>
           </table>
 
-          {/* Pagination controls */}
           {users.length > 0 && (
             <div className="pagination">
               <button 
@@ -227,7 +148,6 @@ const UserTable = ({ onEdit, onView, onAddNew }) => {
         </>
       )}
 
-      {/* Delete confirmation modal */}
       {deleteConfirmation.show && (
         <div className="modal-overlay">
           <div className="modal-content">
