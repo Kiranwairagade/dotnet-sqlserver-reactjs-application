@@ -7,13 +7,10 @@ const Dashboard = () => {
   return (
     <div className="dashboard-container">
       <Sidebar />
-      <div className="dashboard-content">       
-        <div className="dashboard-cards">
-          <div className="dashboard-card">
-            <h2>Registered Users</h2>
+      <div className="dashboard-content">               
+          <div className="dashboard-card">          
             <UserManagement />
-          </div>
-        </div>
+          </div>      
       </div>
     </div>
   );

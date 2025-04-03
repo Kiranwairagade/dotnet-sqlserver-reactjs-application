@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getUserById } from '../../services/userService';
-import './UserTable.css';
+import './UserDetail.css';
 
 const UserDetail = ({ userId, onClose, onEdit }) => {
   const [user, setUser] = useState(null);

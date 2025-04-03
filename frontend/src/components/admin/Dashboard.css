@@ -1,42 +1,77 @@
-/* frontend/src/components/admin/Dashboard.css */
-
 .dashboard-container {
   display: flex;
+  flex-direction: column;
   height: 100vh;
-  background: #f3f1f1;
-  
+  overflow: hidden; /* Prevents scrolling */
 }
 
-.sidebar {
-  width: 200px;
-  height: 100vh;
-  position: fixed;
-  left: 0;
-  top: 0;
-  background: #2c3e50; /* Dark sidebar */
-  color: white;
-  padding-top: 20px;
-}
-
-.dashboard-content {
-  margin-left: 200px; /* Ensures content starts after sidebar */
+.main-content {
+  display: flex;
   flex-grow: 1;
-  padding: 20px;
-  background: white;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  overflow-y: auto;
+  margin: 50px; /* Adjust to match navbar height */
+  overflow: hidden; /* Prevents overflow */
 }
 
-.dashboard-content h1 {
-  font-size: 24px;
-  color: #333;
+/* Prevent body and html from allowing scrollbars */
+html, body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden; /* Completely disables scrolling */
+}
+
+/* Navbar fixed without overflow */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 50px;
+  background: #589ee8;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  box-sizing: border-box;
+  overflow: hidden;
+  white-space: nowrap; /* Prevents text overflow */
+}
+
+/* Sidebar without scrollbars */
+.sidebar {
+  position: fixed;
+  top: 50px; /* Below navbar */
+  left: 0;
+  width: 200px; /* Adjust width as needed */
+  height: calc(100vh - 50px);
+  background: #dff1ff;
+  padding-top: 20px;
+  overflow: hidden; /* Removed scrollbar */
+}
+
+/* Dashboard content stays within viewport */
+.dashboard-content {
+  margin-left: 200px; /* Same width as sidebar */
+  margin-top: 50px; /* Below navbar */
+  padding: 20px;
+  width: calc(100vw - 220px);
+  height: calc(100vh - 70px);
+  overflow: hidden; /* Removes scrolling */
+  box-sizing: border-box;
+  background: white;
 }
 
 .dashboard-card {
+  position: absolute;
+  top: 50px; /* Start after navbar */
+  left: 200px; /* Start after sidebar */
+  width: calc(100vw - 200px); /* Fills remaining width */
+  height: calc(100vh - 50px); /* Fills remaining height */
   background: white;
-  padding: 20px;
-  border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  margin-top: 20px;
+  box-sizing: border-box; /* Prevents extra spacing */
+  padding: 20px; /* Ensures content inside has space */
+  overflow: hidden; /* Prevents unwanted scrolling */
 }

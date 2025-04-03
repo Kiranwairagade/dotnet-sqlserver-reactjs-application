@@ -5,8 +5,19 @@
   background-color: #fff;
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  overflow-x: auto; /* Enables horizontal scrolling instead of overflow */
+  max-width: 100%; /* Ensures it doesn’t exceed the parent */
+}
+.user-table td.permissions-column:hover {
+  white-space: normal;
+  position: relative; /* Prevents layout shift */
+  z-index: 10;
+  width: auto;
+  max-width: 250px;
+  padding: 5px;
 }
 
+/* Table Header */
 .table-header {
   display: flex;
   justify-content: space-between;
@@ -14,6 +25,7 @@
   margin-bottom: 20px;
 }
 
+/* Search Bar */
 .search-container {
   display: flex;
   align-items: center;
@@ -24,43 +36,46 @@
 }
 
 .search-container input {
-  padding: 8px 12px;
-  border: 1px solid #ddd;
-  border-radius: 4px 0 0 4px;
-  font-size: 14px;
-  width: 250px;
+  padding: 4px 8px; /* Reduced padding */
+  font-size: 10px; /* Reduced font size */
+  width: 150px; /* Adjusted width */
 }
 
 .search-container button {
-  padding: 8px 16px;
-  background-color: #4a90e2;
-  color: white;
-  border: none;
-  border-radius: 0 4px 4px 0;
-  cursor: pointer;
-  font-size: 14px;
+  padding: 4px 8px; /* Reduced padding */
+  font-size: 10px;
 }
 
+/* Add Button */
 .btn-add {
-  padding: 8px 16px;
+  padding: 6px 12px;
   background-color: #4caf50;
   color: white;
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 12px; /* Reduced size */
 }
 
+/* Table */
 .user-table {
-  width: 100%;
+  width: 95%;
+  max-width: 100%;
   border-collapse: collapse;
+  font-size: 12px;
+  table-layout: auto; /* Keeps column sizes dynamic */
+  overflow-x: auto;
 }
+
 
 .user-table th,
 .user-table td {
-  padding: 12px 15px;
+  padding: 10px 8px;
   text-align: left;
   border-bottom: 1px solid #ddd;
+  white-space: nowrap; /* Prevents text wrapping */
+  overflow: hidden;
+  text-overflow: ellipsis; /* Truncate long text */
 }
 
 .user-table th {
@@ -72,19 +87,21 @@
   background-color: #f9f9f9;
 }
 
+/* Action Buttons */
 .actions-cell {
   display: flex;
   gap: 5px;
+  flex-wrap: wrap; /* Prevents action buttons from overflowing */
 }
 
 .btn-view,
 .btn-edit,
 .btn-delete {
-  padding: 6px 10px;
+  padding: 4px 8px;
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  font-size: 12px;
+  font-size: 10px; /* Reduced size */
 }
 
 .btn-view {
@@ -102,12 +119,13 @@
   color: white;
 }
 
+/* Loading & Error States */
 .loading,
 .error,
 .no-data {
   text-align: center;
-  padding: 20px;
-  font-size: 16px;
+  padding: 15px;
+  font-size: 14px;
 }
 
 .loading {
@@ -123,7 +141,7 @@
   font-style: italic;
 }
 
-/* Styles for permission handling */
+/* Handling Select Loading */
 .select-loading {
   opacity: 0.7;
 }
@@ -134,22 +152,24 @@
   margin-left: 8px;
 }
 
-/* Pagination styles */
+/* Pagination */
 .pagination {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 20px;
-  gap: 15px;
+  margin-top: 15px;
+  gap: 10px;
+  flex-wrap: wrap; /* Prevents pagination overflow */
 }
 
 .pagination button {
-  padding: 8px 12px;
+  padding: 6px 10px;
   background-color: #4a90e2;
   color: white;
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  font-size: 12px;
 }
 
 .pagination button:disabled {
@@ -157,7 +177,7 @@
   cursor: not-allowed;
 }
 
-/* Modal styles for delete confirmation */
+/* Delete Confirmation Modal */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -173,39 +193,115 @@
 
 .modal-content {
   background-color: white;
-  padding: 20px;
+  padding: 15px;
   border-radius: 8px;
-  width: 400px;
-  max-width: 90%;
+  width: 100%;
+  max-width: 350px; /* Reduced modal size to fit */
+  overflow: hidden;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 }
 
 .modal-content h3 {
   margin-top: 0;
   color: #333;
+  font-size: 14px; /* Adjusted text size */
 }
 
 .modal-actions {
   display: flex;
   justify-content: flex-end;
-  gap: 10px;
-  margin-top: 20px;
+  gap: 8px;
+  margin-top: 15px;
 }
 
 .btn-cancel {
-  padding: 8px 16px;
+  padding: 6px 12px;
   background-color: #ccc;
   color: #333;
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  font-size: 12px;
 }
 
 .btn-confirm-delete {
-  padding: 8px 16px;
+  padding: 6px 12px;
   background-color: #f44336;
   color: white;
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  font-size: 12px;
+}
+/* Reduce width of the Permissions column */
+.user-table td.permissions-column,
+.user-table th.permissions-column {
+  max-width: 120px; /* Adjust width as needed */
+  min-width: 80px; /* Prevents from shrinking too much */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Optional: Show full text on hover */
+.user-table td.permissions-column:hover {
+  overflow: visible;
+  white-space: normal;
+  background-color: #f9f9f9; /* Highlight for better visibility */
+  position: absolute; /* Ensures text appears above other content */
+  z-index: 10;
+  width: auto;
+  min-width: 120px;
+  max-width: 250px; /* Prevents excessive expansion */
+  padding: 10px;
+}
+
+
+/* Optional: Show full text on hover */
+.user-table td.permissions-column:hover {
+  overflow: visible;
+  white-space: normal;
+  background-color: #f9f9f9; /* Highlight for better visibility */
+}
+
+.user-form input,
+.user-form select {
+  font-size: 12px;
+  padding: 6px;
+  width: 100%;
+}
+
+.user-form label {
+  font-size: 12px;
+}
+
+/* Reduce button sizes */
+.user-form .btn-submit,
+.user-form .btn-cancel {
+  padding: 4px 8px;
+  font-size: 10px;
+}
+
+.user-table-container {
+  width: 90%;
+  overflow-x: auto; /* Enable scrolling if needed */
+  font-size: 12px;
+}
+
+/* Reduce table size */
+.user-table th,
+.user-table td {
+  font-size: 12px;
+  padding: 8px;
+}
+
+.actions-cell button {
+  padding: 4px 6px;
+  font-size: 10px;
+}
+.user-form input,
+.user-form select {
+  font-size: 10px; /* Reduced font size */
+  padding: 4px; /* Smaller padding */
+  width: 100%;
 }

@@ -1,16 +1,16 @@
 import React, { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
-import { FaUser, FaSignOutAlt, FaShoppingCart, FaBars } from "react-icons/fa";
+import { FaUser, FaSignOutAlt, FaShoppingCart } from "react-icons/fa";
 import Sidebar from "./Sidebar";
-import "./Navbar.css"; // Add custom styles
+import "./Navbar.css"; // Import the updated CSS
 
 const Navbar = () => {
   const { currentUser, isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [showSidebar, setShowSidebar] = useState(false);
-  const [showDropdown, setShowDropdown] = useState(null);
+  const [activeDropdown, setActiveDropdown] = useState(null);
 
   const handleLogout = () => {
     logout();
@@ -21,8 +21,14 @@ const Navbar = () => {
     setShowSidebar(!showSidebar);
   };
 
-  const toggleDropdown = (dropdown) => {
-    setShowDropdown(showDropdown === dropdown ? null : dropdown);
+  const toggleDropdown = (dropdown, event) => {
+    event.stopPropagation(); // Prevents event from bubbling up
+    setActiveDropdown(activeDropdown === dropdown ? null : dropdown);
+  };
+
+  // Hide dropdowns when clicking outside
+  const closeDropdown = () => {
+    setActiveDropdown(null);
   };
 
   if (["/login", "/signup"].includes(location.pathname)) {
@@ -31,21 +37,24 @@ const Navbar = () => {
 
   return (
     <>
-      <nav className="navbar">     
+      <nav className="navbar" onClick={closeDropdown}>
+        {/* Brand Section */}
         <Link to="/" className="navbar-brand">
           <FaShoppingCart className="icon" />
           <span>ECommerce Manager</span>
         </Link>
 
+        {/* Navigation Links */}
         {isAuthenticated && (
           <div className="nav-links">
+            {/* Masters Dropdown */}
             <div
-              className="dropdown"
-              onClick={() => toggleDropdown("masters")}
+              className={`dropdown ${activeDropdown === "masters" ? "active" : ""}`}
+              onClick={(e) => toggleDropdown("masters", e)}
             >
               Masters
-              {showDropdown === "masters" && (
-                <div className="dropdown-menu">
+              {activeDropdown === "masters" && (
+                <div className="dropdown-menu" onClick={(e) => e.stopPropagation()}>
                   <Link to="/master/categories">Categories</Link>
                   <Link to="/master/brands">Brands</Link>
                   <Link to="/master/suppliers">Suppliers</Link>
@@ -53,13 +62,14 @@ const Navbar = () => {
               )}
             </div>
 
+            {/* Admin Dropdown */}
             <div
-              className="dropdown"
-              onClick={() => toggleDropdown("admin")}
+              className={`dropdown ${activeDropdown === "admin" ? "active" : ""}`}
+              onClick={(e) => toggleDropdown("admin", e)}
             >
               Admin
-              {showDropdown === "admin" && (
-                <div className="dropdown-menu">
+              {activeDropdown === "admin" && (
+                <div className="dropdown-menu" onClick={(e) => e.stopPropagation()}>
                   <Link to="/admin/users">User Management</Link>
                   <Link to="/admin/permissions">Permissions</Link>
                 </div>
@@ -68,13 +78,17 @@ const Navbar = () => {
           </div>
         )}
 
+        {/* Authentication Section */}
         <div className="nav-auth">
           {isAuthenticated ? (
-            <div className="dropdown" onClick={() => toggleDropdown("user")}>
+            <div
+              className={`dropdown ${activeDropdown === "user" ? "active" : ""}`}
+              onClick={(e) => toggleDropdown("user", e)}
+            >
               <FaUser className="icon" />
               {currentUser?.name || "User"}
-              {showDropdown === "user" && (
-                <div className="dropdown-menu">
+              {activeDropdown === "user" && (
+                <div className="dropdown-menu" onClick={(e) => e.stopPropagation()}>
                   <Link to="/profile">My Profile</Link>
                   <hr />
                   <button onClick={handleLogout} className="logout-btn">

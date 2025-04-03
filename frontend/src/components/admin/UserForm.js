@@ -123,102 +123,105 @@ const UserForm = ({ userId = null, onCancel, onSuccess }) => {
       {error && <div className="error-message">{error}</div>}
       
       <form onSubmit={handleSubmit} className="user-form">
-        <div className="form-group">
-          <label htmlFor="username">Username*</label>
-          <input
-            type="text"
-            id="username"
-            name="username"
-            value={user.username}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        
-        <div className="form-group">
-          <label htmlFor="email">Email*</label>
-          <input
-            type="email"
-            id="email"
-            name="email"
-            value={user.email}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        
-        <div className="form-group">
-          <label htmlFor="firstName">First Name</label>
-          <input
-            type="text"
-            id="firstName"
-            name="firstName"
-            value={user.firstName}
-            onChange={handleChange}
-          />
-        </div>
-        
-        <div className="form-group">
-          <label htmlFor="lastName">Last Name</label>
-          <input
-            type="text"
-            id="lastName"
-            name="lastName"
-            value={user.lastName}
-            onChange={handleChange}
-          />
-        </div>
-        
-        <div className="form-group checkbox-group">
-          <label>
-            <input
-              type="checkbox"
-              name="isActive"
-              checked={user.isActive}
-              onChange={handleChange}
-            />
-            Active User
-          </label>
-        </div>
-        
-        {!isEdit && (
-          <>
-            <div className="form-group">
-              <label htmlFor="password">Password*</label>
-              <input
-                type="password"
-                id="password"
-                name="password"
-                value={user.password}
-                onChange={handleChange}
-                required={!isEdit}
-                minLength={6}
-              />
-            </div>
-            
-            <div className="form-group">
-              <label htmlFor="confirmPassword">Confirm Password*</label>
-              <input
-                type="password"
-                id="confirmPassword"
-                name="confirmPassword"
-                value={user.confirmPassword}
-                onChange={handleChange}
-                required={!isEdit}
-              />
-            </div>
-          </>
-        )}
-        
-        <div className="form-actions">
-          <button type="button" className="btn-cancel" onClick={onCancel}>
-            Cancel
-          </button>
-          <button type="submit" className="btn-submit" disabled={loading}>
-            {loading ? 'Saving...' : (isEdit ? 'Update User' : 'Create User')}
-          </button>
-        </div>
-      </form>
+  <div className="form-group">
+    <label htmlFor="username">Username*</label>
+    <input
+      type="text"
+      id="username"
+      name="username"
+      value={user.username}
+      onChange={handleChange}
+      required
+    />
+  </div>
+
+  <div className="form-group">
+    <label htmlFor="email">Email*</label>
+    <input
+      type="email"
+      id="email"
+      name="email"
+      value={user.email}
+      onChange={handleChange}
+      required
+    />
+  </div>
+
+  <div className="form-row">
+    <div className="form-group">
+      <label htmlFor="firstName">First Name</label>
+      <input
+        type="text"
+        id="firstName"
+        name="firstName"
+        value={user.firstName}
+        onChange={handleChange}
+      />
+    </div>
+
+    <div className="form-group">
+      <label htmlFor="lastName">Last Name</label>
+      <input
+        type="text"
+        id="lastName"
+        name="lastName"
+        value={user.lastName}
+        onChange={handleChange}
+      />
+    </div>
+  </div>
+
+  <div className="form-group checkbox-group">
+    <label>
+      <input
+        type="checkbox"
+        name="isActive"
+        checked={user.isActive}
+        onChange={handleChange}
+      />
+      Active User
+    </label>
+  </div>
+
+  {!isEdit && (
+    <>
+      <div className="form-group">
+        <label htmlFor="password">Password*</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          value={user.password}
+          onChange={handleChange}
+          required={!isEdit}
+          minLength={6}
+        />
+      </div>
+
+      <div className="form-group">
+        <label htmlFor="confirmPassword">Confirm Password*</label>
+        <input
+          type="password"
+          id="confirmPassword"
+          name="confirmPassword"
+          value={user.confirmPassword}
+          onChange={handleChange}
+          required={!isEdit}
+        />
+      </div>
+    </>
+  )}
+
+  <div className="form-actions">
+    <button type="button" className="btn-cancel" onClick={onCancel}>
+      Cancel
+    </button>
+    <button type="submit" className="btn-submit" disabled={loading}>
+      {loading ? "Saving..." : isEdit ? "Update User" : "Create User"}
+    </button>
+  </div>
+</form>
+
     </div>
   );
 };
