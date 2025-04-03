@@ -47,15 +47,10 @@ const Sidebar = () => {
         {/* Admin Section */}
         <li className="sidebar-section">Admin</li>
         <li>
-          <Link to="/admin/users" className="sidebar-link">
+          <Link to="/admin/usermanagement" className="sidebar-link">
             <FaUsers className="me-2" /> User Management
           </Link>
-        </li>
-        <li>
-          <Link to="/admin/permissions" className="sidebar-link">
-            <FaUserShield className="me-2" /> Permissions
-          </Link>
-        </li>
+        </li>      
 
         {/* Logout Button */}
         <li>
