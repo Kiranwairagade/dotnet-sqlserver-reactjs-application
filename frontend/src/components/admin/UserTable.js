@@ -2,13 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { getUsers, deleteUser } from '../../services/userService';
 import './UserTable.css';
 
-const UserTable = ({ onEdit, onView, onAddNew, onBack }) => {
+const UserTable = ({ onEdit, onView, onAddNew }) => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [pagination, setPagination] = useState({
     pageNumber: 1,
-    pageSize: 10,
+    pageSize: 7,
     totalCount: 0
   });
   const [searchTerm, setSearchTerm] = useState('');
@@ -35,15 +35,14 @@ const UserTable = ({ onEdit, onView, onAddNew, onBack }) => {
 
   useEffect(() => {
     fetchUsers();
-  }, [pagination.pageNumber, pagination.pageSize]);
+  }, [pagination.pageNumber]);
 
   const handleDeleteConfirm = async () => {
     if (!deleteConfirmation.userId) return;
-    
     try {
       setLoading(true);
       await deleteUser(deleteConfirmation.userId);
-      setUsers(users.filter(user => user.userId !== deleteConfirmation.userId));
+      fetchUsers(); // Refresh user list
       setDeleteConfirmation({ show: false, userId: null });
       alert('User deleted successfully');
     } catch (err) {
@@ -56,15 +55,19 @@ const UserTable = ({ onEdit, onView, onAddNew, onBack }) => {
 
   const handlePageChange = (newPage) => {
     if (newPage > 0 && newPage <= Math.ceil(pagination.totalCount / pagination.pageSize)) {
-      setPagination({...pagination, pageNumber: newPage});
+      setPagination((prev) => ({ ...prev, pageNumber: newPage }));
     }
   };
+
+  const totalPages = Math.ceil(pagination.totalCount / pagination.pageSize);
 
   return (
     <div className="user-table-container">
       <div className="header-row">
-        <h2>User Management</h2>       
+        <h2>User Management</h2>
+        <button className="btn-add" onClick={onAddNew}>Add New User</button>
       </div>
+
       <div className="table-header">
         <div className="search-container">
           <form onSubmit={(e) => { e.preventDefault(); fetchUsers(1, searchTerm); }}>
@@ -77,7 +80,6 @@ const UserTable = ({ onEdit, onView, onAddNew, onBack }) => {
             <button type="submit">Search</button>
           </form>
         </div>
-        <button className="btn-add" onClick={onAddNew}>Add New User</button>
       </div>
 
       {loading ? (
@@ -126,25 +128,23 @@ const UserTable = ({ onEdit, onView, onAddNew, onBack }) => {
             </tbody>
           </table>
 
-          {users.length > 0 && (
-            <div className="pagination">
-              <button 
-                onClick={() => handlePageChange(pagination.pageNumber - 1)}
-                disabled={pagination.pageNumber === 1}
-              >
-                Previous
-              </button>
-              <span>
-                Page {pagination.pageNumber} of {Math.max(1, Math.ceil(pagination.totalCount / pagination.pageSize))}
-              </span>
-              <button 
-                onClick={() => handlePageChange(pagination.pageNumber + 1)}
-                disabled={pagination.pageNumber >= Math.ceil(pagination.totalCount / pagination.pageSize)}
-              >
-                Next
-              </button>
-            </div>
-          )}
+          <div className="pagination">
+            <button
+              onClick={() => handlePageChange(pagination.pageNumber - 1)}
+              disabled={pagination.pageNumber === 1}
+            >
+              Previous
+            </button>
+            <span>
+              Page {pagination.pageNumber} of {totalPages || 1}
+            </span>
+            <button
+              onClick={() => handlePageChange(pagination.pageNumber + 1)}
+              disabled={pagination.pageNumber >= totalPages}
+            >
+              Next
+            </button>
+          </div>
         </>
       )}
 
@@ -152,18 +152,12 @@ const UserTable = ({ onEdit, onView, onAddNew, onBack }) => {
         <div className="modal-overlay">
           <div className="modal-content">
             <h3>Confirm Delete</h3>
-            <p>Are you sure you want to delete this user? This action cannot be undone.</p>
+            <p>Are you sure you want to delete this user?</p>
             <div className="modal-actions">
-              <button 
-                className="btn-cancel" 
-                onClick={() => setDeleteConfirmation({ show: false, userId: null })}
-              >
+              <button className="btn-cancel" onClick={() => setDeleteConfirmation({ show: false, userId: null })}>
                 Cancel
               </button>
-              <button 
-                className="btn-confirm-delete" 
-                onClick={handleDeleteConfirm}
-              >
+              <button className="btn-confirm-delete" onClick={handleDeleteConfirm}>
                 Delete
               </button>
             </div>

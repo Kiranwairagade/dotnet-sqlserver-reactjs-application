@@ -2,7 +2,7 @@ namespace backend.DTOs
 {
     public class TokenRequest
     {
-        public required string AccessToken { get; set; }
-        public required string RefreshToken { get; set; }
+        public string Email { get; set; } = string.Empty;
+        public string Token { get; set; } = string.Empty; // Optional: If you're sending the old token
     }
 }

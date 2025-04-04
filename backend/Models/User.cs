@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
@@ -30,12 +30,10 @@ namespace backend.Models
         public bool IsActive { get; set; } = true;
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;
-
         public DateTime UpdatedAt { get; set; } = DateTime.Now;
 
         // Navigation properties
         public List<UserRole> UserRoles { get; set; } = new List<UserRole>();
-
         public List<Product> CreatedProducts { get; set; } = new List<Product>();
     }
 
@@ -50,26 +48,21 @@ namespace backend.Models
         public string Description { get; set; } = string.Empty;
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;
-
         public DateTime UpdatedAt { get; set; } = DateTime.Now;
 
         // Navigation properties
         public List<UserRole> UserRoles { get; set; } = new List<UserRole>();
-
         public List<RolePermission> RolePermissions { get; set; } = new List<RolePermission>();
     }
 
     public class UserRole
     {
         public int UserRoleId { get; set; }
-
         public int UserId { get; set; }
-
         public int RoleId { get; set; }
 
         // Navigation properties
         public User User { get; set; } = null!;
-
         public Role Role { get; set; } = null!;
     }
 
@@ -91,21 +84,17 @@ namespace backend.Models
         [StringLength(50)]
         public string Action { get; set; } = string.Empty;
 
-        // Navigation properties
         public List<RolePermission> RolePermissions { get; set; } = new List<RolePermission>();
     }
 
     public class RolePermission
     {
         public int RolePermissionId { get; set; }
-
         public int RoleId { get; set; }
-
         public int PermissionId { get; set; }
 
         // Navigation properties
         public Role Role { get; set; } = null!;
-
         public Permission Permission { get; set; } = null!;
     }
 }

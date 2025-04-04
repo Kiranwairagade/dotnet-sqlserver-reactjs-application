@@ -1,13 +1,15 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using DTOUserDto = backend.DTOs.UserDto;
+using backend.DTOs;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
-using Microsoft.Data.SqlClient;
-using System.Data;
 using backend.Data;
 using backend.Models;
-using backend.DTOs;
+using Microsoft.AspNetCore.Cryptography.KeyDerivation;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace backend.Controllers
 {
@@ -22,105 +24,77 @@ namespace backend.Controllers
             _context = context;
         }
 
-        // Get users with pagination & search
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<UserDto>>> GetUsers(
-            [FromQuery] int pageNumber = 1,
-            [FromQuery] int pageSize = 10,
-            [FromQuery] string? searchTerm = null)
+        // ✅ Hash Password Method
+        private string HashPassword(string password)
         {
-            var users = new List<UserDto>();
-            int totalCount = 0;
-
-            await using (var command = _context.Database.GetDbConnection().CreateCommand())
+            byte[] salt = new byte[16];
+            using (var rng = RandomNumberGenerator.Create())
             {
-                command.CommandText = "EXEC sp_GetUsers @PageNumber, @PageSize, @SearchTerm";
-                command.CommandType = CommandType.Text;
-                command.Parameters.Add(new SqlParameter("@PageNumber", pageNumber));
-                command.Parameters.Add(new SqlParameter("@PageSize", pageSize));
-                command.Parameters.Add(new SqlParameter("@SearchTerm", (object?)searchTerm ?? DBNull.Value));
-
-                await _context.Database.OpenConnectionAsync();
-                await using (var reader = await command.ExecuteReaderAsync())
-                {
-                    while (await reader.ReadAsync())
-                    {
-                        users.Add(new UserDto
-                        {
-                            UserId = reader.GetInt32(reader.GetOrdinal("UserId")),
-                            Username = reader.GetString(reader.GetOrdinal("Username")),
-                            Email = reader.GetString(reader.GetOrdinal("Email")),
-                            FirstName = reader.IsDBNull(reader.GetOrdinal("FirstName")) ? string.Empty : reader.GetString(reader.GetOrdinal("FirstName")),
-                            LastName = reader.IsDBNull(reader.GetOrdinal("LastName")) ? string.Empty : reader.GetString(reader.GetOrdinal("LastName")),
-                            IsActive = reader.GetBoolean(reader.GetOrdinal("IsActive")),
-                            CreatedAt = reader.GetDateTime(reader.GetOrdinal("CreatedAt")),
-                            UpdatedAt = reader.GetDateTime(reader.GetOrdinal("UpdatedAt"))
-                        });
-                        totalCount = reader.GetInt32(reader.GetOrdinal("TotalCount"));
-                    }
-                }
+                rng.GetBytes(salt);
             }
 
-            return Ok(new { users, totalCount, pageNumber, pageSize });
+            return Convert.ToBase64String(KeyDerivation.Pbkdf2(
+                password: password,
+                salt: salt,
+                prf: KeyDerivationPrf.HMACSHA256,
+                iterationCount: 10000,
+                numBytesRequested: 32));
         }
 
-        // GET: api/Users/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<UserDto>> GetUser(int id)
-        {
-            var user = await _context.Users.FindAsync(id);
-
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            var userDto = new UserDto
-            {
-                UserId = user.UserId,
-                Username = user.Username,
-                Email = user.Email,
-                FirstName = user.FirstName ?? string.Empty,
-                LastName = user.LastName ?? string.Empty,
-                IsActive = user.IsActive,
-                CreatedAt = user.CreatedAt,
-                UpdatedAt = user.UpdatedAt
-            };
-
-            return userDto;
-        }
-
-        // POST: api/Users
+        // ✅ Create User API
         [HttpPost]
-        public async Task<ActionResult<UserDto>> CreateUser(CreateUserDto createUserDto)
+        public async Task<ActionResult<DTOUserDto>> CreateUser(CreateUserDto userDto)
         {
-            // Check if username or email already exists
-            if (await _context.Users.AnyAsync(u => u.Username == createUserDto.Username))
+            if (await _context.Users.AnyAsync(u => u.Username == userDto.Username))
             {
                 return BadRequest(new { message = "Username already exists" });
             }
 
-            if (await _context.Users.AnyAsync(u => u.Email == createUserDto.Email))
+            if (await _context.Users.AnyAsync(u => u.Email == userDto.Email))
             {
                 return BadRequest(new { message = "Email already exists" });
             }
 
             var user = new User
             {
-                Username = createUserDto.Username,
-                Email = createUserDto.Email,
-                FirstName = createUserDto.FirstName,
-                LastName = createUserDto.LastName,
+                Username = userDto.Username,
+                Email = userDto.Email,
+                FirstName = userDto.FirstName,
+                LastName = userDto.LastName,
                 IsActive = true,
+                PasswordHash = HashPassword(userDto.Password),
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow
-                // Note: Password handling should be implemented with proper hashing
             };
 
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            var userDto = new UserDto
+            return CreatedAtAction(nameof(GetUser), new { id = user.UserId }, new DTOUserDto
+            {
+                UserId = user.UserId,
+                Username = user.Username,
+                Email = user.Email,
+                FirstName = user.FirstName ?? string.Empty,
+                LastName = user.LastName ?? string.Empty,
+                IsActive = user.IsActive,
+                CreatedAt = user.CreatedAt,
+                UpdatedAt = user.UpdatedAt
+            });
+        }
+
+        // ✅ Get single user by ID
+        [HttpGet("{id}")]
+        public async Task<ActionResult<DTOUserDto>> GetUser(int id)
+        {
+            var user = await _context.Users.FindAsync(id);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            return new DTOUserDto
             {
                 UserId = user.UserId,
                 Username = user.Username,
@@ -131,113 +105,51 @@ namespace backend.Controllers
                 CreatedAt = user.CreatedAt,
                 UpdatedAt = user.UpdatedAt
             };
-
-            return CreatedAtAction(nameof(GetUser), new { id = user.UserId }, userDto);
         }
 
-        // PUT: api/Users/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateUser(int id, UpdateUserDto updateUserDto)
+        // ✅ Get all users with pagination and search — returns totalCount
+        [HttpGet]
+        public async Task<IActionResult> GetUsers(
+            [FromQuery] int pageNumber = 1,
+            [FromQuery] int pageSize = 10,
+            [FromQuery] string searchTerm = "")
         {
-            var user = await _context.Users.FindAsync(id);
-            if (user == null)
+            var query = _context.Users.AsQueryable();
+
+            if (!string.IsNullOrEmpty(searchTerm))
             {
-                return NotFound();
+                query = query.Where(u =>
+                    u.Username.Contains(searchTerm) ||
+                    u.Email.Contains(searchTerm) ||
+                    u.FirstName.Contains(searchTerm) ||
+                    u.LastName.Contains(searchTerm));
             }
 
-            // Check if username is being changed and if it already exists
-            if (updateUserDto.Username != user.Username &&
-                await _context.Users.AnyAsync(u => u.Username == updateUserDto.Username))
+            var totalCount = await query.CountAsync();
+
+            var users = await query
+                .OrderBy(u => u.UserId)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            var userDtos = users.Select(user => new DTOUserDto
             {
-                return BadRequest(new { message = "Username already exists" });
-            }
+                UserId = user.UserId,
+                Username = user.Username,
+                Email = user.Email,
+                FirstName = user.FirstName ?? "",
+                LastName = user.LastName ?? "",
+                IsActive = user.IsActive,
+                CreatedAt = user.CreatedAt,
+                UpdatedAt = user.UpdatedAt
+            });
 
-            // Check if email is being changed and if it already exists
-            if (updateUserDto.Email != user.Email &&
-                await _context.Users.AnyAsync(u => u.Email == updateUserDto.Email))
+            return Ok(new
             {
-                return BadRequest(new { message = "Email already exists" });
-            }
-
-            user.Username = updateUserDto.Username;
-            user.Email = updateUserDto.Email;
-            user.FirstName = updateUserDto.FirstName;
-            user.LastName = updateUserDto.LastName;
-            user.IsActive = updateUserDto.IsActive;
-            user.UpdatedAt = DateTime.UtcNow;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!UserExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
-        // PATCH: api/Users/5/activate
-        [HttpPatch("{id}/activate")]
-        public async Task<IActionResult> ActivateUser(int id)
-        {
-            var user = await _context.Users.FindAsync(id);
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            user.IsActive = true;
-            user.UpdatedAt = DateTime.UtcNow;
-
-            await _context.SaveChangesAsync();
-            return NoContent();
-        }
-
-        // PATCH: api/Users/5/deactivate
-        [HttpPatch("{id}/deactivate")]
-        public async Task<IActionResult> DeactivateUser(int id)
-        {
-            var user = await _context.Users.FindAsync(id);
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            user.IsActive = false;
-            user.UpdatedAt = DateTime.UtcNow;
-
-            await _context.SaveChangesAsync();
-            return NoContent();
-        }
-
-        // DELETE: api/Users/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUser(int id)
-        {
-            var user = await _context.Users.FindAsync(id);
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            _context.Users.Remove(user);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private bool UserExists(int id)
-        {
-            return _context.Users.Any(e => e.UserId == id);
+                users = userDtos,
+                totalCount = totalCount
+            });
         }
     }
 }
