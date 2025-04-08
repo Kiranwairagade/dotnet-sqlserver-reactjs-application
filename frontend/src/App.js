@@ -2,7 +2,7 @@ import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from './contexts/AuthContext';
 import Navbar from './components/common/Navbar';
-import Sidebar from './components/common/Sidebar'; // Ensure Sidebar is included
+import Sidebar from './components/common/Sidebar';
 import Login from './components/auth/Login';
 import Signup from './components/auth/Signup';
 import Dashboard from './components/admin/Dashboard';
@@ -14,6 +14,7 @@ import CategoryMaster from './components/masters/CategoryMaster';
 import BrandMaster from './components/masters/BrandMaster';
 import SupplierMaster from './components/masters/SupplierMaster';
 import ProtectedRoute from './components/common/ProtectedRoute';
+import ProductMaster from './components/masters/ProductMaster';
 import './App.css';
 
 function App() {
@@ -22,7 +23,7 @@ function App() {
   return (
     <div className="app-container">
       <Navbar />
-      {isAuthenticated && <Sidebar />} {/* Sidebar is now persistent */}
+      {isAuthenticated && <Sidebar />}
       <main className="content-container">
         <Routes>
           {/* Public Routes */}
@@ -40,9 +41,16 @@ function App() {
             <Route path="/master/categories" element={<CategoryMaster />} />
             <Route path="/master/brands" element={<BrandMaster />} />
             <Route path="/master/suppliers" element={<SupplierMaster />} />
+            <Route path="/master/products" element={<ProductMaster />} />
+
+            {/* Newly added ProductManagement-based routes */}
+            <Route path="/products" element={<ProductMaster />} />
+            <Route path="/products/new" element={<ProductForm />} />
+            <Route path="/products/:id" element={<ProductDetails />} />
+            
           </Route>
 
-          {/* Default route */}
+          {/* Default Routes */}
           <Route path="/" element={<Navigate to={isAuthenticated ? "/dashboard" : "/login"} />} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>

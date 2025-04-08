@@ -23,6 +23,9 @@ namespace backend.Data
         {
             base.OnModelCreating(modelBuilder);
 
+            // Ensure 'Category' maps to the correct table name
+            modelBuilder.Entity<Category>().ToTable("ProductCategories");
+
             // UserRole: Composite Primary Key
             modelBuilder.Entity<UserRole>()
                 .HasKey(ur => new { ur.UserId, ur.RoleId });
@@ -39,9 +42,8 @@ namespace backend.Data
                 .HasOne(pi => pi.Product)
                 .WithMany(p => p.Images)
                 .HasForeignKey(pi => pi.ProductId)
-                .OnDelete(DeleteBehavior.Cascade); // Ensure proper deletion behavior
-
-            // Additional configurations can go here
+                .OnDelete(DeleteBehavior.Cascade);
         }
+
     }
 }

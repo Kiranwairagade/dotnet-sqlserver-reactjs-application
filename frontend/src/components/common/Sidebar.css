@@ -3,7 +3,7 @@
   position: fixed;
   top: 50px; /* Starts below the navbar */
   left: 0;
-  width: 220px; /* Sidebar width */
+  width: 220px; 
   height: calc(100vh - 50px); /* Takes full height minus navbar height */
   background: #e0f7fa;
   padding-top: 10px;

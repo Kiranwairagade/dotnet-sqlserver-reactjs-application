@@ -12,8 +12,8 @@ using backend.Data;
 namespace backend.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250330043549_AddUserPermissions")]
-    partial class AddUserPermissions
+    [Migration("20250406123453_AddCategoriesTable")]
+    partial class AddCategoriesTable
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
