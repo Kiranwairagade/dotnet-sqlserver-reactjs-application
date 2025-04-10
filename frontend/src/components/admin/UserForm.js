@@ -1,203 +1,193 @@
-import React, { useState, useEffect } from 'react';
-import { createUser, updateUser, getUserById } from '../../services/userService';
-import { getSidebarItems } from '../../services/sidebarService';
+import React, { useEffect, useState } from 'react';
+import masterModules from '../../../src/config/modules';
 import './UserForm.css';
 
-const UserForm = ({ userId = null, onCancel, onSuccess }) => {
-  const [user, setUser] = useState({
-    username: '',
-    email: '',
+const permissions = ['Create', 'Read', 'Update', 'Delete'];
+
+const UserForm = ({ selectedUser = null, onSubmitForm, onCancel }) => {
+  const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
-    isActive: true,
+    username: '',
+    email: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    isActive: true,
+    modulePermissions: {},
   });
 
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [isEdit, setIsEdit] = useState(false);
-  const [sidebarList, setSidebarList] = useState([]);
-  const [permissions, setPermissions] = useState({});
-
   useEffect(() => {
-    fetchSidebarItems();
-    if (userId) {
-      setIsEdit(true);
-      fetchUserDetails();
-    }
-  }, [userId]);
-
-  const fetchSidebarItems = async () => {
-    try {
-      const items = await getSidebarItems();
-      setSidebarList(items);
-
-      setPermissions((prevPermissions) => {
-        const updatedPermissions = { ...prevPermissions };
-        items.forEach((item) => {
-          if (!updatedPermissions[item.id]) {
-            updatedPermissions[item.id] = '';
-          }
-        });
-        return updatedPermissions;
-      });
-
-    } catch (err) {
-      console.error('Failed to load sidebar items', err);
-    }
-  };
-
-  const fetchUserDetails = async () => {
-    try {
-      setLoading(true);
-      const userData = await getUserById(userId);
-      setUser({
-        username: userData.username || '',
-        email: userData.email || '',
-        firstName: userData.firstName || '',
-        lastName: userData.lastName || '',
-        isActive: userData.isActive || false,
+    if (selectedUser) {
+      setFormData({
+        firstName: selectedUser.firstName || '',
+        lastName: selectedUser.lastName || '',
+        username: selectedUser.username || '',
+        email: selectedUser.email || '',
         password: '',
-        confirmPassword: ''
+        confirmPassword: '',
+        isActive: selectedUser.isActive ?? true,
+        modulePermissions: selectedUser.modulePermissions || {},
       });
-      setPermissions(userData.permissions || {});
-    } catch (err) {
-      setError('Failed to load user details. Please try again.');
-    } finally {
-      setLoading(false);
     }
+  }, [selectedUser]);
+
+  const handleCheckboxChange = (module, action) => {
+    setFormData((prevState) => ({
+      ...prevState,
+      modulePermissions: {
+        ...prevState.modulePermissions,
+        [module]: {
+          ...prevState.modulePermissions[module],
+          [action]: !prevState.modulePermissions?.[module]?.[action],
+        },
+      },
+    }));
   };
 
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setUser({
-      ...user,
-      [name]: type === 'checkbox' ? checked : value
-    });
-  };
-
-  const handlePermissionChange = (id, value) => {
-    setPermissions({ ...permissions, [id]: value });
-  };
-
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (!user.email || !user.username || !user.firstName || !user.lastName) {
-      setError('All fields are required.');
+    // Validate form
+    if (!formData.firstName || !formData.lastName || !formData.username || !formData.email) {
+      alert('Please fill all required fields.');
+      return;
+    }
+    
+    if (!selectedUser && formData.password !== formData.confirmPassword) {
+      alert('Passwords do not match!');
       return;
     }
 
-    if (!isEdit && (!user.password || user.password.length < 8 || user.password !== user.confirmPassword)) {
-      setError('Password must be at least 8 characters and match confirmation.');
+    const userPayload = { ...formData };
+    if (selectedUser) {
+      // Don't send password fields when updating
+      delete userPayload.password;
+      delete userPayload.confirmPassword;
+    } else if (!formData.password) {
+      // Password is required for new users
+      alert('Password is required');
       return;
     }
 
-    if (isEdit && user.password && user.password !== user.confirmPassword) {
-      setError('Passwords do not match.');
-      return;
-    }
-
-    try {
-      setLoading(true);
-      const userData = {
-        username: user.username,
-        email: user.email,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        isActive: user.isActive,
-        permissions
-      };
-
-      if (user.password) {
-        userData.password = user.password;
-      }
-
-      if (isEdit) {
-        await updateUser(userId, userData);
-      } else {
-        await createUser(userData);
-      }
-
-      onSuccess();
-    } catch (err) {
-      setError(isEdit ? 'Failed to update user.' : 'Failed to create user.');
-    } finally {
-      setLoading(false);
-    }
+    onSubmitForm(userPayload);
   };
 
   return (
     <div className="user-form-container">
-      <h2>{isEdit ? 'Edit User' : 'Create New User'}</h2>
-      {error && <div className="error-message">{error}</div>}
-      <form onSubmit={handleSubmit} className="user-form">
-        <div className="form-row">
-          <div className="form-group">
-            <label htmlFor="firstName">First Name*</label>
-            <input type="text" id="firstName" name="firstName" value={user.firstName} onChange={handleChange} required />
-          </div>
-          <div className="form-group">
-            <label htmlFor="lastName">Last Name*</label>
-            <input type="text" id="lastName" name="lastName" value={user.lastName} onChange={handleChange} required />
-          </div>
-        </div>
+      <form className="user-form" onSubmit={handleSubmit}>
+        <h2>{selectedUser ? 'Edit User' : 'Create New User'}</h2>
 
         <div className="form-row">
           <div className="form-group">
-            <label htmlFor="username">Username*</label>
-            <input type="text" id="username" name="username" value={user.username} onChange={handleChange} required />
+            <label>First Name*</label>
+            <input
+              type="text"
+              value={formData.firstName}
+              onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+              required
+            />
           </div>
           <div className="form-group">
-            <label htmlFor="email">Email*</label>
-            <input type="email" id="email" name="email" value={user.email} onChange={handleChange} required />
+            <label>Last Name*</label>
+            <input
+              type="text"
+              value={formData.lastName}
+              onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+              required
+            />
           </div>
         </div>
 
-        <div className="form-group checkbox-group">
-          <label>
-            <input type="checkbox" name="isActive" checked={user.isActive} onChange={handleChange} /> Active User
-          </label>
+        <div className="form-row">
+          <div className="form-group">
+            <label>Username*</label>
+            <input
+              type="text"
+              value={formData.username}
+              onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label>Email*</label>
+            <input
+              type="email"
+              value={formData.email}
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              required
+            />
+          </div>
         </div>
 
-        {!isEdit && (
+        {!selectedUser && (
           <div className="form-row">
             <div className="form-group">
-              <label htmlFor="password">Password*</label>
-              <input type="password" id="password" name="password" value={user.password} onChange={handleChange} required minLength={8} />
+              <label>Password*</label>
+              <input
+                type="password"
+                value={formData.password}
+                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                required
+              />
             </div>
             <div className="form-group">
-              <label htmlFor="confirmPassword">Confirm Password*</label>
-              <input type="password" id="confirmPassword" name="confirmPassword" value={user.confirmPassword} onChange={handleChange} required />
+              <label>Confirm Password*</label>
+              <input
+                type="password"
+                value={formData.confirmPassword}
+                onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                required
+              />
             </div>
           </div>
         )}
 
-        <h5>Permissions</h5>
-        {sidebarList.map((item) => (
-          <div key={item.id} className="permissions-group">
-            <label>{item.name}</label>
-            <select value={permissions[item.id] || ''} onChange={(e) => handlePermissionChange(item.id, e.target.value)}>
-              <option value="">None</option>
-              <option value="Create">Create</option>
-              <option value="Read">Read</option>
-              <option value="Update">Update</option>
-              <option value="Delete">Delete</option>
-              <option value="Create, Read">Create & Read</option>
-              <option value="Create, Update">Create & Update</option>
-              <option value="Create, Delete">Create & Delete</option>
-              <option value="Read, Update">Read & Update</option>
-              <option value="Read, Delete">Read & Delete</option>
-              <option value="Update, Delete">Update & Delete</option>
-              <option value="Create, Read, Update, Delete">All Permissions</option>
-            </select>
-          </div>
-        ))}
+        <div className="checkbox-group">
+          <input
+            type="checkbox"
+            checked={formData.isActive}
+            onChange={() => setFormData({ ...formData, isActive: !formData.isActive })}
+          />
+          <label>Active User</label>
+        </div>
+
+        <h3>Module Permissions</h3>
+        <div className="permissions-table-container">
+          <table className="permissions-table">
+            <thead>
+              <tr>
+                <th>Module</th>
+                {permissions.map((perm) => (
+                  <th key={perm}>{perm}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {masterModules.map((module) => (
+                <tr key={module}>
+                  <td>{module}</td>
+                  {permissions.map((perm) => (
+                    <td key={perm}>
+                      <input
+                        type="checkbox"
+                        checked={formData.modulePermissions?.[module]?.[perm] || false}
+                        onChange={() => handleCheckboxChange(module, perm)}
+                      />
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
 
         <div className="form-actions">
-          <button type="button" className="btn-cancel" onClick={onCancel}>Cancel</button>
-          <button type="submit" className="btn-submit" disabled={loading}>{loading ? 'Saving...' : isEdit ? 'Update User' : 'Create User'}</button>
+          <button type="button" className="btn-cancel" onClick={onCancel}>
+            Cancel
+          </button>
+          <button type="submit" className="btn-submit">
+            {selectedUser ? 'Update User' : 'Create User'}
+          </button>
         </div>
       </form>
     </div>

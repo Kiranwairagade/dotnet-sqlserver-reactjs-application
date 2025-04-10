@@ -13,14 +13,14 @@ namespace backend.DTOs
         public bool IsActive { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
-        public List<string> Roles { get; set; } = new List<string>();
+        public List<string>? Permissions { get; set; }
 
         // Optional constructor for mapping
         public UserDto() { }
 
         public UserDto(int userId, string username, string email, string firstName,
                        string lastName, bool isActive, DateTime createdAt,
-                       DateTime updatedAt, List<string> roles)
+                       DateTime updatedAt, List<string> permissions)
         {
             UserId = userId;
             Username = username;
@@ -30,7 +30,7 @@ namespace backend.DTOs
             IsActive = isActive;
             CreatedAt = createdAt;
             UpdatedAt = updatedAt;
-            Roles = roles ?? new List<string>();
+            Permissions = permissions ?? new List<string>();
         }
     }
 
@@ -41,6 +41,7 @@ namespace backend.DTOs
         public string FirstName { get; set; } = string.Empty;
         public string LastName { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
+        public List<string>? Permissions { get; set; }
     }
 
     public class UpdateUserDto
@@ -50,6 +51,7 @@ namespace backend.DTOs
         public string FirstName { get; set; } = string.Empty;
         public string LastName { get; set; } = string.Empty;
         public bool IsActive { get; set; }
+        public List<string>? Permissions { get; set; }
     }
 
     public class UsersResponse
@@ -65,7 +67,6 @@ namespace backend.DTOs
         public string Email { get; set; } = string.Empty;
         public string FirstName { get; set; } = string.Empty;
         public string LastName { get; set; } = string.Empty;
-        public List<string> Roles { get; set; } = new();
     }
 
     public class UpdateUserRequest
@@ -74,11 +75,5 @@ namespace backend.DTOs
         public string Email { get; set; } = string.Empty;
         public string FirstName { get; set; } = string.Empty;
         public string LastName { get; set; } = string.Empty;
-    }
-
-    public class RoleDto
-    {
-        public int Id { get; set; }
-        public string RoleName { get; set; } = string.Empty;
     }
 }

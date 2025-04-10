@@ -1,10 +1,14 @@
 ﻿using backend.DTOs;
-using System.Threading.Tasks;
+using backend.Models;
 
-public interface IAuthService
+namespace backend.Services
 {
-    Task<AuthResponse> RegisterAsync(RegisterRequest request);
-    Task<AuthResponse> LoginAsync(LoginRequest request);
-    Task<AuthResponse> RefreshTokenAsync(TokenRequest request);
-    Task<UserDto?> GetUserByIdAsync(int userId);
+    public interface IAuthService
+    {
+        Task<AuthResponse> RegisterAsync(RegisterRequest request);
+        Task<AuthResponse> LoginAsync(LoginRequest request);
+        Task<AuthResponse> RefreshTokenAsync(TokenRequest request);
+        Task<UserDto?> GetUserByIdAsync(int userId);
+        Task<User?> GetUserByEmailAsync(string email); // ✅ Add this
+    }
 }

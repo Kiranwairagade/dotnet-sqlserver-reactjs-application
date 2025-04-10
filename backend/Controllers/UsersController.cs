@@ -1,20 +1,15 @@
-﻿using DTOUserDto = backend.DTOs.UserDto;
-using backend.DTOs;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Threading.Tasks;
-using backend.Data;
-using backend.Models;
-using Microsoft.AspNetCore.Cryptography.KeyDerivation;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using backend.Models;
+using backend.DTOs;
+using System.Security.Cryptography;
+using System.Text;
+using backend.Data;
 
 namespace backend.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/[controller]")]
     public class UsersController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
@@ -24,36 +19,15 @@ namespace backend.Controllers
             _context = context;
         }
 
-        // ✅ Hash Password Method
-        private string HashPassword(string password)
-        {
-            byte[] salt = new byte[16];
-            using (var rng = RandomNumberGenerator.Create())
-            {
-                rng.GetBytes(salt);
-            }
-
-            return Convert.ToBase64String(KeyDerivation.Pbkdf2(
-                password: password,
-                salt: salt,
-                prf: KeyDerivationPrf.HMACSHA256,
-                iterationCount: 10000,
-                numBytesRequested: 32));
-        }
-
-        // ✅ Create User API
+        // 🔹 POST: Create User
         [HttpPost]
-        public async Task<ActionResult<DTOUserDto>> CreateUser(CreateUserDto userDto)
+        public async Task<ActionResult<UserDto>> CreateUser(CreateUserDto userDto)
         {
             if (await _context.Users.AnyAsync(u => u.Username == userDto.Username))
-            {
                 return BadRequest(new { message = "Username already exists" });
-            }
 
             if (await _context.Users.AnyAsync(u => u.Email == userDto.Email))
-            {
                 return BadRequest(new { message = "Email already exists" });
-            }
 
             var user = new User
             {
@@ -61,95 +35,127 @@ namespace backend.Controllers
                 Email = userDto.Email,
                 FirstName = userDto.FirstName,
                 LastName = userDto.LastName,
-                IsActive = true,
                 PasswordHash = HashPassword(userDto.Password),
+                Permissions = userDto.Permissions ?? new List<string>(),
                 CreatedAt = DateTime.UtcNow,
-                UpdatedAt = DateTime.UtcNow
+                UpdatedAt = DateTime.UtcNow,
+                IsActive = true
             };
 
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetUser), new { id = user.UserId }, new DTOUserDto
-            {
-                UserId = user.UserId,
-                Username = user.Username,
-                Email = user.Email,
-                FirstName = user.FirstName ?? string.Empty,
-                LastName = user.LastName ?? string.Empty,
-                IsActive = user.IsActive,
-                CreatedAt = user.CreatedAt,
-                UpdatedAt = user.UpdatedAt
-            });
+            return CreatedAtAction(nameof(GetUserById), new { id = user.UserId }, MapToDto(user));
         }
 
-        // ✅ Get single user by ID
+        // 🔹 GET: User by ID
         [HttpGet("{id}")]
-        public async Task<ActionResult<DTOUserDto>> GetUser(int id)
+        public async Task<ActionResult<UserDto>> GetUserById(int id)
         {
             var user = await _context.Users.FindAsync(id);
-
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            return new DTOUserDto
-            {
-                UserId = user.UserId,
-                Username = user.Username,
-                Email = user.Email,
-                FirstName = user.FirstName ?? string.Empty,
-                LastName = user.LastName ?? string.Empty,
-                IsActive = user.IsActive,
-                CreatedAt = user.CreatedAt,
-                UpdatedAt = user.UpdatedAt
-            };
+            if (user == null) return NotFound();
+            return MapToDto(user);
         }
 
-        // ✅ Get all users with pagination and search — returns totalCount
+        // 🔹 GET: Users with pagination and search
         [HttpGet]
-        public async Task<IActionResult> GetUsers(
-            [FromQuery] int pageNumber = 1,
-            [FromQuery] int pageSize = 10,
-            [FromQuery] string searchTerm = "")
+        public async Task<IActionResult> GetUsers([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10, [FromQuery] string searchTerm = "")
         {
             var query = _context.Users.AsQueryable();
 
-            if (!string.IsNullOrEmpty(searchTerm))
+            if (!string.IsNullOrWhiteSpace(searchTerm))
             {
-                query = query.Where(u =>
-                    u.Username.Contains(searchTerm) ||
-                    u.Email.Contains(searchTerm) ||
-                    u.FirstName.Contains(searchTerm) ||
-                    u.LastName.Contains(searchTerm));
+                query = query.Where(u => u.Username.Contains(searchTerm) || u.Email.Contains(searchTerm));
             }
 
             var totalCount = await query.CountAsync();
 
             var users = await query
-                .OrderBy(u => u.UserId)
+                .OrderByDescending(u => u.CreatedAt)
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync();
 
-            var userDtos = users.Select(user => new DTOUserDto
-            {
-                UserId = user.UserId,
-                Username = user.Username,
-                Email = user.Email,
-                FirstName = user.FirstName ?? "",
-                LastName = user.LastName ?? "",
-                IsActive = user.IsActive,
-                CreatedAt = user.CreatedAt,
-                UpdatedAt = user.UpdatedAt
-            });
+            var userDtos = users.Select(MapToDto);
 
-            return Ok(new
+            var result = new
             {
                 users = userDtos,
-                totalCount = totalCount
-            });
+                pageNumber,
+                pageSize,
+                totalCount
+            };
+
+            return Ok(result);
+        }
+
+
+        // 🔹 PUT: Update User
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateUser(int id, UpdateUserDto updateDto)
+        {
+            var user = await _context.Users.FindAsync(id);
+            if (user == null) return NotFound();
+
+            user.FirstName = updateDto.FirstName;
+            user.LastName = updateDto.LastName;
+            user.Email = updateDto.Email;
+            user.IsActive = updateDto.IsActive;
+            user.UpdatedAt = DateTime.UtcNow;
+
+            await _context.SaveChangesAsync();
+            return NoContent();
+        }
+
+        // 🔹 DELETE: Delete User
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteUser(int id)
+        {
+            var user = await _context.Users.FindAsync(id);
+            if (user == null) return NotFound();
+
+            _context.Users.Remove(user);
+            await _context.SaveChangesAsync();
+            return NoContent();
+        }
+
+        // 🔹 PUT: Update User Permissions
+        [HttpPut("{id}/permissions")]
+        public async Task<IActionResult> UpdateUserPermissions(int id, [FromBody] List<string> permissions)
+        {
+            var user = await _context.Users.FindAsync(id);
+            if (user == null) return NotFound();
+
+            user.Permissions = permissions;
+            user.UpdatedAt = DateTime.UtcNow;
+            await _context.SaveChangesAsync();
+
+            return Ok(MapToDto(user));
+        }
+
+        // 🔐 Helper to hash passwords
+        private string HashPassword(string password)
+        {
+            using var sha256 = SHA256.Create();
+            var bytes = Encoding.UTF8.GetBytes(password);
+            var hash = sha256.ComputeHash(bytes);
+            return Convert.ToBase64String(hash);
+        }
+
+        // 🔄 Helper to map User to DTO
+        private UserDto MapToDto(User user)
+        {
+            return new UserDto(
+                user.UserId,
+                user.Username,
+                user.Email,
+                user.FirstName,
+                user.LastName,
+                user.IsActive,
+                user.CreatedAt,
+                user.UpdatedAt,
+                user.Permissions
+            );
         }
     }
 }

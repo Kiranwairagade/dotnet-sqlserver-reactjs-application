@@ -13,9 +13,6 @@ namespace backend.Services
         Task<UsersResponse> GetUsersAsync(int pageNumber, int pageSize, string? searchTerm);
         Task<UserDetailDto> GetUserByIdAsync(int id);
         Task<bool> UpdateUserAsync(int id, UpdateUserRequest request);
-        Task<List<RoleDto>> GetAllRolesAsync();
-        Task<bool> AssignRoleToUserAsync(int userId, int roleId);
-        Task<bool> RemoveRoleFromUserAsync(int userId, int roleId);
     }
 
     public class UserService : IUserService
@@ -45,8 +42,7 @@ namespace backend.Services
                     Username = u.Username,
                     Email = u.Email,
                     FirstName = u.FirstName,
-                    LastName = u.LastName,
-                    Roles = u.UserRoles.Select(ur => ur.Role.RoleName).ToList()
+                    LastName = u.LastName
                 })
                 .ToListAsync();
 
@@ -62,8 +58,6 @@ namespace backend.Services
         public async Task<UserDetailDto> GetUserByIdAsync(int id)
         {
             var user = await _context.Users
-                .Include(u => u.UserRoles)
-                .ThenInclude(ur => ur.Role)
                 .FirstOrDefaultAsync(u => u.UserId == id);
 
             if (user == null)
@@ -77,8 +71,7 @@ namespace backend.Services
                 Username = user.Username,
                 Email = user.Email,
                 FirstName = user.FirstName,
-                LastName = user.LastName,
-                Roles = user.UserRoles.Select(ur => ur.Role.RoleName).ToList()
+                LastName = user.LastName
             };
         }
 
@@ -96,45 +89,6 @@ namespace backend.Services
             user.FirstName = request.FirstName;
             user.LastName = request.LastName;
 
-            await _context.SaveChangesAsync();
-            return true;
-        }
-
-        public async Task<List<RoleDto>> GetAllRolesAsync()
-        {
-            return await _context.Roles
-                .Select(r => new RoleDto
-                {
-                    Id = r.RoleId,
-                    RoleName = r.RoleName
-                })
-                .ToListAsync();
-        }
-
-        public async Task<bool> AssignRoleToUserAsync(int userId, int roleId)
-        {
-            var userRole = new UserRole
-            {
-                UserId = userId,
-                RoleId = roleId
-            };
-
-            _context.UserRoles.Add(userRole);
-            await _context.SaveChangesAsync();
-            return true;
-        }
-
-        public async Task<bool> RemoveRoleFromUserAsync(int userId, int roleId)
-        {
-            var userRole = await _context.UserRoles
-                .FirstOrDefaultAsync(ur => ur.UserId == userId && ur.RoleId == roleId);
-
-            if (userRole == null)
-            {
-                throw new KeyNotFoundException("User role not found.");
-            }
-
-            _context.UserRoles.Remove(userRole);
             await _context.SaveChangesAsync();
             return true;
         }

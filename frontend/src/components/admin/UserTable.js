@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { getUsers, deleteUser } from '../../services/userService';
 import './UserTable.css';
 
-const UserTable = ({ onEdit, onView, onAddNew }) => {
+const UserTable = ({ onEdit, onView, onAddNew, setSelectedUser, refreshTrigger }) => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -14,40 +14,40 @@ const UserTable = ({ onEdit, onView, onAddNew }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [deleteConfirmation, setDeleteConfirmation] = useState({ show: false, userId: null });
 
-  const fetchUsers = async (page = pagination.pageNumber, search = searchTerm) => {
+  const fetchUsers = async (page = 1, search = '') => {
     try {
       setLoading(true);
       const data = await getUsers(page, pagination.pageSize, search);
-      setUsers(data.users || data);
+      setUsers(data.users || []);
       setPagination((prev) => ({
         ...prev,
         pageNumber: data.pageNumber || page,
-        totalCount: data.totalCount || (data.length || 0),
+        totalCount: data.totalCount || 0
       }));
       setError(null);
     } catch (err) {
       setError('Failed to load users. Please try again later.');
-      console.error(err);
+      console.error('Error fetching users:', err);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchUsers();
-  }, [pagination.pageNumber]);
+    fetchUsers(pagination.pageNumber, searchTerm);
+  }, [pagination.pageNumber, refreshTrigger]);
 
   const handleDeleteConfirm = async () => {
     if (!deleteConfirmation.userId) return;
     try {
       setLoading(true);
       await deleteUser(deleteConfirmation.userId);
-      fetchUsers(); // Refresh user list
+      fetchUsers(1, searchTerm); // Reset to first page after delete
       setDeleteConfirmation({ show: false, userId: null });
       alert('User deleted successfully');
     } catch (err) {
       console.error('Error deleting user:', err);
-      alert(`Failed to delete user: ${err.message || 'Unknown error'}`);
+      alert('Error deleting user: ' + (err.response?.data?.message || err.message || 'Unknown error'));
     } finally {
       setLoading(false);
     }
@@ -59,7 +59,13 @@ const UserTable = ({ onEdit, onView, onAddNew }) => {
     }
   };
 
-  const totalPages = Math.ceil(pagination.totalCount / pagination.pageSize);
+  const handleSearch = (e) => {
+    e.preventDefault();
+    setPagination((prev) => ({ ...prev, pageNumber: 1 })); // Reset to page 1
+    fetchUsers(1, searchTerm); // Fetch results based on search
+  };
+
+  const totalPages = Math.ceil(pagination.totalCount / pagination.pageSize) || 1;
 
   return (
     <div className="user-table-container">
@@ -69,17 +75,15 @@ const UserTable = ({ onEdit, onView, onAddNew }) => {
       </div>
 
       <div className="table-header">
-        <div className="search-container">
-          <form onSubmit={(e) => { e.preventDefault(); fetchUsers(1, searchTerm); }}>
-            <input
-              type="text"
-              placeholder="Search users..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-            <button type="submit">Search</button>
-          </form>
-        </div>
+        <form onSubmit={handleSearch}>
+          <input
+            type="text"
+            placeholder="Search users..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+          <button type="submit">Search</button>
+        </form>
       </div>
 
       {loading ? (
@@ -104,46 +108,29 @@ const UserTable = ({ onEdit, onView, onAddNew }) => {
                 users.map((user) => (
                   <tr key={user.userId}>
                     <td>{user.userId}</td>
-                    <td>{user.username || 'N/A'}</td>
+                    <td>{user.username}</td>
                     <td>{user.email}</td>
                     <td>{`${user.firstName || ''} ${user.lastName || ''}`.trim()}</td>
                     <td>{new Date(user.createdAt || Date.now()).toLocaleDateString()}</td>
-                    <td className="actions-cell">
-                      <button className="btn-view" onClick={() => onView(user)}>View</button>
-                      <button className="btn-edit" onClick={() => onEdit(user)}>Edit</button>
-                      <button 
-                        className="btn-delete" 
-                        onClick={() => setDeleteConfirmation({ show: true, userId: user.userId })}
-                      >
-                        Delete
-                      </button>
+                    <td>
+                      <button onClick={() => onView(user)}>View</button>
+                      <button onClick={() => onEdit(user)}>Edit</button>
+                      <button onClick={() => setDeleteConfirmation({ show: true, userId: user.userId })}>Delete</button>
                     </td>
                   </tr>
                 ))
               ) : (
-                <tr>
-                  <td colSpan="6" className="no-data">No users found</td>
-                </tr>
+                <tr><td colSpan="6">No users found</td></tr>
               )}
             </tbody>
           </table>
 
           <div className="pagination">
-            <button
-              onClick={() => handlePageChange(pagination.pageNumber - 1)}
-              disabled={pagination.pageNumber === 1}
-            >
-              Previous
-            </button>
-            <span>
-              Page {pagination.pageNumber} of {totalPages || 1}
-            </span>
-            <button
-              onClick={() => handlePageChange(pagination.pageNumber + 1)}
-              disabled={pagination.pageNumber >= totalPages}
-            >
-              Next
-            </button>
+            <button disabled={pagination.pageNumber === 1} onClick={() => handlePageChange(pagination.pageNumber - 1)}>Previous</button>
+            {Array.from({ length: totalPages }, (_, index) => (
+              <button key={index} className={pagination.pageNumber === index + 1 ? 'active' : ''} onClick={() => handlePageChange(index + 1)}>{index + 1}</button>
+            ))}
+            <button disabled={pagination.pageNumber === totalPages} onClick={() => handlePageChange(pagination.pageNumber + 1)}>Next</button>
           </div>
         </>
       )}
@@ -154,12 +141,8 @@ const UserTable = ({ onEdit, onView, onAddNew }) => {
             <h3>Confirm Delete</h3>
             <p>Are you sure you want to delete this user?</p>
             <div className="modal-actions">
-              <button className="btn-cancel" onClick={() => setDeleteConfirmation({ show: false, userId: null })}>
-                Cancel
-              </button>
-              <button className="btn-confirm-delete" onClick={handleDeleteConfirm}>
-                Delete
-              </button>
+              <button onClick={() => setDeleteConfirmation({ show: false, userId: null })}>Cancel</button>
+              <button onClick={handleDeleteConfirm} className="btn-delete">Delete</button>
             </div>
           </div>
         </div>

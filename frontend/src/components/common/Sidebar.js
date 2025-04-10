@@ -1,82 +1,52 @@
-import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../../contexts/AuthContext";
+import React from 'react';
+import { NavLink } from 'react-router-dom';
 import {
-  FaListAlt,
-  FaTag,
-  FaTruck,
-  FaBox,
-  FaUserShield,
-  FaUsers,
-  FaSignOutAlt,
-} from "react-icons/fa";
-import { getSidebarItems } from "../../services/sidebarService";
-import "./Sidebar.css";
+  LayoutDashboard,
+  UserCog,
+  LogOut,
+  Box,
+  Tag,
+  Truck,
+  PackageSearch,
+  Users
+} from 'lucide-react';
+
+import masterModules from '../../../src/config/modules';
+import './Sidebar';
+const icons = {
+  Categories: <Tag size={18} />,
+  Brands: <Box size={18} />,
+  Suppliers: <Truck size={18} />,
+  Products: <PackageSearch size={18} />,
+  Employees: <Users size={18} />
+};
 
 const Sidebar = () => {
-  const { logout } = useAuth();
-  const navigate = useNavigate();
-  const [sidebarList, setSidebarList] = useState([]);
-
-  useEffect(() => {
-    const fetchItems = async () => {
-      const items = await getSidebarItems();
-      setSidebarList(items);
-    };
-    fetchItems();
-  }, []);
-
-  const handleLogout = () => {
-    logout();
-    navigate("/login");
-  };
-
   return (
     <div className="sidebar">
+      <h4>Masters</h4>
       <ul className="sidebar-list">
-        {/* Masters Section */}
-        <li className="sidebar-section">Masters</li>
-        <li>
-          <Link to="/master/categories" className="sidebar-link">
-            <FaListAlt className="me-2" /> Categories
-          </Link>
-        </li>
-        <li>
-          <Link to="/master/brands" className="sidebar-link">
-            <FaTag className="me-2" /> Brands
-          </Link>
-        </li>
-        <li>
-          <Link to="/master/suppliers" className="sidebar-link">
-            <FaTruck className="me-2" /> Suppliers
-          </Link>
-        </li>
-        <li>
-          <Link to="/master/products" className="sidebar-link">
-            <FaBox className="me-2" /> Products
-          </Link>
-        </li>
-        <li>
-          <Link to="/master/employees" className="sidebar-link">
-            <FaUserShield className="me-2" /> Employees
-          </Link>
-        </li>
+        {masterModules.map((module) => (
+          <li key={module}>
+            <NavLink to={`/${module.toLowerCase()}`} className="sidebar-link">
+              {icons[module]} <span>{module}</span>
+            </NavLink>
+          </li>
+        ))}
+      </ul>
 
-        {/* Admin Section */}
-        <li className="sidebar-section">Admin</li>
+      <h4>Admin</h4>
+      <ul className="sidebar-list">
         <li>
-          <Link to="/admin/usermanagement" className="sidebar-link">
-            <FaUsers className="me-2" /> User Management
-          </Link>
-        </li>
-
-        {/* Logout Button */}
-        <li>
-          <button className="sidebar-logout" onClick={handleLogout}>
-            <FaSignOutAlt className="me-2" /> Logout
-          </button>
+          <NavLink to="/user-management" className="sidebar-link">
+            <UserCog size={18} /> <span>User Management</span>
+          </NavLink>
         </li>
       </ul>
+
+      <button className="logout-btn">
+        <LogOut size={18} /> <span>Logout</span>
+      </button>
     </div>
   );
 };

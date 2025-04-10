@@ -1,5 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using backend.Models;
+using System;
+using System.Linq;
+using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace backend.Data
 {
@@ -14,10 +18,6 @@ namespace backend.Data
         public DbSet<Product> Products { get; set; } = null!;
         public DbSet<Category> Categories { get; set; } = null!;
         public DbSet<ProductImage> ProductImages { get; set; } = null!;
-        public DbSet<Role> Roles { get; set; } = null!;
-        public DbSet<UserRole> UserRoles { get; set; } = null!;
-        public DbSet<Permission> Permissions { get; set; } = null!;
-        public DbSet<RolePermission> RolePermissions { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -25,14 +25,6 @@ namespace backend.Data
 
             // Ensure 'Category' maps to the correct table name
             modelBuilder.Entity<Category>().ToTable("ProductCategories");
-
-            // UserRole: Composite Primary Key
-            modelBuilder.Entity<UserRole>()
-                .HasKey(ur => new { ur.UserId, ur.RoleId });
-
-            // RolePermission: Composite Primary Key
-            modelBuilder.Entity<RolePermission>()
-                .HasKey(rp => new { rp.RoleId, rp.PermissionId });
 
             // ProductImage Entity Configuration
             modelBuilder.Entity<ProductImage>()
@@ -43,7 +35,24 @@ namespace backend.Data
                 .WithMany(p => p.Images)
                 .HasForeignKey(pi => pi.ProductId)
                 .OnDelete(DeleteBehavior.Cascade);
-        }
 
+            // Configure Permissions as a comma-separated string in the database
+            modelBuilder.Entity<User>()
+                .Property(u => u.Permissions)
+                .HasConversion(
+                    v => string.Join(',', v), // Convert List<string> to string
+                    v => v.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList() // Convert string back to List<string>
+                );
+            var stringListConverter = new ValueConverter<List<string>, string>(
+    v => string.Join(",", v),     // Convert List<string> to comma-separated string
+    v => v.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).ToList() // Back to List<string>
+);
+
+            modelBuilder.Entity<User>()
+                .Property(u => u.Permissions)
+                .HasConversion(stringListConverter);
+
+        }
+        public DbSet<UserPermission> UserPermissions { get; set; }     
     }
 }

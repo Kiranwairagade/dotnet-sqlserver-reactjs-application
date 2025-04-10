@@ -6,7 +6,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using backend.Data;
-using backend.DTOs; // ✅ Uses only DTOs
+using backend.DTOs;
 using backend.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -21,30 +21,41 @@ namespace backend.Services
 
         public AuthService(ApplicationDbContext context, IConfiguration configuration)
         {
-            _context = context;
-            _configuration = configuration;
+            _context = context ?? throw new ArgumentNullException(nameof(context));
+            _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
         }
 
         public async Task<AuthResponse> RegisterAsync(RegisterRequest request)
         {
+            if (request == null)
+                throw new ArgumentNullException(nameof(request));
+
+            if (string.IsNullOrWhiteSpace(request.Email))
+                throw new ArgumentException("Email cannot be empty.");
+
             if (await _context.Users.AnyAsync(u => u.Email == request.Email))
-            {
                 throw new InvalidOperationException("Email is already registered.");
-            }
 
             var user = new User
             {
                 FirstName = request.FirstName ?? throw new ArgumentNullException(nameof(request.FirstName)),
                 LastName = request.LastName ?? throw new ArgumentNullException(nameof(request.LastName)),
-                Email = request.Email ?? throw new ArgumentNullException(nameof(request.Email)),
+                Email = request.Email,
                 PasswordHash = HashPassword(request.Password ?? throw new ArgumentNullException(nameof(request.Password))),
                 IsActive = true,
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow
             };
 
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.Users.Add(user);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while saving user to the database.", ex);
+            }
 
             var token = GenerateJwtToken(user);
 
@@ -60,6 +71,9 @@ namespace backend.Services
 
         public async Task<AuthResponse> LoginAsync(LoginRequest request)
         {
+            if (request == null || string.IsNullOrWhiteSpace(request.Email))
+                throw new ArgumentException("Invalid login request.");
+
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email && u.IsActive);
 
             if (user == null || !VerifyPasswordHash(request.Password ?? "", user.PasswordHash))
@@ -93,22 +107,20 @@ namespace backend.Services
                     LastName = user.LastName,
                     IsActive = user.IsActive,
                     CreatedAt = user.CreatedAt,
-                    UpdatedAt = user.UpdatedAt,
-                    Roles = new List<string>() // Add roles if needed
+                    UpdatedAt = user.UpdatedAt
                 }
                 : null;
         }
 
         public async Task<AuthResponse> RefreshTokenAsync(TokenRequest request)
         {
+            if (request == null || string.IsNullOrWhiteSpace(request.Email))
+                throw new ArgumentException("Invalid token request.");
+
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email && u.IsActive);
 
             if (user == null)
-            {
                 throw new UnauthorizedAccessException("Invalid refresh token or user not found.");
-            }
-
-            // Add token validation logic here if storing refresh tokens in DB
 
             var token = GenerateJwtToken(user);
 
@@ -122,32 +134,52 @@ namespace backend.Services
             };
         }
 
+        public async Task<User?> GetUserByEmailAsync(string email)
+        {
+            if (string.IsNullOrWhiteSpace(email))
+                return null;
+
+            return await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+        }
+
         private string GenerateJwtToken(User user)
         {
-            var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"] ?? "");
+            var jwtKey = _configuration["Jwt:Key"];
+            if (string.IsNullOrWhiteSpace(jwtKey))
+                throw new InvalidOperationException("JWT key is not configured.");
+
+            var key = Encoding.ASCII.GetBytes(jwtKey);
+
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),
+                new Claim(ClaimTypes.Email, user.Email ?? ""),
+                new Claim(ClaimTypes.GivenName, user.FirstName ?? ""),
+                new Claim(ClaimTypes.Surname, user.LastName ?? "")
+            };
+
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(new[]
-                {
-                    new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),
-                    new Claim(ClaimTypes.Email, user.Email ?? ""),
-                    new Claim(ClaimTypes.GivenName, user.FirstName ?? ""),
-                    new Claim(ClaimTypes.Surname, user.LastName ?? "")
-                }),
+                Subject = new ClaimsIdentity(claims),
                 Expires = DateTime.UtcNow.AddDays(7),
                 SigningCredentials = new SigningCredentials(
-                    new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+                    new SymmetricSecurityKey(key),
+                    SecurityAlgorithms.HmacSha256Signature)
             };
 
             var tokenHandler = new JwtSecurityTokenHandler();
             var token = tokenHandler.CreateToken(tokenDescriptor);
-
             return tokenHandler.WriteToken(token);
         }
 
-        private string HashPassword(string password) => BCrypt.Net.BCrypt.HashPassword(password);
+        private string HashPassword(string password)
+        {
+            return BCrypt.Net.BCrypt.HashPassword(password);
+        }
 
-        private bool VerifyPasswordHash(string password, string storedHash) =>
-            BCrypt.Net.BCrypt.Verify(password, storedHash);
+        private bool VerifyPasswordHash(string password, string storedHash)
+        {
+            return BCrypt.Net.BCrypt.Verify(password, storedHash);
+        }
     }
 }

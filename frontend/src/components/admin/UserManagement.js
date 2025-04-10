@@ -2,11 +2,13 @@ import React, { useState } from 'react';
 import UserTable from './UserTable';
 import UserForm from './UserForm';
 import UserDetail from './UserDetail';
+import { createUser, updateUser } from '../../services/userService';
 import './UserTable.css';
 
 const UserManagement = () => {
   const [activeView, setActiveView] = useState('list'); // 'list', 'create', 'edit', 'view'
   const [selectedUser, setSelectedUser] = useState(null);
+  const [refreshTable, setRefreshTable] = useState(false);
 
   const handleViewUser = (user) => {
     setSelectedUser(user);
@@ -26,10 +28,27 @@ const UserManagement = () => {
   const handleSuccess = () => {
     // After successful create/edit operation, go back to list view
     setActiveView('list');
+    // Trigger table refresh
+    setRefreshTable(prev => !prev);
   };
 
   const handleCancel = () => {
     setActiveView('list');
+  };
+
+  // Handle form submission
+  const handleFormSubmit = async (formData) => {
+    try {
+      if (activeView === 'create') {
+        await createUser(formData);
+      } else if (activeView === 'edit' && selectedUser) {
+        await updateUser(selectedUser.userId, formData);
+      }
+      handleSuccess();
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      alert(`Error: ${error.response?.data?.message || error.message || 'Unknown error occurred'}`);
+    }
   };
 
   // Render the appropriate component based on active view
@@ -38,16 +57,17 @@ const UserManagement = () => {
       case 'create':
         return (
           <UserForm 
+            selectedUser={null}
             onCancel={handleCancel} 
-            onSuccess={handleSuccess} 
+            onSubmitForm={handleFormSubmit} 
           />
         );
       case 'edit':
         return (
           <UserForm 
-            userId={selectedUser?.userId} 
+            selectedUser={selectedUser}
             onCancel={handleCancel} 
-            onSuccess={handleSuccess} 
+            onSubmitForm={handleFormSubmit} 
           />
         );
       case 'view':
@@ -55,7 +75,7 @@ const UserManagement = () => {
           <UserDetail 
             userId={selectedUser?.userId} 
             onClose={handleCancel}
-            onEdit={() => setActiveView('edit')}
+            onEdit={() => handleEditUser(selectedUser)}
           />
         );
       case 'list':
@@ -65,6 +85,8 @@ const UserManagement = () => {
             onView={handleViewUser}
             onEdit={handleEditUser}
             onAddNew={handleAddNewUser}
+            setSelectedUser={setSelectedUser}
+            refreshTrigger={refreshTable}
           />
         );
     }

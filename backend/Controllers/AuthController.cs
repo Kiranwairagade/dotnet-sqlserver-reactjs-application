@@ -52,5 +52,24 @@ namespace backend.Controllers
             }
             return Ok(response);
         }
+
+        [HttpGet("user-info")]
+        public async Task<ActionResult<UserDto>> GetUserInfo()
+        {
+            var userEmail = User.Identity?.Name;
+
+            if (string.IsNullOrEmpty(userEmail))
+            {
+                return Unauthorized(new { message = "User is not authenticated" });
+            }
+
+            var user = await _authService.GetUserByEmailAsync(userEmail);
+            if (user == null)
+            {
+                return NotFound(new { message = "User not found" });
+            }
+
+            return Ok(user);
+        }
     }
 }

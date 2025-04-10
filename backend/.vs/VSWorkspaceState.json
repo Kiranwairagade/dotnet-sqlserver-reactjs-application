@@ -2,10 +2,9 @@
   "ExpandedNodes": [
     "",
     "\\Controllers",
-    "\\Data",
-    "\\Models",
-    "\\Services"
+    "\\DTOs",
+    "\\Migrations"
   ],
-  "SelectedNode": "\\Models\\Category.cs",
+  "SelectedNode": "\\Migrations",
   "PreviewInSolutionExplorer": false
 }
