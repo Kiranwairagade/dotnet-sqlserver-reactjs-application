@@ -1,4 +1,3 @@
-// src/components/products/ProductCard.js
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import './ProductCard.css';
@@ -10,8 +9,10 @@ const ProductCard = ({ product, onDelete }) => {
     <div className="product-card">
       <div className="product-image">
         <img 
-          src={product.primaryImageUrl || '/placeholder-product.png'} 
-          alt={product.productName}
+          src={product.images && product.images.length > 0 
+            ? product.images[0].imageUrl 
+            : '/placeholder-product.png'} 
+          alt={product.name}
           onError={(e) => {
             e.target.onerror = null;
             e.target.src = '/placeholder-product.png';
@@ -19,8 +20,14 @@ const ProductCard = ({ product, onDelete }) => {
         />
       </div>
       <div className="product-info">
-        <h3>{product.productName}</h3>
-        <p className="product-description">{product.description.substring(0, 100)}...</p>
+        <h3>{product.name}</h3>
+        <p className="product-description">
+          {product.description 
+            ? (product.description.length > 100 
+                ? `${product.description.substring(0, 100)}...` 
+                : product.description)
+            : 'No description available'}
+        </p>
         <div className="product-price">
           {product.discountPrice ? (
             <>
@@ -32,20 +39,24 @@ const ProductCard = ({ product, onDelete }) => {
           )}
         </div>
         <div className="product-category">
-          <span>Category: {product.categoryName}</span>
+          <span>Category: {product.category ? product.category.name : 'N/A'}</span>
         </div>
         <div className="product-stock">
-          <span>{product.quantity > 0 ? `In Stock (${product.quantity})` : 'Out of Stock'}</span>
+          <span className={product.stockQuantity <= 0 ? 'out-of-stock' : ''}>
+            {product.stockQuantity > 0 
+              ? `In Stock (${product.stockQuantity})` 
+              : 'Out of Stock'}
+          </span>
         </div>
       </div>
       <div className="product-actions">
-        <button onClick={() => navigate(`/products/${product.productId}`)} className="view-btn">
+        <button onClick={() => navigate(`/products/${product.id}`)} className="view-btn">
           View Details
         </button>
-        <button onClick={() => navigate(`/products/edit/${product.productId}`)} className="edit-btn">
+        <button onClick={() => navigate(`/products/edit/${product.id}`)} className="edit-btn">
           Edit
         </button>
-        <button onClick={() => onDelete(product.productId)} className="delete-btn">
+        <button onClick={() => onDelete(product.id)} className="delete-btn">
           Delete
         </button>
       </div>

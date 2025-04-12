@@ -18,7 +18,7 @@ export const refreshToken = async () => {
     if (!refreshTokenValue) throw new Error('No refresh token available');
 
     const response = await api.post('/auth/refresh-token', { refreshToken: refreshTokenValue });
-    localStorage.setItem('token', response.data.token);
+    localStorage.setItem('authToken', response.data.token);
     localStorage.setItem('refreshToken', response.data.refreshToken);
     return response.data;
   } catch (error) {

@@ -11,23 +11,17 @@ export const getAllCategories = async () => {
 // Add a new category
 export const addCategory = async (category) => {
   const response = await axios.post(API_BASE_URL, category);
-  return response.data;
+  return response.status === 201 || response.status === 200;
 };
 
 // Delete a category by ID
 export const deleteCategory = async (id) => {
-  await axios.delete(`${API_BASE_URL}/${id}`);
+  const response = await axios.delete(`${API_BASE_URL}/${id}`);
+  return response.status === 200;
 };
 
+// Update a category by ID
 export const updateCategory = async (id, updatedCategory) => {
-    const response = await fetch(`/api/categories/${id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(updatedCategory),
-    });
-  
-    return response.ok;
-  };
-  
+  const response = await axios.put(`${API_BASE_URL}/${id}`, updatedCategory);
+  return response.status === 200;
+};

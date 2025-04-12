@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import masterModules from '../../../src/config/modules';
+import masterModules from '../../config/modules';
 import './UserForm.css';
 
 const permissions = ['Create', 'Read', 'Update', 'Delete'];
 
-const UserForm = ({ selectedUser = null, onSubmitForm, onCancel }) => {
+const UserForm = ({ selectedUser = null, onSubmitForm, onCancel, isLoading, error }) => {
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -18,6 +18,18 @@ const UserForm = ({ selectedUser = null, onSubmitForm, onCancel }) => {
 
   useEffect(() => {
     if (selectedUser) {
+      const modulePerms = {};
+      if (selectedUser.userPermissions && Array.isArray(selectedUser.userPermissions)) {
+        selectedUser.userPermissions.forEach(perm => {
+          modulePerms[perm.moduleName] = {
+            Create: perm.canCreate,
+            Read: perm.canRead,
+            Update: perm.canUpdate,
+            Delete: perm.canDelete
+          };
+        });
+      }
+
       setFormData({
         firstName: selectedUser.firstName || '',
         lastName: selectedUser.lastName || '',
@@ -26,7 +38,18 @@ const UserForm = ({ selectedUser = null, onSubmitForm, onCancel }) => {
         password: '',
         confirmPassword: '',
         isActive: selectedUser.isActive ?? true,
-        modulePermissions: selectedUser.modulePermissions || {},
+        modulePermissions: modulePerms,
+      });
+    } else {
+      setFormData({
+        firstName: '',
+        lastName: '',
+        username: '',
+        email: '',
+        password: '',
+        confirmPassword: '',
+        isActive: true,
+        modulePermissions: {},
       });
     }
   }, [selectedUser]);
@@ -44,38 +67,58 @@ const UserForm = ({ selectedUser = null, onSubmitForm, onCancel }) => {
     }));
   };
 
+  const buildUserPermissionsPayload = () => {
+    return masterModules.map((module) => {
+      const perms = formData.modulePermissions[module] || {};
+      return {
+        moduleName: module,
+        canCreate: perms.Create || false,
+        canRead: perms.Read || false,
+        canUpdate: perms.Update || false,
+        canDelete: perms.Delete || false,
+      };
+    });
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Validate form
     if (!formData.firstName || !formData.lastName || !formData.username || !formData.email) {
       alert('Please fill all required fields.');
       return;
     }
-    
+
     if (!selectedUser && formData.password !== formData.confirmPassword) {
       alert('Passwords do not match!');
       return;
     }
 
-    const userPayload = { ...formData };
-    if (selectedUser) {
-      // Don't send password fields when updating
-      delete userPayload.password;
-      delete userPayload.confirmPassword;
-    } else if (!formData.password) {
-      // Password is required for new users
-      alert('Password is required');
-      return;
+    const userPayload = {
+      firstName: formData.firstName,
+      lastName: formData.lastName,
+      username: formData.username,
+      email: formData.email,
+      isActive: formData.isActive,
+    };
+
+    if (!selectedUser) {
+      if (!formData.password) {
+        alert('Password is required');
+        return;
+      }
+      userPayload.password = formData.password;
     }
 
-    onSubmitForm(userPayload);
+    const userPermissions = buildUserPermissionsPayload();
+    onSubmitForm({ ...userPayload, userPermissions });
   };
 
   return (
     <div className="user-form-container">
       <form className="user-form" onSubmit={handleSubmit}>
         <h2>{selectedUser ? 'Edit User' : 'Create New User'}</h2>
+
+        {error && <div className="form-error">{error}</div>}
 
         <div className="form-row">
           <div className="form-group">
@@ -142,17 +185,21 @@ const UserForm = ({ selectedUser = null, onSubmitForm, onCancel }) => {
           </div>
         )}
 
-        <div className="checkbox-group">
-          <input
-            type="checkbox"
-            checked={formData.isActive}
-            onChange={() => setFormData({ ...formData, isActive: !formData.isActive })}
-          />
-          <label>Active User</label>
+        <div className="form-row">
+          <div className="form-group checkbox-group">
+            <label>
+              <input
+                type="checkbox"
+                checked={formData.isActive}
+                onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
+              />
+              Active
+            </label>
+          </div>
         </div>
 
-        <h3>Module Permissions</h3>
-        <div className="permissions-table-container">
+        <div className="permissions-section">
+          <h3>Module Permissions</h3>
           <table className="permissions-table">
             <thead>
               <tr>
@@ -182,11 +229,11 @@ const UserForm = ({ selectedUser = null, onSubmitForm, onCancel }) => {
         </div>
 
         <div className="form-actions">
-          <button type="button" className="btn-cancel" onClick={onCancel}>
-            Cancel
+          <button type="submit" disabled={isLoading}>
+            {isLoading ? 'Submitting...' : selectedUser ? 'Update User' : 'Create User'}
           </button>
-          <button type="submit" className="btn-submit">
-            {selectedUser ? 'Update User' : 'Create User'}
+          <button type="button" className="cancel-btn" onClick={onCancel}>
+            Cancel
           </button>
         </div>
       </form>

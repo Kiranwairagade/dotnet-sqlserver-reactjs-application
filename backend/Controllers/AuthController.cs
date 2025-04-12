@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using backend.DTOs;
 using backend.Services;
+using Microsoft.AspNetCore.Authorization;
 
 namespace backend.Controllers
 {
@@ -57,7 +58,24 @@ namespace backend.Controllers
         public async Task<ActionResult<UserDto>> GetUserInfo()
         {
             var userEmail = User.Identity?.Name;
+            if (string.IsNullOrEmpty(userEmail))
+            {
+                return Unauthorized(new { message = "User is not authenticated" });
+            }
 
+            var user = await _authService.GetUserByEmailAsync(userEmail);
+            if (user == null)
+            {
+                return NotFound(new { message = "User not found" });
+            }
+
+            return Ok(user);
+        }
+        [HttpGet("me")]
+        [Authorize]
+        public async Task<ActionResult<UserDto>> GetCurrentUser()
+        {
+            var userEmail = User.Identity?.Name;
             if (string.IsNullOrEmpty(userEmail))
             {
                 return Unauthorized(new { message = "User is not authenticated" });

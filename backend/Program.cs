@@ -1,10 +1,11 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.OpenApi.Models;
 using backend.Services;
 using backend.Data;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization; // ✅ Required for ReferenceHandler
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,9 +13,14 @@ var builder = WebApplication.CreateBuilder(args);
 const string CorsPolicyName = "AllowReactApp";
 
 // Add services to the container
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        // ✅ Fix circular reference issues
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
+    });
+
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddScoped<IAuthService, AuthService>();
 
 // Swagger Configuration with JWT Support
 builder.Services.AddSwaggerGen(c =>
@@ -40,7 +46,7 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-// Register ApplicationDbContext
+// Register DbContext
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -48,7 +54,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 
-// JWT Authentication
+// JWT Authentication Configuration
 var jwtSettings = builder.Configuration.GetSection("Jwt");
 var key = Encoding.ASCII.GetBytes(jwtSettings["Key"] ?? throw new InvalidOperationException("JWT Key is missing in configuration."));
 
@@ -81,7 +87,7 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline
+// HTTP request pipeline
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -90,7 +96,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-// Ensure CORS is applied before authentication & authorization
+// CORS should be before auth
 app.UseCors(CorsPolicyName);
 
 app.UseAuthentication();

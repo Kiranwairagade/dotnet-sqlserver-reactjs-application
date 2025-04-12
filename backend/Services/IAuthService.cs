@@ -9,6 +9,6 @@ namespace backend.Services
         Task<AuthResponse> LoginAsync(LoginRequest request);
         Task<AuthResponse> RefreshTokenAsync(TokenRequest request);
         Task<UserDto?> GetUserByIdAsync(int userId);
-        Task<User?> GetUserByEmailAsync(string email); // ✅ Add this
+        Task<UserDto?> GetUserByEmailAsync(string email);
     }
 }

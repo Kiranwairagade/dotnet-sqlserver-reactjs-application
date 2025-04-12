@@ -77,9 +77,7 @@ namespace backend.Services
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email && u.IsActive);
 
             if (user == null || !VerifyPasswordHash(request.Password ?? "", user.PasswordHash))
-            {
                 throw new UnauthorizedAccessException("Invalid email or password.");
-            }
 
             var token = GenerateJwtToken(user);
 
@@ -91,25 +89,6 @@ namespace backend.Services
                 LastName = user.LastName,
                 Token = token
             };
-        }
-
-        public async Task<UserDto?> GetUserByIdAsync(int userId)
-        {
-            var user = await _context.Users.FindAsync(userId);
-
-            return user != null
-                ? new UserDto
-                {
-                    UserId = user.UserId,
-                    Username = user.Username,
-                    Email = user.Email,
-                    FirstName = user.FirstName,
-                    LastName = user.LastName,
-                    IsActive = user.IsActive,
-                    CreatedAt = user.CreatedAt,
-                    UpdatedAt = user.UpdatedAt
-                }
-                : null;
         }
 
         public async Task<AuthResponse> RefreshTokenAsync(TokenRequest request)
@@ -134,19 +113,57 @@ namespace backend.Services
             };
         }
 
-        public async Task<User?> GetUserByEmailAsync(string email)
+        public async Task<UserDto?> GetUserByIdAsync(int userId)
+        {
+            var user = await _context.Users.FindAsync(userId);
+
+            if (user == null)
+                return null;
+
+            // Load or generate user permissions here if needed
+            var permissions = new List<string>();
+
+            return new UserDto(
+                user.UserId,
+                user.Username ?? string.Empty,
+                user.Email ?? string.Empty,
+                user.FirstName ?? string.Empty,
+                user.LastName ?? string.Empty,
+                user.IsActive,
+                user.CreatedAt,
+                user.UpdatedAt,
+                permissions
+            );
+        }
+
+        public async Task<UserDto?> GetUserByEmailAsync(string email)
         {
             if (string.IsNullOrWhiteSpace(email))
                 return null;
 
-            return await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+            if (user == null)
+                return null;
+
+            var permissions = new List<string>();
+            return new UserDto(
+                user.UserId,
+                user.Username ?? string.Empty,
+                user.Email ?? string.Empty,
+                user.FirstName ?? string.Empty,
+                user.LastName ?? string.Empty,
+                user.IsActive,
+                user.CreatedAt,
+                user.UpdatedAt,
+                permissions
+            );
         }
 
         private string GenerateJwtToken(User user)
         {
             var jwtKey = _configuration["Jwt:Key"];
             if (string.IsNullOrWhiteSpace(jwtKey))
-                throw new InvalidOperationException("JWT key is not configured.");
+                throw new InvalidOperationException("JWT key is not configured in app settings.");
 
             var key = Encoding.ASCII.GetBytes(jwtKey);
 

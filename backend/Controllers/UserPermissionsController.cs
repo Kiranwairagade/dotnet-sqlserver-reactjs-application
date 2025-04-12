@@ -3,6 +3,10 @@ using Microsoft.EntityFrameworkCore;
 using backend.DTOs;
 using backend.Models;
 using backend.Data;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
 namespace backend.Controllers
 {
     [ApiController]
@@ -16,10 +20,14 @@ namespace backend.Controllers
             _context = context;
         }
 
-        // 🔹 POST: Create or Update Permission
+        // 🔹 POST: Create or Update a single permission
         [HttpPost]
         public async Task<IActionResult> SetPermission(CreateUserPermissionDto dto)
         {
+            var userExists = await _context.Users.AnyAsync(u => u.UserId == dto.UserId);
+            if (!userExists)
+                return NotFound(new { message = $"User with ID {dto.UserId} not found" });
+
             var existing = await _context.UserPermissions
                 .FirstOrDefaultAsync(p => p.UserId == dto.UserId && p.ModuleName == dto.ModuleName);
 
@@ -45,21 +53,70 @@ namespace backend.Controllers
             }
 
             await _context.SaveChangesAsync();
+            await UpdateSimplePermissionsList(dto.UserId);
+
             return Ok(new { message = "Permissions saved." });
         }
 
-        // 🔹 GET: Get User Permissions
+        // 🔹 GET: All permissions for a user
         [HttpGet("{userId}")]
-        public async Task<ActionResult<IEnumerable<UserPermission>>> GetUserPermissions(int userId)
+        public async Task<ActionResult<IEnumerable<UserPermissionDto>>> GetUserPermissions(int userId)
         {
+            var userExists = await _context.Users.AnyAsync(u => u.UserId == userId);
+            if (!userExists)
+                return NotFound(new { message = $"User with ID {userId} not found" });
+
             var permissions = await _context.UserPermissions
                 .Where(p => p.UserId == userId)
+                .Select(p => new UserPermissionDto
+                {
+                    UserPermissionId = p.UserPermissionId,
+                    UserId = p.UserId,
+                    ModuleName = p.ModuleName,
+                    CanCreate = p.CanCreate,
+                    CanRead = p.CanRead,
+                    CanUpdate = p.CanUpdate,
+                    CanDelete = p.CanDelete
+                })
                 .ToListAsync();
 
             return Ok(permissions);
         }
 
-        // 🔹 DELETE: Remove Permission
+        // 🔹 PUT: Replace all permissions for a user
+        [HttpPut("{userId}")]
+        public async Task<IActionResult> UpdateUserPermissions(int userId, [FromBody] List<CreateUserPermissionDto> permissions)
+        {
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null)
+                return NotFound(new { message = $"User with ID {userId} not found" });
+
+            var existingPermissions = await _context.UserPermissions
+                .Where(p => p.UserId == userId)
+                .ToListAsync();
+
+            _context.UserPermissions.RemoveRange(existingPermissions);
+
+            foreach (var perm in permissions)
+            {
+                _context.UserPermissions.Add(new UserPermission
+                {
+                    UserId = userId,
+                    ModuleName = perm.ModuleName,
+                    CanCreate = perm.CanCreate,
+                    CanRead = perm.CanRead,
+                    CanUpdate = perm.CanUpdate,
+                    CanDelete = perm.CanDelete
+                });
+            }
+
+            await _context.SaveChangesAsync();
+            await UpdateSimplePermissionsList(userId);
+
+            return Ok(new { message = "All permissions updated." });
+        }
+
+        // 🔹 DELETE: Specific permission by ID
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePermission(int id)
         {
@@ -67,9 +124,35 @@ namespace backend.Controllers
             if (permission == null)
                 return NotFound();
 
+            int userId = permission.UserId;
+
             _context.UserPermissions.Remove(permission);
             await _context.SaveChangesAsync();
+
+            await UpdateSimplePermissionsList(userId);
+
             return Ok(new { message = "Permission deleted." });
+        }
+
+        // 🔹 Private helper: Update User.Permissions field with allowed module names
+        private async Task UpdateSimplePermissionsList(int userId)
+        {
+            var user = await _context.Users.FindAsync(userId);
+            if (user != null)
+            {
+                var permissions = await _context.UserPermissions
+                    .Where(p => p.UserId == userId)
+                    .ToListAsync();
+
+                user.Permissions = permissions
+                    .Where(p => p.CanRead || p.CanCreate || p.CanUpdate || p.CanDelete)
+                    .Select(p => p.ModuleName)
+                    .Distinct()
+                    .ToList();
+
+                user.UpdatedAt = DateTime.UtcNow;
+                await _context.SaveChangesAsync();
+            }
         }
     }
 }

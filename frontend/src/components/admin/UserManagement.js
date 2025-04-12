@@ -9,6 +9,8 @@ const UserManagement = () => {
   const [activeView, setActiveView] = useState('list'); // 'list', 'create', 'edit', 'view'
   const [selectedUser, setSelectedUser] = useState(null);
   const [refreshTable, setRefreshTable] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const handleViewUser = (user) => {
     setSelectedUser(user);
@@ -34,20 +36,29 @@ const UserManagement = () => {
 
   const handleCancel = () => {
     setActiveView('list');
+    setError(null);
   };
 
   // Handle form submission
   const handleFormSubmit = async (formData) => {
     try {
+      setIsLoading(true);
+      setError(null);
+      
+      console.log("Form data to submit:", formData); // Debug logging
+      
       if (activeView === 'create') {
         await createUser(formData);
       } else if (activeView === 'edit' && selectedUser) {
         await updateUser(selectedUser.userId, formData);
       }
+      
       handleSuccess();
     } catch (error) {
       console.error("Error submitting form:", error);
-      alert(`Error: ${error.response?.data?.message || error.message || 'Unknown error occurred'}`);
+      setError(`Error: ${error.response?.data?.message || error.message || 'Unknown error occurred'}`);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -60,6 +71,8 @@ const UserManagement = () => {
             selectedUser={null}
             onCancel={handleCancel} 
             onSubmitForm={handleFormSubmit} 
+            isLoading={isLoading}
+            error={error}
           />
         );
       case 'edit':
@@ -67,7 +80,9 @@ const UserManagement = () => {
           <UserForm 
             selectedUser={selectedUser}
             onCancel={handleCancel} 
-            onSubmitForm={handleFormSubmit} 
+            onSubmitForm={handleFormSubmit}
+            isLoading={isLoading}
+            error={error} 
           />
         );
       case 'view':

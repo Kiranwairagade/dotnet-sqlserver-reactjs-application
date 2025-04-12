@@ -1,9 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using backend.Models;
-using System;
 using System.Linq;
 using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace backend.Data
 {
@@ -15,6 +13,7 @@ namespace backend.Data
 
         // DbSet properties for your entities
         public DbSet<User> Users { get; set; } = null!;
+        public DbSet<UserPermission> UserPermissions { get; set; } = null!;
         public DbSet<Product> Products { get; set; } = null!;
         public DbSet<Category> Categories { get; set; } = null!;
         public DbSet<ProductImage> ProductImages { get; set; } = null!;
@@ -28,7 +27,7 @@ namespace backend.Data
 
             // ProductImage Entity Configuration
             modelBuilder.Entity<ProductImage>()
-                .HasKey(pi => pi.ImageId); // Define primary key
+                .HasKey(pi => pi.ImageId);
 
             modelBuilder.Entity<ProductImage>()
                 .HasOne(pi => pi.Product)
@@ -40,19 +39,19 @@ namespace backend.Data
             modelBuilder.Entity<User>()
                 .Property(u => u.Permissions)
                 .HasConversion(
-                    v => string.Join(',', v), // Convert List<string> to string
-                    v => v.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList() // Convert string back to List<string>
+                    v => string.Join(',', v), // Convert List to string
+                    v => v.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList() // Convert string back to List
                 );
-            var stringListConverter = new ValueConverter<List<string>, string>(
-    v => string.Join(",", v),     // Convert List<string> to comma-separated string
-    v => v.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).ToList() // Back to List<string>
-);
 
-            modelBuilder.Entity<User>()
-                .Property(u => u.Permissions)
-                .HasConversion(stringListConverter);
+            // Set up relationship between User and UserPermission
+            modelBuilder.Entity<UserPermission>()
+                .HasKey(up => new { up.UserId, up.ModuleName }); // Composite Key
 
+            modelBuilder.Entity<UserPermission>()
+                .HasOne(up => up.User)
+                .WithMany(u => u.UserPermissions)
+                .HasForeignKey(up => up.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
-        public DbSet<UserPermission> UserPermissions { get; set; }     
     }
 }

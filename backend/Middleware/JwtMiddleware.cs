@@ -32,21 +32,34 @@ public class JwtMiddleware
         try
         {
             var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"] ?? "");
-            var principal = new JwtSecurityTokenHandler().ValidateToken(token, new TokenValidationParameters
+            var tokenHandler = new JwtSecurityTokenHandler();
+
+            var principal = tokenHandler.ValidateToken(token, new TokenValidationParameters
             {
                 ValidateIssuerSigningKey = true,
                 IssuerSigningKey = new SymmetricSecurityKey(key),
                 ValidateIssuer = false,
-                ValidateAudience = false
+                ValidateAudience = false,
+                ClockSkew = TimeSpan.Zero
             }, out _);
 
-            var userId = int.Parse(principal.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
-            context.User = new ClaimsPrincipal(new ClaimsIdentity(principal.Claims, "jwt"));
+            var userIdClaim = principal.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var emailClaim = principal.FindFirst(ClaimTypes.Email)?.Value;
+
+            if (!string.IsNullOrEmpty(emailClaim))
+            {
+                // Set the email as the Name for identity-based authentication
+                var claims = new List<Claim>(principal.Claims)
+            {
+                new Claim(ClaimTypes.Name, emailClaim)
+            };
+
+                context.User = new ClaimsPrincipal(new ClaimsIdentity(claims, "jwt"));
+            }
         }
         catch (Exception)
         {
-            // Log error
+            // Log error but don't throw to prevent middleware crashing
         }
-        await Task.CompletedTask; // Explicitly mark as async
     }
 }

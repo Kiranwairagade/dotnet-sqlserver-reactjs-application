@@ -38,7 +38,7 @@ namespace backend.Services
                 .Take(pageSize)
                 .Select(u => new UserDetailDto
                 {
-                    Id = u.UserId,
+                    UserId = u.UserId,
                     Username = u.Username,
                     Email = u.Email,
                     FirstName = u.FirstName,
@@ -67,7 +67,7 @@ namespace backend.Services
 
             return new UserDetailDto
             {
-                Id = user.UserId,
+                UserId = user.UserId,
                 Username = user.Username,
                 Email = user.Email,
                 FirstName = user.FirstName,

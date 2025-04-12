@@ -2,9 +2,9 @@
 using Microsoft.EntityFrameworkCore;
 using backend.Models;
 using backend.DTOs;
+using backend.Data;
 using System.Security.Cryptography;
 using System.Text;
-using backend.Data;
 
 namespace backend.Controllers
 {
@@ -21,31 +21,38 @@ namespace backend.Controllers
 
         // 🔹 POST: Create User
         [HttpPost]
-        public async Task<ActionResult<UserDto>> CreateUser(CreateUserDto userDto)
+        public async Task<IActionResult> CreateUser(CreateUserDto dto)
         {
-            if (await _context.Users.AnyAsync(u => u.Username == userDto.Username))
-                return BadRequest(new { message = "Username already exists" });
-
-            if (await _context.Users.AnyAsync(u => u.Email == userDto.Email))
-                return BadRequest(new { message = "Email already exists" });
-
             var user = new User
             {
-                Username = userDto.Username,
-                Email = userDto.Email,
-                FirstName = userDto.FirstName,
-                LastName = userDto.LastName,
-                PasswordHash = HashPassword(userDto.Password),
-                Permissions = userDto.Permissions ?? new List<string>(),
-                CreatedAt = DateTime.UtcNow,
-                UpdatedAt = DateTime.UtcNow,
-                IsActive = true
+                FirstName = dto.FirstName,
+                LastName = dto.LastName,
+                Username = dto.Username,
+                Email = dto.Email,
+                IsActive = dto.IsActive,
+                PasswordHash = HashPassword(dto.Password)
             };
 
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetUserById), new { id = user.UserId }, MapToDto(user));
+            // Add permissions
+            foreach (var perm in dto.UserPermissions)
+            {
+                _context.UserPermissions.Add(new UserPermission
+                {
+                    UserId = user.UserId,
+                    ModuleName = perm.ModuleName,
+                    CanCreate = perm.CanCreate,
+                    CanRead = perm.CanRead,
+                    CanUpdate = perm.CanUpdate,
+                    CanDelete = perm.CanDelete
+                });
+            }
+
+            await _context.SaveChangesAsync();
+
+            return Ok(user);
         }
 
         // 🔹 GET: User by ID
@@ -89,13 +96,15 @@ namespace backend.Controllers
             return Ok(result);
         }
 
-
         // 🔹 PUT: Update User
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateUser(int id, UpdateUserDto updateDto)
         {
             var user = await _context.Users.FindAsync(id);
             if (user == null) return NotFound();
+
+            if (user.Email != updateDto.Email && await _context.Users.AnyAsync(u => u.Email == updateDto.Email))
+                return BadRequest(new { message = "Email already exists" });
 
             user.FirstName = updateDto.FirstName;
             user.LastName = updateDto.LastName;
@@ -134,12 +143,10 @@ namespace backend.Controllers
         }
 
         // 🔐 Helper to hash passwords
+        // Update UserController's HashPassword method to use BCrypt like AuthService
         private string HashPassword(string password)
         {
-            using var sha256 = SHA256.Create();
-            var bytes = Encoding.UTF8.GetBytes(password);
-            var hash = sha256.ComputeHash(bytes);
-            return Convert.ToBase64String(hash);
+            return BCrypt.Net.BCrypt.HashPassword(password);
         }
 
         // 🔄 Helper to map User to DTO

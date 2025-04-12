@@ -21,7 +21,16 @@ const CategoryMaster = () => {
 
   const loadCategories = async () => {
     const data = await getAllCategories();
-    setCategories(data);
+    console.log('Fetched categories:', data);
+
+    // Ensure data is an array before setting it
+    if (Array.isArray(data)) {
+      setCategories(data);
+    } else if (data?.categories && Array.isArray(data.categories)) {
+      setCategories(data.categories);
+    } else {
+      setCategories([]); // fallback
+    }
   };
 
   const handleAddCategory = async () => {
@@ -102,7 +111,7 @@ const CategoryMaster = () => {
             </tr>
           </thead>
           <tbody>
-            {categories.map((cat) => (
+            {Array.isArray(categories) && categories.map((cat) => (
               <tr key={cat.categoryId}>
                 <td>{cat.categoryId}</td>
                 <td>

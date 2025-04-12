@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace backend.Migrations
 {
     /// <inheritdoc />
-    public partial class FixedUserSchema : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -33,11 +33,11 @@ namespace backend.Migrations
                 {
                     UserId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Username = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    PasswordHash = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    FirstName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    LastName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Username = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -86,10 +86,10 @@ namespace backend.Migrations
                 name: "UserPermissions",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<int>(type: "int", nullable: false),
-                    ModuleName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ModuleName = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    UserPermissionId = table.Column<int>(type: "int", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false),
                     CanCreate = table.Column<bool>(type: "bit", nullable: false),
                     CanRead = table.Column<bool>(type: "bit", nullable: false),
                     CanUpdate = table.Column<bool>(type: "bit", nullable: false),
@@ -97,7 +97,7 @@ namespace backend.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserPermissions", x => x.Id);
+                    table.PrimaryKey("PK_UserPermissions", x => new { x.UserId, x.ModuleName });
                     table.ForeignKey(
                         name: "FK_UserPermissions_Users_UserId",
                         column: x => x.UserId,
@@ -141,11 +141,6 @@ namespace backend.Migrations
                 name: "IX_Products_CreatedByUserId",
                 table: "Products",
                 column: "CreatedByUserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_UserPermissions_UserId",
-                table: "UserPermissions",
-                column: "UserId");
         }
 
         /// <inheritdoc />

@@ -8,18 +8,29 @@ const UserDetail = ({ userId, onClose, onEdit }) => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetchUserDetails();
+    if (userId) {
+      fetchUserDetails();
+    } else {
+      setError('User ID is required');
+      setLoading(false);
+    }
   }, [userId]);
 
   const fetchUserDetails = async () => {
     try {
       setLoading(true);
       const userData = await getUserById(userId);
-      setUser(userData);
-      setError(null);
+      console.log("Fetched user details:", userData); // Debug logging
+      
+      if (userData) {
+        setUser(userData);
+        setError(null);
+      } else {
+        setError('User data not found');
+      }
     } catch (err) {
       setError('Failed to load user details. Please try again.');
-      console.error(err);
+      console.error('Error fetching user details:', err);
     } finally {
       setLoading(false);
     }
@@ -97,26 +108,61 @@ const UserDetail = ({ userId, onClose, onEdit }) => {
           <div className="detail-value">{formatDate(user.updatedAt)}</div>
         </div>
         
-        {user.roles && user.roles.length > 0 && (
-          <div className="detail-item">
-            <div className="detail-label">Roles:</div>
+        {/* Display user permissions in a table format similar to UserForm */}
+        {user.userPermissions && user.userPermissions.length > 0 && (
+          <div className="detail-item permissions-section">
+            <div className="detail-label">Module Permissions:</div>
             <div className="detail-value">
-              <ul className="detail-list">
-                {user.roles.map(role => (
-                  <li key={role.id || role.name}>{role.name}</li>
-                ))}
-              </ul>
+              <table className="permissions-table">
+                <thead>
+                  <tr>
+                    <th>Module</th>
+                    <th>Create</th>
+                    <th>Read</th>
+                    <th>Update</th>
+                    <th>Delete</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {user.userPermissions.map((permission, idx) => (
+                    <tr key={idx}>
+                      <td>{permission.moduleName}</td>
+                      <td>
+                        <div className={`permission-indicator ${permission.canCreate ? 'granted' : 'denied'}`}>
+                          {permission.canCreate ? 'Yes' : 'No'}
+                        </div>
+                      </td>
+                      <td>
+                        <div className={`permission-indicator ${permission.canRead ? 'granted' : 'denied'}`}>
+                          {permission.canRead ? 'Yes' : 'No'}
+                        </div>
+                      </td>
+                      <td>
+                        <div className={`permission-indicator ${permission.canUpdate ? 'granted' : 'denied'}`}>
+                          {permission.canUpdate ? 'Yes' : 'No'}
+                        </div>
+                      </td>
+                      <td>
+                        <div className={`permission-indicator ${permission.canDelete ? 'granted' : 'denied'}`}>
+                          {permission.canDelete ? 'Yes' : 'No'}
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </div>
         )}
         
-        {user.permissions && user.permissions.length > 0 && (
+        {/* Keep the old permissions display as a fallback */}
+        {!user.userPermissions && user.permissions && user.permissions.length > 0 && (
           <div className="detail-item">
             <div className="detail-label">Permissions:</div>
             <div className="detail-value">
               <ul className="detail-list">
-                {user.permissions.map(permission => (
-                  <li key={permission.id || permission.name}>{permission.name}</li>
+                {user.permissions.map((permission, idx) => (
+                  <li key={idx}>{permission}</li>
                 ))}
               </ul>
             </div>

@@ -1,11 +1,28 @@
-import { api } from '../utils/api';
+// services/UserService.js
+import axios from 'axios';
 
-// Fetch all users with pagination and search
-export const getUsers = async (pageNumber = 1, pageSize = 10, searchTerm = '') => {
+// ✅ Base URL for API (adjust if needed)
+const API_BASE_URL = 'http://localhost:5207';
+const API_URL = `${API_BASE_URL}/api/users`;
+
+// ✅ Add interceptor for Authorization header
+axios.interceptors.request.use(
+  config => {
+    const token = localStorage.getItem('authToken');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  error => Promise.reject(error)
+);
+
+// ✅ Get users with pagination + search
+const getUsers = async (pageNumber = 1, pageSize = 10, searchTerm = '') => {
   try {
-    const response = await api.get('/users', {
-      params: { pageNumber, pageSize, searchTerm },
-    });
+    const response = await axios.get(
+      `${API_URL}?pageNumber=${pageNumber}&pageSize=${pageSize}&searchTerm=${encodeURIComponent(searchTerm)}`
+    );
     return response.data;
   } catch (error) {
     console.error('Error fetching users:', error);
@@ -13,21 +30,21 @@ export const getUsers = async (pageNumber = 1, pageSize = 10, searchTerm = '') =
   }
 };
 
-// Fetch user by ID
-export const getUserById = async (id) => {
+// ✅ Get single user by ID
+const getUserById = async (userId) => {
   try {
-    const response = await api.get(`/users/${id}`);
+    const response = await axios.get(`${API_URL}/${userId}`);
     return response.data;
   } catch (error) {
-    console.error(`Error fetching user with ID ${id}:`, error);
+    console.error(`Error fetching user ${userId}:`, error);
     throw error;
   }
 };
 
-// Create a new user
-export const createUser = async (userData) => {
+// ✅ Create new user
+const createUser = async (userData) => {
   try {
-    const response = await api.post('/users', userData);
+    const response = await axios.post(API_URL, userData);
     return response.data;
   } catch (error) {
     console.error('Error creating user:', error);
@@ -35,32 +52,32 @@ export const createUser = async (userData) => {
   }
 };
 
-// Update an existing user
-export const updateUser = async (userId, userData) => {
+// ✅ Update user info
+const updateUser = async (userId, userData) => {
   try {
-    const response = await api.put(`/users/${userId}`, userData);
+    const response = await axios.put(`${API_URL}/${userId}`, userData);
     return response.data;
   } catch (error) {
-    console.error(`Error updating user with ID ${userId}:`, error);
+    console.error(`Error updating user ${userId}:`, error);
     throw error;
   }
 };
 
-// Delete a user
-export const deleteUser = async (userId) => {
+// ✅ Delete user
+const deleteUser = async (userId) => {
   try {
-    const response = await api.delete(`/users/${userId}`);
+    const response = await axios.delete(`${API_URL}/${userId}`);
     return response.data;
   } catch (error) {
-    console.error(`Error deleting user with ID ${userId}:`, error);
+    console.error(`Error deleting user ${userId}:`, error);
     throw error;
   }
 };
 
-// Update user permissions
-export const updateUserPermissions = async (userId, permissions) => {
+// ✅ Update permissions
+const updateUserPermissions = async (userId, permissions) => {
   try {
-    const response = await api.put(`/users/${userId}/permissions`, permissions);
+    const response = await axios.put(`${API_URL}/${userId}/permissions`, permissions);
     return response.data;
   } catch (error) {
     console.error(`Error updating permissions for user ${userId}:`, error);
@@ -68,13 +85,23 @@ export const updateUserPermissions = async (userId, permissions) => {
   }
 };
 
-// Get user permissions (from user details)
-export const getUserPermissions = async (userId) => {
+// ✅ Get permissions
+const getUserPermissions = async (userId) => {
   try {
-    const user = await getUserById(userId);
-    return user.permissions || [];
+    const response = await axios.get(`${API_URL}/${userId}/permissions`);
+    return response.data;
   } catch (error) {
     console.error(`Error fetching permissions for user ${userId}:`, error);
     throw error;
   }
+};
+
+export {
+  getUsers,
+  getUserById,
+  createUser,
+  updateUser,
+  deleteUser,
+  updateUserPermissions,
+  getUserPermissions,
 };

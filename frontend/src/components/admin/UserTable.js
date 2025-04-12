@@ -1,151 +1,96 @@
 import React, { useState, useEffect } from 'react';
-import { getUsers, deleteUser } from '../../services/userService';
+import { deleteUser } from '../../services/userService';
 import './UserTable.css';
+import axios from 'axios';
 
 const UserTable = ({ onEdit, onView, onAddNew, setSelectedUser, refreshTrigger }) => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [pagination, setPagination] = useState({
-    pageNumber: 1,
-    pageSize: 7,
-    totalCount: 0
-  });
-  const [searchTerm, setSearchTerm] = useState('');
-  const [deleteConfirmation, setDeleteConfirmation] = useState({ show: false, userId: null });
-
-  const fetchUsers = async (page = 1, search = '') => {
-    try {
-      setLoading(true);
-      const data = await getUsers(page, pagination.pageSize, search);
-      setUsers(data.users || []);
-      setPagination((prev) => ({
-        ...prev,
-        pageNumber: data.pageNumber || page,
-        totalCount: data.totalCount || 0
-      }));
-      setError(null);
-    } catch (err) {
-      setError('Failed to load users. Please try again later.');
-      console.error('Error fetching users:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   useEffect(() => {
-    fetchUsers(pagination.pageNumber, searchTerm);
-  }, [pagination.pageNumber, refreshTrigger]);
+    fetchUsers();
+  }, [refreshTrigger]);
 
-  const handleDeleteConfirm = async () => {
-    if (!deleteConfirmation.userId) return;
+  const fetchUsers = async () => {
+    setLoading(true);
     try {
-      setLoading(true);
-      await deleteUser(deleteConfirmation.userId);
-      fetchUsers(1, searchTerm); // Reset to first page after delete
-      setDeleteConfirmation({ show: false, userId: null });
-      alert('User deleted successfully');
-    } catch (err) {
-      console.error('Error deleting user:', err);
-      alert('Error deleting user: ' + (err.response?.data?.message || err.message || 'Unknown error'));
+      const res = await axios.get('http://localhost:5207/api/users');
+      const userList = res.data.users?.$values || [];
+      setUsers(userList);
+    } catch (error) {
+      console.error('Error fetching users:', error);
+      setUsers([]); // set to empty array if fetch fails
     } finally {
       setLoading(false);
     }
   };
 
-  const handlePageChange = (newPage) => {
-    if (newPage > 0 && newPage <= Math.ceil(pagination.totalCount / pagination.pageSize)) {
-      setPagination((prev) => ({ ...prev, pageNumber: newPage }));
+  const handleDelete = async (userId) => {
+    if (window.confirm('Are you sure you want to delete this user?')) {
+      try {
+        await deleteUser(userId);
+        setUsers(users.filter((user) => user.userId !== userId));
+        alert('User deleted successfully');
+      } catch (error) {
+        console.error('Error deleting user:', error);
+        alert('Failed to delete user');
+      }
     }
   };
 
-  const handleSearch = (e) => {
-    e.preventDefault();
-    setPagination((prev) => ({ ...prev, pageNumber: 1 })); // Reset to page 1
-    fetchUsers(1, searchTerm); // Fetch results based on search
+  const formatDate = (dateStr) => {
+    if (!dateStr || dateStr.startsWith('0001')) return 'N/A';
+    return new Date(dateStr).toLocaleString();
   };
-
-  const totalPages = Math.ceil(pagination.totalCount / pagination.pageSize) || 1;
 
   return (
     <div className="user-table-container">
-      <div className="header-row">
-        <h2>User Management</h2>
-        <button className="btn-add" onClick={onAddNew}>Add New User</button>
-      </div>
-
       <div className="table-header">
-        <form onSubmit={handleSearch}>
-          <input
-            type="text"
-            placeholder="Search users..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-          <button type="submit">Search</button>
-        </form>
+        <h2>User List</h2>
+        <button className="add-button" onClick={onAddNew}>New User</button>
       </div>
 
       {loading ? (
-        <div className="loading">Loading users...</div>
-      ) : error ? (
-        <div className="error">{error}</div>
+        <p>Loading...</p>
       ) : (
-        <>
-          <table className="user-table">
-            <thead>
+        <table className="user-table">
+          <thead>
+            <tr>
+              <th>User ID</th>
+              <th>Username</th>
+              <th>Email</th>
+              <th>Full Name</th>
+              <th>Active</th>
+              <th>Created At</th>
+              <th>Updated At</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {users.length > 0 ? (
+              users.map((user) => (
+                <tr key={user.userId}>
+                  <td>{user.userId}</td>
+                  <td>{user.username ?? 'N/A'}</td>
+                  <td>{user.email ?? 'N/A'}</td>
+                  <td>{(user.firstName ?? '') + ' ' + (user.lastName ?? '')}</td>
+                  <td>{user.isActive ? 'Yes' : 'No'}</td>
+                  <td>{formatDate(user.createdAt)}</td>
+                  <td>{formatDate(user.updatedAt)}</td>
+                  <td>
+                    <button onClick={() => onView(user)}>View</button>
+                    <button onClick={() => onEdit(user)}>Edit</button>
+                    <button onClick={() => handleDelete(user.userId)}>Delete</button>
+                  </td>
+                </tr>
+              ))
+            ) : (
               <tr>
-                <th>ID</th>
-                <th>Username</th>
-                <th>Email</th>
-                <th>Name</th>
-                <th>Created</th>
-                <th>Actions</th>
+                <td colSpan="8" style={{ textAlign: 'center' }}>No users found.</td>
               </tr>
-            </thead>
-            <tbody>
-              {users.length > 0 ? (
-                users.map((user) => (
-                  <tr key={user.userId}>
-                    <td>{user.userId}</td>
-                    <td>{user.username}</td>
-                    <td>{user.email}</td>
-                    <td>{`${user.firstName || ''} ${user.lastName || ''}`.trim()}</td>
-                    <td>{new Date(user.createdAt || Date.now()).toLocaleDateString()}</td>
-                    <td>
-                      <button onClick={() => onView(user)}>View</button>
-                      <button onClick={() => onEdit(user)}>Edit</button>
-                      <button onClick={() => setDeleteConfirmation({ show: true, userId: user.userId })}>Delete</button>
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr><td colSpan="6">No users found</td></tr>
-              )}
-            </tbody>
-          </table>
-
-          <div className="pagination">
-            <button disabled={pagination.pageNumber === 1} onClick={() => handlePageChange(pagination.pageNumber - 1)}>Previous</button>
-            {Array.from({ length: totalPages }, (_, index) => (
-              <button key={index} className={pagination.pageNumber === index + 1 ? 'active' : ''} onClick={() => handlePageChange(index + 1)}>{index + 1}</button>
-            ))}
-            <button disabled={pagination.pageNumber === totalPages} onClick={() => handlePageChange(pagination.pageNumber + 1)}>Next</button>
-          </div>
-        </>
-      )}
-
-      {deleteConfirmation.show && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <h3>Confirm Delete</h3>
-            <p>Are you sure you want to delete this user?</p>
-            <div className="modal-actions">
-              <button onClick={() => setDeleteConfirmation({ show: false, userId: null })}>Cancel</button>
-              <button onClick={handleDeleteConfirm} className="btn-delete">Delete</button>
-            </div>
-          </div>
-        </div>
+            )}
+          </tbody>
+        </table>
       )}
     </div>
   );

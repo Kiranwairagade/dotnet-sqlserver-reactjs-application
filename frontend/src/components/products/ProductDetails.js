@@ -8,6 +8,7 @@ const ProductDetails = () => {
   const navigate = useNavigate();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [mainImage, setMainImage] = useState('');
 
   useEffect(() => {
@@ -28,6 +29,7 @@ const ProductDetails = () => {
       setLoading(false);
     } catch (error) {
       console.error('Error fetching product details:', error);
+      setError('Failed to load product details');
       setLoading(false);
     }
   };
@@ -39,6 +41,7 @@ const ProductDetails = () => {
         navigate('/products');
       } catch (error) {
         console.error('Error deleting product:', error);
+        setError('Failed to delete product');
       }
     }
   };
@@ -48,11 +51,33 @@ const ProductDetails = () => {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="product-details-container">
+        <div className="loading">Loading product details...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="product-details-container">
+        <div className="error-message">{error}</div>
+        <div className="back-link">
+          <Link to="/products">&larr; Back to Products</Link>
+        </div>
+      </div>
+    );
   }
 
   if (!product) {
-    return <div>Product not found</div>;
+    return (
+      <div className="product-details-container">
+        <div className="not-found">Product not found</div>
+        <div className="back-link">
+          <Link to="/products">&larr; Back to Products</Link>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -105,6 +130,12 @@ const ProductDetails = () => {
               <span className="label">Price:</span>
               <span className="price">${product.price.toFixed(2)}</span>
             </div>
+            {product.discountPrice && (
+              <div className="info-row">
+                <span className="label">Discount Price:</span>
+                <span className="discount-price">${product.discountPrice.toFixed(2)}</span>
+              </div>
+            )}
             <div className="info-row">
               <span className="label">Stock:</span>
               <span className={`stock ${product.stockQuantity < 10 ? 'low-stock' : ''}`}>
@@ -114,6 +145,14 @@ const ProductDetails = () => {
             <div className="info-row">
               <span className="label">Category:</span>
               <span>{product.category ? product.category.name : 'N/A'}</span>
+            </div>
+            <div className="info-row">
+              <span className="label">Created:</span>
+              <span>{new Date(product.createdAt).toLocaleDateString()}</span>
+            </div>
+            <div className="info-row">
+              <span className="label">Last Updated:</span>
+              <span>{new Date(product.updatedAt).toLocaleDateString()}</span>
             </div>
           </div>
           
