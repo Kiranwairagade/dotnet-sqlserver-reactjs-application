@@ -23,11 +23,9 @@ const CategoryMaster = () => {
     const data = await getAllCategories();
     console.log('Fetched categories:', data);
 
-    // Ensure data is an array before setting it
-    if (Array.isArray(data)) {
-      setCategories(data);
-    } else if (data?.categories && Array.isArray(data.categories)) {
-      setCategories(data.categories);
+    // Extract categories from $values
+    if (Array.isArray(data?.$values)) {
+      setCategories(data.$values);
     } else {
       setCategories([]); // fallback
     }
@@ -111,49 +109,50 @@ const CategoryMaster = () => {
             </tr>
           </thead>
           <tbody>
-            {Array.isArray(categories) && categories.map((cat) => (
-              <tr key={cat.categoryId}>
-                <td>{cat.categoryId}</td>
-                <td>
-                  {editingId === cat.categoryId ? (
-                    <input
-                      type="text"
-                      value={editedName}
-                      onChange={(e) => setEditedName(e.target.value)}
-                    />
-                  ) : (
-                    cat.name
-                  )}
-                </td>
-                <td>
-                  {editingId === cat.categoryId ? (
-                    <input
-                      type="text"
-                      value={editedDescription}
-                      onChange={(e) => setEditedDescription(e.target.value)}
-                    />
-                  ) : (
-                    cat.description || '-'
-                  )}
-                </td>
-                <td>
-                  <div className="action-buttons">
+            {Array.isArray(categories) && categories.length > 0 ? (
+              categories.map((cat) => (
+                <tr key={cat.categoryId}>
+                  <td>{cat.categoryId}</td>
+                  <td>
                     {editingId === cat.categoryId ? (
-                      <>
-                        <button className="edit-btn" onClick={() => handleUpdate(cat.categoryId)}>Save</button>
-                        <button className="delete-btn" onClick={handleCancel}>Cancel</button>
-                      </>
+                      <input
+                        type="text"
+                        value={editedName}
+                        onChange={(e) => setEditedName(e.target.value)}
+                      />
                     ) : (
-                      <>
-                        <button className="edit-btn" onClick={() => handleEdit(cat)}>Edit</button>
-                        <button className="delete-btn" onClick={() => handleDelete(cat.categoryId)}>Delete</button>
-                      </>
+                      cat.name
                     )}
-                  </div>
-                </td>
-              </tr>
-            ))}
-            {categories.length === 0 && (
+                  </td>
+                  <td>
+                    {editingId === cat.categoryId ? (
+                      <input
+                        type="text"
+                        value={editedDescription}
+                        onChange={(e) => setEditedDescription(e.target.value)}
+                      />
+                    ) : (
+                      cat.description || '-'
+                    )}
+                  </td>
+                  <td>
+                    <div className="action-buttons">
+                      {editingId === cat.categoryId ? (
+                        <>
+                          <button className="edit-btn" onClick={() => handleUpdate(cat.categoryId)}>Save</button>
+                          <button className="delete-btn" onClick={handleCancel}>Cancel</button>
+                        </>
+                      ) : (
+                        <>
+                          <button className="edit-btn" onClick={() => handleEdit(cat)}>Edit</button>
+                          <button className="delete-btn" onClick={() => handleDelete(cat.categoryId)}>Delete</button>
+                        </>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              ))
+            ) : (
               <tr>
                 <td colSpan="4">No categories found.</td>
               </tr>

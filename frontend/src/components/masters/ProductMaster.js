@@ -1,10 +1,12 @@
+// ProductMaster.jsx
 import React, { useState, useEffect } from 'react';
-import { getProducts, deleteProduct } from '../../services/productService';
-import { Link } from 'react-router-dom';
-import { AlertCircle, Search, PlusCircle, Eye, Edit2, Trash2 } from 'lucide-react';
+import { getProducts, deleteProduct, createProduct, updateProduct } from '../../services/productService';
+import { Link, useNavigate } from 'react-router-dom';
+import { AlertCircle, Search, PlusCircle, Eye, Edit2, Trash2, Save, X } from 'lucide-react';
 import './ProductMaster.css';
 
 const ProductMaster = () => {
+  const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
@@ -14,6 +16,19 @@ const ProductMaster = () => {
   const [sortField, setSortField] = useState('name');
   const [sortDirection, setSortDirection] = useState('asc');
   const [isDeleting, setIsDeleting] = useState(false);
+  const [showProductForm, setShowProductForm] = useState(false);
+  const [currentProduct, setCurrentProduct] = useState({
+    id: null,
+    name: '',
+    category: '',
+    price: 0,
+    stockQuantity: 0,
+    description: '',
+    imageUrl: '',
+  });
+  const [isEditing, setIsEditing] = useState(false);
+  const [formErrors, setFormErrors] = useState({});
+  const [isSaving, setIsSaving] = useState(false);
 
   const pageSize = 10;
 
@@ -25,10 +40,8 @@ const ProductMaster = () => {
     try {
       setLoading(true);
       setError(null);
-      // Changed from getAllProducts to getProducts to match your service export
       const response = await getProducts(currentPage, searchTerm, pageSize, sortField, sortDirection);
 
-      // Make sure the response structure matches what your API returns
       const { products = [], totalCount = 0 } = response;
       setProducts(products);
       setTotalPages(Math.ceil(totalCount / pageSize));
@@ -72,6 +85,92 @@ const ProductMaster = () => {
       } finally {
         setIsDeleting(false);
       }
+    }
+  };
+
+  const handleAddNewClick = () => {
+    setCurrentProduct({
+      id: null,
+      name: '',
+      category: '',
+      price: 0,
+      stockQuantity: 0,
+      description: '',
+      imageUrl: '',
+    });
+    setIsEditing(false);
+    setShowProductForm(true);
+    setFormErrors({});
+  };
+
+  const handleEditProduct = (product) => {
+    setCurrentProduct({ ...product });
+    setIsEditing(true);
+    setShowProductForm(true);
+    setFormErrors({});
+  };
+
+  const handleFormChange = (e) => {
+    const { name, value } = e.target;
+    let processedValue = value;
+    
+    // Convert numeric fields
+    if (name === 'price' || name === 'stockQuantity') {
+      processedValue = name === 'price' ? parseFloat(value) : parseInt(value, 10);
+    }
+    
+    setCurrentProduct({
+      ...currentProduct,
+      [name]: processedValue,
+    });
+  };
+
+  const validateForm = () => {
+    const errors = {};
+    
+    if (!currentProduct.name.trim()) {
+      errors.name = 'Product name is required';
+    }
+    
+    if (!currentProduct.category.trim()) {
+      errors.category = 'Category is required';
+    }
+    
+    if (isNaN(currentProduct.price) || currentProduct.price < 0) {
+      errors.price = 'Price must be a valid number greater than or equal to 0';
+    }
+    
+    if (isNaN(currentProduct.stockQuantity) || currentProduct.stockQuantity < 0) {
+      errors.stockQuantity = 'Stock quantity must be a valid number greater than or equal to 0';
+    }
+    
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  const handleFormSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!validateForm()) {
+      return;
+    }
+    
+    try {
+      setIsSaving(true);
+      
+      if (isEditing) {
+        await updateProduct(currentProduct.id, currentProduct);
+      } else {
+        await createProduct(currentProduct);
+      }
+      
+      setShowProductForm(false);
+      fetchProducts();
+    } catch (error) {
+      console.error('Error saving product:', error);
+      setError(`Failed to ${isEditing ? 'update' : 'create'} product. Please try again.`);
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -146,14 +245,143 @@ const ProductMaster = () => {
     );
   };
 
+  const renderProductForm = () => {
+    return (
+      <div className="product-form-overlay">
+        <div className="product-form-container">
+          <div className="product-form-header">
+            <h2>{isEditing ? 'Edit Product' : 'Add New Product'}</h2>
+            <button 
+              className="close-form-btn" 
+              onClick={() => setShowProductForm(false)}
+            >
+              <X size={20} />
+            </button>
+          </div>
+          
+          <form onSubmit={handleFormSubmit} className="product-form">
+            <div className="form-group">
+              <label htmlFor="name">Product Name</label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                value={currentProduct.name}
+                onChange={handleFormChange}
+                placeholder="Enter product name"
+              />
+              {formErrors.name && <span className="error-message">{formErrors.name}</span>}
+            </div>
+            
+            <div className="form-group">
+              <label htmlFor="category">Category</label>
+              <input
+                type="text"
+                id="category"
+                name="category"
+                value={currentProduct.category}
+                onChange={handleFormChange}
+                placeholder="Enter category"
+              />
+              {formErrors.category && <span className="error-message">{formErrors.category}</span>}
+            </div>
+            
+            <div className="form-row">
+              <div className="form-group">
+                <label htmlFor="price">Price ($)</label>
+                <input
+                  type="number"
+                  id="price"
+                  name="price"
+                  value={currentProduct.price}
+                  onChange={handleFormChange}
+                  step="0.01"
+                  min="0"
+                />
+                {formErrors.price && <span className="error-message">{formErrors.price}</span>}
+              </div>
+              
+              <div className="form-group">
+                <label htmlFor="stockQuantity">Stock Quantity</label>
+                <input
+                  type="number"
+                  id="stockQuantity"
+                  name="stockQuantity"
+                  value={currentProduct.stockQuantity}
+                  onChange={handleFormChange}
+                  step="1"
+                  min="0"
+                />
+                {formErrors.stockQuantity && <span className="error-message">{formErrors.stockQuantity}</span>}
+              </div>
+            </div>
+            
+            <div className="form-group">
+              <label htmlFor="description">Description</label>
+              <textarea
+                id="description"
+                name="description"
+                value={currentProduct.description}
+                onChange={handleFormChange}
+                placeholder="Enter product description"
+                rows="4"
+              />
+            </div>
+            
+            <div className="form-group">
+              <label htmlFor="imageUrl">Image URL</label>
+              <input
+                type="url"
+                id="imageUrl"
+                name="imageUrl"
+                value={currentProduct.imageUrl}
+                onChange={handleFormChange}
+                placeholder="Enter image URL"
+              />
+            </div>
+            
+            {currentProduct.imageUrl && (
+              <div className="image-preview">
+                <p>Image Preview:</p>
+                <img src={currentProduct.imageUrl} alt="Product preview" />
+              </div>
+            )}
+            
+            <div className="form-actions">
+              <button
+                type="button"
+                className="cancel-btn"
+                onClick={() => setShowProductForm(false)}
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="save-btn"
+                disabled={isSaving}
+              >
+                {isSaving ? 'Saving...' : (
+                  <>
+                    <Save size={16} />
+                    <span>{isEditing ? 'Update Product' : 'Create Product'}</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="product-management-container">
       <div className="product-management-header">
         <h1>Product Management</h1>
-        <Link to="/products/new" className="add-product-btn">
+        <button onClick={handleAddNewClick} className="add-product-btn">
           <PlusCircle size={20} />
           <span>Add New Product</span>
-        </Link>
+        </button>
       </div>
 
       <div className="search-and-filter">
@@ -266,12 +494,20 @@ const ProductMaster = () => {
                       </span>
                     </td>
                     <td className="action-buttons">
-                      <Link to={`/products/${product.id}`} className="view-btn" title="View Details">
+                      <button 
+                        className="view-btn" 
+                        title="View Details"
+                        onClick={() => navigate(`/products/${product.id}`)}
+                      >
                         <Eye size={16} />
-                      </Link>
-                      <Link to={`/products/edit/${product.id}`} className="edit-btn" title="Edit Product">
+                      </button>
+                      <button 
+                        className="edit-btn" 
+                        title="Edit Product"
+                        onClick={() => handleEditProduct(product)}
+                      >
                         <Edit2 size={16} />
-                      </Link>
+                      </button>
                       <button
                         className="delete-btn"
                         onClick={() => handleDeleteProduct(product.id)}
@@ -295,6 +531,8 @@ const ProductMaster = () => {
           </div>
         </>
       )}
+
+      {showProductForm && renderProductForm()}
     </div>
   );
 };

@@ -11,12 +11,16 @@ F:\Aarkay\dotnet-sqlserver-reactjs-application\backend\bin\Debug\net9.0\Azure.Id
 F:\Aarkay\dotnet-sqlserver-reactjs-application\backend\bin\Debug\net9.0\BCrypt.Net-Next.dll
 F:\Aarkay\dotnet-sqlserver-reactjs-application\backend\bin\Debug\net9.0\Humanizer.dll
 F:\Aarkay\dotnet-sqlserver-reactjs-application\backend\bin\Debug\net9.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+F:\Aarkay\dotnet-sqlserver-reactjs-application\backend\bin\Debug\net9.0\Microsoft.AspNetCore.JsonPatch.dll
+F:\Aarkay\dotnet-sqlserver-reactjs-application\backend\bin\Debug\net9.0\Microsoft.AspNetCore.Mvc.Razor.Extensions.dll
 F:\Aarkay\dotnet-sqlserver-reactjs-application\backend\bin\Debug\net9.0\Microsoft.AspNetCore.OpenApi.dll
+F:\Aarkay\dotnet-sqlserver-reactjs-application\backend\bin\Debug\net9.0\Microsoft.AspNetCore.Razor.Language.dll
 F:\Aarkay\dotnet-sqlserver-reactjs-application\backend\bin\Debug\net9.0\Microsoft.Bcl.AsyncInterfaces.dll
 F:\Aarkay\dotnet-sqlserver-reactjs-application\backend\bin\Debug\net9.0\Microsoft.Build.Locator.dll
 F:\Aarkay\dotnet-sqlserver-reactjs-application\backend\bin\Debug\net9.0\Microsoft.CodeAnalysis.dll
 F:\Aarkay\dotnet-sqlserver-reactjs-application\backend\bin\Debug\net9.0\Microsoft.CodeAnalysis.CSharp.dll
 F:\Aarkay\dotnet-sqlserver-reactjs-application\backend\bin\Debug\net9.0\Microsoft.CodeAnalysis.CSharp.Workspaces.dll
+F:\Aarkay\dotnet-sqlserver-reactjs-application\backend\bin\Debug\net9.0\Microsoft.CodeAnalysis.Razor.dll
 F:\Aarkay\dotnet-sqlserver-reactjs-application\backend\bin\Debug\net9.0\Microsoft.CodeAnalysis.Workspaces.dll
 F:\Aarkay\dotnet-sqlserver-reactjs-application\backend\bin\Debug\net9.0\Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.dll
 F:\Aarkay\dotnet-sqlserver-reactjs-application\backend\bin\Debug\net9.0\Microsoft.CodeAnalysis.Workspaces.MSBuild.dll
@@ -48,6 +52,8 @@ F:\Aarkay\dotnet-sqlserver-reactjs-application\backend\bin\Debug\net9.0\Microsof
 F:\Aarkay\dotnet-sqlserver-reactjs-application\backend\bin\Debug\net9.0\Microsoft.SqlServer.Server.dll
 F:\Aarkay\dotnet-sqlserver-reactjs-application\backend\bin\Debug\net9.0\Microsoft.Win32.SystemEvents.dll
 F:\Aarkay\dotnet-sqlserver-reactjs-application\backend\bin\Debug\net9.0\Mono.TextTemplating.dll
+F:\Aarkay\dotnet-sqlserver-reactjs-application\backend\bin\Debug\net9.0\Newtonsoft.Json.dll
+F:\Aarkay\dotnet-sqlserver-reactjs-application\backend\bin\Debug\net9.0\Newtonsoft.Json.Bson.dll
 F:\Aarkay\dotnet-sqlserver-reactjs-application\backend\bin\Debug\net9.0\Swashbuckle.AspNetCore.Swagger.dll
 F:\Aarkay\dotnet-sqlserver-reactjs-application\backend\bin\Debug\net9.0\Swashbuckle.AspNetCore.SwaggerGen.dll
 F:\Aarkay\dotnet-sqlserver-reactjs-application\backend\bin\Debug\net9.0\Swashbuckle.AspNetCore.SwaggerUI.dll
