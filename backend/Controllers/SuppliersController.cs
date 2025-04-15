@@ -11,7 +11,6 @@ namespace backend.Controllers
     public class SuppliersController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
-
         public SuppliersController(ApplicationDbContext context)
         {
             _context = context;
@@ -21,20 +20,27 @@ namespace backend.Controllers
         [HttpGet]
         public IActionResult GetAllSuppliers()
         {
-            var suppliers = _context.Suppliers
-                .Select(s => new
-                {
-                    s.SupplierId,
-                    s.Name,
-                    s.Email,
-                    s.Phone,
-                    s.Address,
-                    s.CreatedAt,
-                    s.UpdatedAt
-                })
-                .ToList();
+            try
+            {
+                var suppliers = _context.Suppliers
+                    .Select(s => new
+                    {
+                        supplierId = s.SupplierId,
+                        name = s.Name,
+                        email = s.Email,
+                        phone = s.Phone,
+                        address = s.Address,
+                        createdAt = s.CreatedAt,
+                        updatedAt = s.UpdatedAt
+                    })
+                    .ToList();
 
-            return Ok(suppliers);
+                return Ok(suppliers);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
         }
 
         // GET: api/suppliers/{id}
@@ -42,11 +48,19 @@ namespace backend.Controllers
         public IActionResult GetSupplierById(int id)
         {
             var supplier = _context.Suppliers.FirstOrDefault(s => s.SupplierId == id);
-
             if (supplier == null)
                 return NotFound("Supplier not found.");
 
-            return Ok(supplier);
+            return Ok(new
+            {
+                supplierId = supplier.SupplierId,
+                name = supplier.Name,
+                email = supplier.Email,
+                phone = supplier.Phone,
+                address = supplier.Address,
+                createdAt = supplier.CreatedAt,
+                updatedAt = supplier.UpdatedAt
+            });
         }
 
         // POST: api/suppliers
@@ -58,11 +72,19 @@ namespace backend.Controllers
 
             supplier.CreatedAt = DateTime.UtcNow;
             supplier.UpdatedAt = DateTime.UtcNow;
-
             _context.Suppliers.Add(supplier);
             _context.SaveChanges();
 
-            return Ok(supplier);
+            return Ok(new
+            {
+                supplierId = supplier.SupplierId,
+                name = supplier.Name,
+                email = supplier.Email,
+                phone = supplier.Phone,
+                address = supplier.Address,
+                createdAt = supplier.CreatedAt,
+                updatedAt = supplier.UpdatedAt
+            });
         }
 
         // PUT: api/suppliers/{id}
@@ -81,10 +103,18 @@ namespace backend.Controllers
             supplier.Phone = updatedSupplier.Phone;
             supplier.Address = updatedSupplier.Address;
             supplier.UpdatedAt = DateTime.UtcNow;
-
             _context.SaveChanges();
 
-            return Ok(supplier);
+            return Ok(new
+            {
+                supplierId = supplier.SupplierId,
+                name = supplier.Name,
+                email = supplier.Email,
+                phone = supplier.Phone,
+                address = supplier.Address,
+                createdAt = supplier.CreatedAt,
+                updatedAt = supplier.UpdatedAt
+            });
         }
 
         // DELETE: api/suppliers/{id}
@@ -97,7 +127,6 @@ namespace backend.Controllers
 
             _context.Suppliers.Remove(supplier);
             _context.SaveChanges();
-
             return Ok("Supplier deleted successfully");
         }
     }

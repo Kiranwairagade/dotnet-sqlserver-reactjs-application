@@ -6,10 +6,20 @@ const BASE_URL = 'http://localhost:5207/api'; // Replace with your actual API UR
 export const getAllSuppliers = async () => {
   try {
     const response = await axios.get(`${BASE_URL}/suppliers`);
-    return response.data;
+    console.log('API Response:', response.data);
+    
+    // Check if response.data is an object with a $values property
+    if (response.data && response.data.$values) {
+      return response.data.$values; // Return the array of suppliers
+    } else if (Array.isArray(response.data)) {
+      return response.data; // Already an array
+    } else {
+      console.error('Unexpected API response format:', response.data);
+      return [];
+    }
   } catch (error) {
     console.error("Error fetching suppliers:", error);
-    return null;
+    return [];
   }
 };
 
