@@ -1,4 +1,3 @@
-// DTOs/UserDtos.cs
 using System;
 using System.Collections.Generic;
 
@@ -24,16 +23,28 @@ namespace backend.DTOs
         public string FirstName { get; set; } = string.Empty;
         public string LastName { get; set; } = string.Empty;
         public bool IsActive { get; set; }
-        public List<UserPermissionDto> UserPermissions { get; set; } = new List<UserPermissionDto>();
-
+        public List<UserPermissionDto>? UserPermissions { get; set; }
     }
 
     public class UpdateUserDto
     {
+        public string Username { get; set; }
+        public string Email { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public bool IsActive { get; set; }
+        public List<UserPermissionDto>? UserPermissions { get; set; }
+    }
+
+
+    public class UpdateUserRequest
+    {
+        public string Username { get; set; } = string.Empty;
         public string FirstName { get; set; } = string.Empty;
         public string LastName { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
-        public bool IsActive { get; set; } = true;
+        public bool IsActive { get; set; }
+        public List<UserPermissionDto> UserPermissions { get; set; } = new();
     }
 
     public class UsersResponse
@@ -44,18 +55,21 @@ namespace backend.DTOs
 
     public class UserDetailDto
     {
-        public int UserId { get; set; }              // <-- changed from Id to UserId
+        public int UserId { get; set; }
         public string Username { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
         public string FirstName { get; set; } = string.Empty;
         public string LastName { get; set; } = string.Empty;
     }
 
-    public class UpdateUserRequest
+    public class UserPermissionDto
     {
-        public string Username { get; set; } = string.Empty;
-        public string Email { get; set; } = string.Empty;
-        public string FirstName { get; set; } = string.Empty;
-        public string LastName { get; set; } = string.Empty;
+        public int UserPermissionId { get; set; }
+        public int UserId { get; set; }
+        public string ModuleName { get; set; } = string.Empty;
+        public bool CanCreate { get; set; }
+        public bool CanRead { get; set; }
+        public bool CanUpdate { get; set; }
+        public bool CanDelete { get; set; }
     }
 }
