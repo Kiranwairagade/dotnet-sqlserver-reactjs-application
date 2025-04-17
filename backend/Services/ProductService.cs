@@ -2,19 +2,18 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using backend.Data;
-using backend.DTOs;
-using backend.Models;
 using Microsoft.EntityFrameworkCore;
+using backend.Data;
+using backend.Models;
 
 namespace backend.Services
 {
     public interface IProductService
     {
-        Task<ProductsResponse> GetProductsAsync(int pageNumber, int pageSize, int? categoryId, string? searchTerm);
-        Task<ProductDetailDto> GetProductByIdAsync(int id);
-        Task<int> CreateProductAsync(CreateProductRequest request, int userId);
-        Task<bool> UpdateProductAsync(int id, UpdateProductRequest request);
+        Task<IEnumerable<Product>> GetAllProductsAsync();
+        Task<Product> GetProductByIdAsync(int id);
+        Task<Product> CreateProductAsync(CreateProductDTO productDTO);
+        Task<Product> UpdateProductAsync(int id, UpdateProductDTO productDTO);
         Task<bool> DeleteProductAsync(int id);
     }
 
@@ -27,147 +26,59 @@ namespace backend.Services
             _context = context;
         }
 
-        public async Task<ProductsResponse> GetProductsAsync(int pageNumber, int pageSize, int? categoryId, string? searchTerm)
+        public async Task<IEnumerable<Product>> GetAllProductsAsync()
         {
-            var query = _context.Products.AsQueryable();
-
-            if (categoryId.HasValue)
-            {
-                query = query.Where(p => p.CategoryId == categoryId);
-            }
-
-            if (!string.IsNullOrEmpty(searchTerm))
-            {
-                query = query.Where(p => p.ProductName.Contains(searchTerm) || p.Description.Contains(searchTerm));
-            }
-
-            var products = await query
-                .Skip((pageNumber - 1) * pageSize)
-                .Take(pageSize)
-                .Select(p => new ProductListDto
-                {
-                    ProductId = p.ProductId,
-                    ProductName = p.ProductName,
-                    Description = p.Description,
-                    SKU = p.SKU,
-                    Price = p.Price,
-                    DiscountPrice = p.DiscountPrice,
-                    Quantity = p.Quantity,
-                    IsActive = p.IsActive,
-                    CreatedAt = p.CreatedAt,
-                    CategoryId = p.CategoryId,
-                    CategoryName = p.Category!.CategoryName, // Use null-forgiving operator
-                    PrimaryImageUrl = p.Images.FirstOrDefault(pi => pi.IsPrimary)!.ImageUrl // Use null-forgiving operator
-                })
-                .ToListAsync();
-
-            var totalCount = await query.CountAsync();
-
-            return new ProductsResponse
-            {
-                Products = products,
-                TotalCount = totalCount,
-                PageNumber = pageNumber,
-                PageSize = pageSize
-            };
+            return await _context.Products.ToListAsync();
         }
 
-        public async Task<ProductDetailDto> GetProductByIdAsync(int id)
+        public async Task<Product> GetProductByIdAsync(int id)
         {
-            var product = await _context.Products
-                .Include(p => p.Category)
-                .Include(p => p.CreatedByUser)
-                .Include(p => p.Images)
-                .FirstOrDefaultAsync(p => p.ProductId == id);
+            var product = await _context.Products.FindAsync(id);
 
             if (product == null)
             {
-                throw new KeyNotFoundException("Product not found.");
+                throw new KeyNotFoundException($"Product with ID {id} not found.");
             }
 
-            return new ProductDetailDto
-            {
-                ProductId = product.ProductId,
-                ProductName = product.ProductName,
-                Description = product.Description,
-                SKU = product.SKU,
-                Price = product.Price,
-                DiscountPrice = product.DiscountPrice,
-                Quantity = product.Quantity,
-                IsActive = product.IsActive,
-                CreatedAt = product.CreatedAt,
-                UpdatedAt = product.UpdatedAt,
-                CategoryId = product.CategoryId,
-                CategoryName = product.Category?.CategoryName ?? string.Empty, // Use null-conditional operator
-                CreatedByUserId = product.CreatedByUserId,
-                CreatedByUsername = product.CreatedByUser?.Username ?? string.Empty, // Use null-conditional operator
-                Images = product.Images.Select(pi => new ProductImageDto
-                {
-                    ImageId = pi.ImageId,
-                    ImageUrl = pi.ImageUrl,
-                    IsPrimary = pi.IsPrimary
-                }).ToList()
-            };
+            return product;
         }
 
-        public async Task<int> CreateProductAsync(CreateProductRequest request, int userId)
+        public async Task<Product> CreateProductAsync(CreateProductDTO productDTO)
         {
             var product = new Product
             {
-                ProductName = request.ProductName,
-                Description = request.Description,
-                SKU = request.SKU,
-                Price = request.Price,
-                DiscountPrice = request.DiscountPrice,
-                Quantity = request.Quantity,
-                IsActive = true,
-                CreatedAt = DateTime.UtcNow,
-                UpdatedAt = DateTime.UtcNow,
-                CategoryId = request.CategoryId,
-                CreatedByUserId = userId,
-                Images = request.Images.Select(pi => new ProductImage
-                {
-                    ImageUrl = pi.ImageUrl,
-                    IsPrimary = pi.IsPrimary
-                }).ToList()
+                Name = productDTO.Name,
+                Price = productDTO.Price,
+                Category = productDTO.Category,
+                Stock = productDTO.Stock,
+                CreatedAt = DateTime.UtcNow
             };
 
             _context.Products.Add(product);
             await _context.SaveChangesAsync();
 
-            return product.ProductId;
+            return product;
         }
 
-        public async Task<bool> UpdateProductAsync(int id, UpdateProductRequest request)
+        public async Task<Product> UpdateProductAsync(int id, UpdateProductDTO productDTO)
         {
-            var product = await _context.Products
-                .Include(p => p.Images)
-                .FirstOrDefaultAsync(p => p.ProductId == id);
+            var product = await _context.Products.FindAsync(id);
 
             if (product == null)
             {
-                throw new KeyNotFoundException("Product not found.");
+                throw new KeyNotFoundException($"Product with ID {id} not found.");
             }
 
-            product.ProductName = request.ProductName;
-            product.Description = request.Description;
-            product.SKU = request.SKU;
-            product.Price = request.Price;
-            product.DiscountPrice = request.DiscountPrice;
-            product.Quantity = request.Quantity;
-            product.IsActive = request.IsActive;
+            product.Name = productDTO.Name;
+            product.Price = productDTO.Price;
+            product.Category = productDTO.Category;
+            product.Stock = productDTO.Stock;
             product.UpdatedAt = DateTime.UtcNow;
-            product.CategoryId = request.CategoryId;
 
-            // Update images
-            product.Images = request.Images.Select(pi => new ProductImage
-            {
-                ImageUrl = pi.ImageUrl,
-                IsPrimary = pi.IsPrimary
-            }).ToList();
-
+            _context.Products.Update(product);
             await _context.SaveChangesAsync();
-            return true;
+
+            return product;
         }
 
         public async Task<bool> DeleteProductAsync(int id)
@@ -176,11 +87,12 @@ namespace backend.Services
 
             if (product == null)
             {
-                throw new KeyNotFoundException("Product not found.");
+                return false;
             }
 
             _context.Products.Remove(product);
             await _context.SaveChangesAsync();
+
             return true;
         }
     }

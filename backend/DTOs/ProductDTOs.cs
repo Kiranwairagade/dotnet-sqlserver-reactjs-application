@@ -1,86 +1,51 @@
-using System;
-using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
-namespace backend.DTOs
+namespace backend.Models
 {
-    public class ProductListDto
+    public class ProductDTO
     {
         public int ProductId { get; set; }
-        public string ProductName { get; set; } = string.Empty;
-        public string Description { get; set; } = string.Empty;
-        public string SKU { get; set; } = string.Empty;
+        public string Name { get; set; }
         public decimal Price { get; set; }
-        public decimal? DiscountPrice { get; set; }
-        public int Quantity { get; set; }
-        public bool IsActive { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public int? CategoryId { get; set; }
-        public string CategoryName { get; set; } = string.Empty;
-        public string PrimaryImageUrl { get; set; } = string.Empty;
+        public string Category { get; set; }
+        public int Stock { get; set; }
     }
 
-    public class ProductDetailDto
+    public class CreateProductDTO
     {
-        public int ProductId { get; set; }
-        public string ProductName { get; set; } = string.Empty;
-        public string Description { get; set; } = string.Empty;
-        public string SKU { get; set; } = string.Empty;
+        [Required]
+        [StringLength(100)]
+        public string Name { get; set; }
+
+        [Required]
+        [Range(0.01, double.MaxValue, ErrorMessage = "Price must be greater than 0")]
         public decimal Price { get; set; }
-        public decimal? DiscountPrice { get; set; }
-        public int Quantity { get; set; }
-        public bool IsActive { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public DateTime UpdatedAt { get; set; }
-        public int? CategoryId { get; set; }
-        public string CategoryName { get; set; } = string.Empty;
-        public int CreatedByUserId { get; set; }
-        public string CreatedByUsername { get; set; } = string.Empty;
-        public List<ProductImageDto> Images { get; set; } = new List<ProductImageDto>();
+
+        [Required]
+        [StringLength(50)]
+        public string Category { get; set; }
+
+        [Required]
+        [Range(0, int.MaxValue, ErrorMessage = "Stock cannot be negative")]
+        public int Stock { get; set; }
     }
 
-    public class ProductImageDto
+    public class UpdateProductDTO
     {
-        public int ImageId { get; set; }
-        public string ImageUrl { get; set; } = string.Empty;
-        public bool IsPrimary { get; set; }
-    }
+        [Required]
+        [StringLength(100)]
+        public string Name { get; set; }
 
-    public class CreateProductRequest
-    {
-        public string ProductName { get; set; } = string.Empty;
-        public string Description { get; set; } = string.Empty;
-        public int? CategoryId { get; set; }
-        public string SKU { get; set; } = string.Empty;
+        [Required]
+        [Range(0.01, double.MaxValue, ErrorMessage = "Price must be greater than 0")]
         public decimal Price { get; set; }
-        public decimal? DiscountPrice { get; set; }
-        public int Quantity { get; set; }
-        public List<ProductImageRequest> Images { get; set; } = new List<ProductImageRequest>();
-    }
 
-    public class UpdateProductRequest
-    {
-        public string ProductName { get; set; } = string.Empty;
-        public string Description { get; set; } = string.Empty;
-        public int? CategoryId { get; set; }
-        public string SKU { get; set; } = string.Empty;
-        public decimal Price { get; set; }
-        public decimal? DiscountPrice { get; set; }
-        public int Quantity { get; set; }
-        public bool IsActive { get; set; }
-        public List<ProductImageRequest> Images { get; set; } = new List<ProductImageRequest>();
-    }
+        [Required]
+        [StringLength(50)]
+        public string Category { get; set; }
 
-    public class ProductImageRequest
-    {
-        public string ImageUrl { get; set; } = string.Empty;
-        public bool IsPrimary { get; set; }
-    }
-
-    public class ProductsResponse
-    {
-        public List<ProductListDto> Products { get; set; } = new List<ProductListDto>();
-        public int TotalCount { get; set; }
-        public int PageNumber { get; set; }
-        public int PageSize { get; set; }
+        [Required]
+        [Range(0, int.MaxValue, ErrorMessage = "Stock cannot be negative")]
+        public int Stock { get; set; }
     }
 }

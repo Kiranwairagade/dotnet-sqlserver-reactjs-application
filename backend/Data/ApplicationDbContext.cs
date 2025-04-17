@@ -14,11 +14,11 @@ namespace backend.Data
         // DbSet properties for your entities
         public DbSet<User> Users { get; set; } = null!;
         public DbSet<UserPermission> UserPermissions { get; set; } = null!;
-        public DbSet<Product> Products { get; set; } = null!;
+        public DbSet<Product> Products { get; set; }
         public DbSet<Category> Categories { get; set; } = null!;
         public DbSet<Brand> Brands { get; set; }
         public DbSet<Supplier> Suppliers { get; set; }
-        public DbSet<ProductImage> ProductImages { get; set; } = null!;
+        
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -27,15 +27,7 @@ namespace backend.Data
             // Ensure 'Category' maps to the correct table name
             modelBuilder.Entity<Category>().ToTable("ProductCategories");
 
-            // ProductImage Entity Configuration
-            modelBuilder.Entity<ProductImage>()
-                .HasKey(pi => pi.ImageId);
-
-            modelBuilder.Entity<ProductImage>()
-                .HasOne(pi => pi.Product)
-                .WithMany(p => p.Images)
-                .HasForeignKey(pi => pi.ProductId)
-                .OnDelete(DeleteBehavior.Cascade);
+            
 
             // Configure Permissions as a comma-separated string in the database
             modelBuilder.Entity<User>()

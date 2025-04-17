@@ -1,9 +1,11 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
-using backend.DTOs;
-using backend.Services;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
+using backend.Models;
+using backend.Services;
+using Microsoft.Extensions.Logging;
 
 namespace backend.Controllers
 {
@@ -12,94 +14,170 @@ namespace backend.Controllers
     public class ProductsController : ControllerBase
     {
         private readonly IProductService _productService;
+        private readonly ILogger<ProductsController> _logger;
 
-        public ProductsController(IProductService productService)
+        public ProductsController(IProductService productService, ILogger<ProductsController> logger)
         {
             _productService = productService;
+            _logger = logger;
         }
 
+        // GET: api/products
         [HttpGet]
-        public async Task<ActionResult<ProductsResponse>> GetProducts(
-            [FromQuery] int pageNumber = 1,
-            [FromQuery] int pageSize = 10,
-            [FromQuery] int? categoryId = null,
-            [FromQuery] string? searchTerm = null)
+        public async Task<ActionResult<IEnumerable<ProductDTO>>> GetProducts()
         {
-            var response = await _productService.GetProductsAsync(pageNumber, pageSize, categoryId, searchTerm);
-            return Ok(response);
+            try
+            {
+                _logger.LogInformation("Getting all products");
+                var products = await _productService.GetAllProductsAsync();
+                var productDtos = products.Select(p => new ProductDTO
+                {
+                    ProductId = p.ProductId,
+                    Name = p.Name,
+                    Price = p.Price,
+                    Category = p.Category,
+                    Stock = p.Stock
+                }).ToList();
+
+                _logger.LogInformation($"Returning {productDtos.Count} products");
+                // Make sure we return the array directly
+                return Ok(productDtos);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while getting all products");
+                return StatusCode(500, new { error = "Internal server error", message = ex.Message });
+            }
         }
 
+        // GET: api/products/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<ProductDetailDto>> GetProductById(int id)
+        public async Task<ActionResult<ProductDTO>> GetProduct(int id)
         {
-            var product = await _productService.GetProductByIdAsync(id);
-
-            if (product == null)
+            try
             {
-                return NotFound(new { message = "Product not found" });
-            }
+                _logger.LogInformation($"Getting product with ID {id}");
+                var product = await _productService.GetProductByIdAsync(id);
 
-            return Ok(product);
+                var productDto = new ProductDTO
+                {
+                    ProductId = product.ProductId,
+                    Name = product.Name,
+                    Price = product.Price,
+                    Category = product.Category,
+                    Stock = product.Stock
+                };
+
+                return Ok(productDto);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                _logger.LogInformation(ex.Message);
+                return NotFound(new { error = "Not Found", message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error occurred while getting product with ID {id}");
+                return StatusCode(500, new { error = "Internal server error", message = ex.Message });
+            }
         }
 
-        [Authorize]
+        // POST: api/products
         [HttpPost]
-        public async Task<ActionResult<int>> CreateProduct([FromBody] CreateProductRequest request)
+        public async Task<ActionResult<ProductDTO>> CreateProduct(CreateProductDTO productDto)
         {
-            // Check if user has permission to create products
-            if (!User.HasClaim(c => c.Type == "Permission" && c.Value == "CreateProduct"))
+            try
             {
-                return Forbid();
-            }
+                _logger.LogInformation("Creating new product");
 
-            // Safely parse the user ID
-            if (!int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out int userId))
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+
+                var createdProduct = await _productService.CreateProductAsync(productDto);
+
+                var createdProductDto = new ProductDTO
+                {
+                    ProductId = createdProduct.ProductId,
+                    Name = createdProduct.Name,
+                    Price = createdProduct.Price,
+                    Category = createdProduct.Category,
+                    Stock = createdProduct.Stock
+                };
+
+                _logger.LogInformation($"Product created with ID {createdProduct.ProductId}");
+                return CreatedAtAction(nameof(GetProduct), new { id = createdProduct.ProductId }, createdProductDto);
+            }
+            catch (Exception ex)
             {
-                return BadRequest(new { message = "Invalid user ID." });
+                _logger.LogError(ex, "Error occurred while creating a product");
+                return StatusCode(500, new { error = "Internal server error", message = ex.Message });
             }
-
-            var productId = await _productService.CreateProductAsync(request, userId);
-            return CreatedAtAction(nameof(GetProductById), new { id = productId }, productId);
         }
 
-        [Authorize]
+        // PUT: api/products/5
         [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateProduct(int id, [FromBody] UpdateProductRequest request)
+        public async Task<IActionResult> UpdateProduct(int id, UpdateProductDTO productDto)
         {
-            // Check if user has permission to update products
-            if (!User.HasClaim(c => c.Type == "Permission" && c.Value == "UpdateProduct"))
+            try
             {
-                return Forbid();
+                _logger.LogInformation($"Updating product with ID {id}");
+
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+
+                var updatedProduct = await _productService.UpdateProductAsync(id, productDto);
+
+                var updatedProductDto = new ProductDTO
+                {
+                    ProductId = updatedProduct.ProductId,
+                    Name = updatedProduct.Name,
+                    Price = updatedProduct.Price,
+                    Category = updatedProduct.Category,
+                    Stock = updatedProduct.Stock
+                };
+
+                _logger.LogInformation($"Product updated with ID {id}");
+                return Ok(updatedProductDto);
             }
-
-            var success = await _productService.UpdateProductAsync(id, request);
-
-            if (!success)
+            catch (KeyNotFoundException ex)
             {
-                return NotFound(new { message = "Product not found" });
+                _logger.LogInformation(ex.Message);
+                return NotFound(new { error = "Not Found", message = ex.Message });
             }
-
-            return NoContent();
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error occurred while updating product with ID {id}");
+                return StatusCode(500, new { error = "Internal server error", message = ex.Message });
+            }
         }
 
-        [Authorize]
+        // DELETE: api/products/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteProduct(int id)
+        public async Task<IActionResult> DeleteProduct(int id)
         {
-            // Check if user has permission to delete products
-            if (!User.HasClaim(c => c.Type == "Permission" && c.Value == "DeleteProduct"))
+            try
             {
-                return Forbid();
+                _logger.LogInformation($"Deleting product with ID {id}");
+                var result = await _productService.DeleteProductAsync(id);
+
+                if (!result)
+                {
+                    _logger.LogInformation($"Product with ID {id} not found for deletion");
+                    return NotFound(new { error = "Not Found", message = $"Product with ID {id} not found." });
+                }
+
+                _logger.LogInformation($"Product with ID {id} deleted successfully");
+                return NoContent();
             }
-
-            var success = await _productService.DeleteProductAsync(id);
-
-            if (!success)
+            catch (Exception ex)
             {
-                return NotFound(new { message = "Product not found" });
+                _logger.LogError(ex, $"Error occurred while deleting product with ID {id}");
+                return StatusCode(500, new { error = "Internal server error", message = ex.Message });
             }
-
-            return NoContent();
         }
     }
 }
