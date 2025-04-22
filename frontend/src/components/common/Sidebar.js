@@ -1,7 +1,7 @@
 // Sidebar.js
 import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext'; // import the context
+import { useAuth } from '../../contexts/AuthContext'; 
 import {
   LayoutDashboard,
   UserCog,
@@ -50,6 +50,11 @@ const Sidebar = () => {
         <li>
           <NavLink to="/user-management" className="sidebar-link">
             <UserCog size={18} /> <span>User Management</span>
+          </NavLink>
+        </li>
+        <li>
+          <NavLink to="/chatbot" className="sidebar-link">
+            <UserCog size={18} /> <span>ChatBot</span>
           </NavLink>
         </li>
       </ul>

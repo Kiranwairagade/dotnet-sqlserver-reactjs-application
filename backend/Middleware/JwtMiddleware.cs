@@ -1,6 +1,6 @@
 ﻿
 // JwtMiddleware.cs (Fixed async warning)
-using backend.Services; // ✅ Ensure correct namespace for IAuthService
+using backend.Services; 
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -29,37 +29,39 @@ public class JwtMiddleware
 
     private async Task AttachUserToContext(HttpContext context, IAuthService authService, string token)
     {
-        try
+        await Task.Run(() =>
         {
-            var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"] ?? "");
-            var tokenHandler = new JwtSecurityTokenHandler();
-
-            var principal = tokenHandler.ValidateToken(token, new TokenValidationParameters
+            try
             {
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(key),
-                ValidateIssuer = false,
-                ValidateAudience = false,
-                ClockSkew = TimeSpan.Zero
-            }, out _);
+                var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"] ?? "");
+                var tokenHandler = new JwtSecurityTokenHandler();
 
-            var userIdClaim = principal.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var emailClaim = principal.FindFirst(ClaimTypes.Email)?.Value;
+                var principal = tokenHandler.ValidateToken(token, new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    ClockSkew = TimeSpan.Zero
+                }, out _);
 
-            if (!string.IsNullOrEmpty(emailClaim))
-            {
-                // Set the email as the Name for identity-based authentication
-                var claims = new List<Claim>(principal.Claims)
-            {
-                new Claim(ClaimTypes.Name, emailClaim)
-            };
+                var userIdClaim = principal.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                var emailClaim = principal.FindFirst(ClaimTypes.Email)?.Value;
 
-                context.User = new ClaimsPrincipal(new ClaimsIdentity(claims, "jwt"));
+                if (!string.IsNullOrEmpty(emailClaim))
+                {
+                    var claims = new List<Claim>(principal.Claims)
+                {
+                    new Claim(ClaimTypes.Name, emailClaim)
+                };
+
+                    context.User = new ClaimsPrincipal(new ClaimsIdentity(claims, "jwt"));
+                }
             }
-        }
-        catch (Exception)
-        {
-            // Log error but don't throw to prevent middleware crashing
-        }
+            catch (Exception)
+            {
+                // Optional: Log exception
+            }
+        });
     }
 }

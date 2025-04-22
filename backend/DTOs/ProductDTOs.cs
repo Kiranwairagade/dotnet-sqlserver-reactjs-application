@@ -5,9 +5,9 @@ namespace backend.Models
     public class ProductDTO
     {
         public int ProductId { get; set; }
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
         public decimal Price { get; set; }
-        public string Category { get; set; }
+        public string Category { get; set; } = string.Empty;
         public int Stock { get; set; }
     }
 
@@ -15,7 +15,7 @@ namespace backend.Models
     {
         [Required]
         [StringLength(100)]
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         [Required]
         [Range(0.01, double.MaxValue, ErrorMessage = "Price must be greater than 0")]
@@ -23,7 +23,7 @@ namespace backend.Models
 
         [Required]
         [StringLength(50)]
-        public string Category { get; set; }
+        public string Category { get; set; } = string.Empty;
 
         [Required]
         [Range(0, int.MaxValue, ErrorMessage = "Stock cannot be negative")]
@@ -34,7 +34,7 @@ namespace backend.Models
     {
         [Required]
         [StringLength(100)]
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         [Required]
         [Range(0.01, double.MaxValue, ErrorMessage = "Price must be greater than 0")]
@@ -42,7 +42,7 @@ namespace backend.Models
 
         [Required]
         [StringLength(50)]
-        public string Category { get; set; }
+        public string Category { get; set; } = string.Empty;
 
         [Required]
         [Range(0, int.MaxValue, ErrorMessage = "Stock cannot be negative")]

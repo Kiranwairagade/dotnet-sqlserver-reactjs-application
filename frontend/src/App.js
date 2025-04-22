@@ -6,16 +6,13 @@ import Sidebar from './components/common/Sidebar';
 import Login from './components/auth/Login';
 import Signup from './components/auth/Signup';
 import Dashboard from './components/admin/Dashboard';
-// Ensure ProductList is being used properly if you add it back later
-//import ProductDetails from './components/products/ProductDetails';
-//import ProductForm from './components/products/ProductForm';
 import UserManagement from './components/admin/UserManagement';
 import CategoryMaster from './components/masters/CategoryMaster';
 import BrandMaster from './components/masters/BrandMaster';
 import SupplierMaster from './components/masters/SupplierMaster';
-//import EmployeeMaster from './components/masters/EmployeeMaster';
 import ProductMaster from './components/masters/ProductMaster';
 import ProtectedRoute from './components/common/ProtectedRoute';
+import Chatbot from './components/common/Chatbot';
 import './App.css';
 
 function App() {
@@ -40,10 +37,10 @@ function App() {
             <Route path="/categories" element={<CategoryMaster />} />
             <Route path="/brands" element={<BrandMaster />} />
             <Route path="/suppliers" element={<SupplierMaster />} />
-            {/* <Route path="/employees" element={<EmployeeMaster />} /> */}
             <Route path="/products" element={<ProductMaster />} />
             
-            <Route path="/user-management" element={<UserManagement />} />
+            <Route path="/user-management" element={<UserManagement />} />          
+            <Route path="/chatbot" element={<Chatbot />} />
           </Route>
 
           {/* Fallback */}

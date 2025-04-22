@@ -9,6 +9,7 @@ F:\Aarkay\dotnet-sqlserver-reactjs-application\backend\bin\Debug\net9.0\backend.
 F:\Aarkay\dotnet-sqlserver-reactjs-application\backend\bin\Debug\net9.0\Azure.Core.dll
 F:\Aarkay\dotnet-sqlserver-reactjs-application\backend\bin\Debug\net9.0\Azure.Identity.dll
 F:\Aarkay\dotnet-sqlserver-reactjs-application\backend\bin\Debug\net9.0\BCrypt.Net-Next.dll
+F:\Aarkay\dotnet-sqlserver-reactjs-application\backend\bin\Debug\net9.0\DatabaseSchemaReader.dll
 F:\Aarkay\dotnet-sqlserver-reactjs-application\backend\bin\Debug\net9.0\Humanizer.dll
 F:\Aarkay\dotnet-sqlserver-reactjs-application\backend\bin\Debug\net9.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
 F:\Aarkay\dotnet-sqlserver-reactjs-application\backend\bin\Debug\net9.0\Microsoft.AspNetCore.JsonPatch.dll
@@ -54,6 +55,15 @@ F:\Aarkay\dotnet-sqlserver-reactjs-application\backend\bin\Debug\net9.0\Microsof
 F:\Aarkay\dotnet-sqlserver-reactjs-application\backend\bin\Debug\net9.0\Mono.TextTemplating.dll
 F:\Aarkay\dotnet-sqlserver-reactjs-application\backend\bin\Debug\net9.0\Newtonsoft.Json.dll
 F:\Aarkay\dotnet-sqlserver-reactjs-application\backend\bin\Debug\net9.0\Newtonsoft.Json.Bson.dll
+F:\Aarkay\dotnet-sqlserver-reactjs-application\backend\bin\Debug\net9.0\Serilog.dll
+F:\Aarkay\dotnet-sqlserver-reactjs-application\backend\bin\Debug\net9.0\Serilog.AspNetCore.dll
+F:\Aarkay\dotnet-sqlserver-reactjs-application\backend\bin\Debug\net9.0\Serilog.Extensions.Hosting.dll
+F:\Aarkay\dotnet-sqlserver-reactjs-application\backend\bin\Debug\net9.0\Serilog.Extensions.Logging.dll
+F:\Aarkay\dotnet-sqlserver-reactjs-application\backend\bin\Debug\net9.0\Serilog.Formatting.Compact.dll
+F:\Aarkay\dotnet-sqlserver-reactjs-application\backend\bin\Debug\net9.0\Serilog.Settings.Configuration.dll
+F:\Aarkay\dotnet-sqlserver-reactjs-application\backend\bin\Debug\net9.0\Serilog.Sinks.Console.dll
+F:\Aarkay\dotnet-sqlserver-reactjs-application\backend\bin\Debug\net9.0\Serilog.Sinks.Debug.dll
+F:\Aarkay\dotnet-sqlserver-reactjs-application\backend\bin\Debug\net9.0\Serilog.Sinks.File.dll
 F:\Aarkay\dotnet-sqlserver-reactjs-application\backend\bin\Debug\net9.0\Swashbuckle.AspNetCore.Swagger.dll
 F:\Aarkay\dotnet-sqlserver-reactjs-application\backend\bin\Debug\net9.0\Swashbuckle.AspNetCore.SwaggerGen.dll
 F:\Aarkay\dotnet-sqlserver-reactjs-application\backend\bin\Debug\net9.0\Swashbuckle.AspNetCore.SwaggerUI.dll

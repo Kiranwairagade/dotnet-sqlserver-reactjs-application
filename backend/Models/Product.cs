@@ -12,7 +12,7 @@ namespace backend.Models
 
         [Required]
         [StringLength(100)]
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         [Required]
         [Column(TypeName = "decimal(18,2)")]
@@ -20,7 +20,7 @@ namespace backend.Models
 
         [Required]
         [StringLength(50)]
-        public string Category { get; set; }
+        public string Category { get; set; } = string.Empty;
 
         [Required]
         public int Stock { get; set; }
