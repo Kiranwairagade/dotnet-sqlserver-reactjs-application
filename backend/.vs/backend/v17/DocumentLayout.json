@@ -3,12 +3,48 @@
   "WorkspaceRootPath": "F:\\Aarkay\\dotnet-sqlserver-reactjs-application\\backend\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|F:\\Aarkay\\dotnet-sqlserver-reactjs-application\\backend\\Services\\ChatbotService.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Services\\ChatbotService.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|F:\\Aarkay\\dotnet-sqlserver-reactjs-application\\backend\\Tools\\ChatbotModelTrainer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Tools\\ChatbotModelTrainer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|F:\\Aarkay\\dotnet-sqlserver-reactjs-application\\backend\\Services\\ChatbotModelBuilder.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Services\\ChatbotModelBuilder.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|F:\\Aarkay\\dotnet-sqlserver-reactjs-application\\backend\\Models\\ChatModels.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Models\\ChatModels.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|F:\\Aarkay\\dotnet-sqlserver-reactjs-application\\backend\\DTOs\\ChatDTOs.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:DTOs\\ChatDTOs.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|F:\\Aarkay\\dotnet-sqlserver-reactjs-application\\backend\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|F:\\Aarkay\\dotnet-sqlserver-reactjs-application\\backend\\Services\\MLChatbotService.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Services\\MLChatbotService.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|F:\\Aarkay\\dotnet-sqlserver-reactjs-application\\backend\\Program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|F:\\Aarkay\\dotnet-sqlserver-reactjs-application\\backend\\Services\\IChatbotService.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Services\\IChatbotService.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|F:\\Aarkay\\dotnet-sqlserver-reactjs-application\\backend\\Models\\FAQ.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Models\\FAQ.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|F:\\Aarkay\\dotnet-sqlserver-reactjs-application\\backend\\Controllers\\ChatbotController.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Controllers\\ChatbotController.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|F:\\Aarkay\\dotnet-sqlserver-reactjs-application\\backend\\backend.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:backend.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|F:\\Aarkay\\dotnet-sqlserver-reactjs-application\\backend\\Models\\ChatbotModels.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -26,40 +62,157 @@
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "ChatbotModels.cs",
-              "DocumentMoniker": "F:\\Aarkay\\dotnet-sqlserver-reactjs-application\\backend\\Models\\ChatbotModels.cs",
-              "RelativeDocumentMoniker": "Models\\ChatbotModels.cs",
-              "ToolTip": "F:\\Aarkay\\dotnet-sqlserver-reactjs-application\\backend\\Models\\ChatbotModels.cs",
-              "RelativeToolTip": "Models\\ChatbotModels.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABsAAAA2AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-22T02:13:10.24Z"
+              "DocumentIndex": 4,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "F:\\Aarkay\\dotnet-sqlserver-reactjs-application\\backend\\appsettings.json",
+              "RelativeDocumentMoniker": "appsettings.json",
+              "ToolTip": "F:\\Aarkay\\dotnet-sqlserver-reactjs-application\\backend\\appsettings.json",
+              "RelativeToolTip": "appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAB/AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-04-22T16:41:16.386Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 1,
+              "Title": "ChatbotModelBuilder.cs",
+              "DocumentMoniker": "F:\\Aarkay\\dotnet-sqlserver-reactjs-application\\backend\\Services\\ChatbotModelBuilder.cs",
+              "RelativeDocumentMoniker": "Services\\ChatbotModelBuilder.cs",
+              "ToolTip": "F:\\Aarkay\\dotnet-sqlserver-reactjs-application\\backend\\Services\\ChatbotModelBuilder.cs",
+              "RelativeToolTip": "Services\\ChatbotModelBuilder.cs",
+              "ViewState": "AgIAAJEAAAAAAAAAAAAAAKoAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-22T13:27:07.461Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "ChatbotModelTrainer.cs",
+              "DocumentMoniker": "F:\\Aarkay\\dotnet-sqlserver-reactjs-application\\backend\\Tools\\ChatbotModelTrainer.cs",
+              "RelativeDocumentMoniker": "Tools\\ChatbotModelTrainer.cs",
+              "ToolTip": "F:\\Aarkay\\dotnet-sqlserver-reactjs-application\\backend\\Tools\\ChatbotModelTrainer.cs",
+              "RelativeToolTip": "Tools\\ChatbotModelTrainer.cs",
+              "ViewState": "AgIAABYAAABAmZmZmZkwwCAAAAAVAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-22T13:28:12.099Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "ChatModels.cs",
+              "DocumentMoniker": "F:\\Aarkay\\dotnet-sqlserver-reactjs-application\\backend\\Models\\ChatModels.cs",
+              "RelativeDocumentMoniker": "Models\\ChatModels.cs",
+              "ToolTip": "F:\\Aarkay\\dotnet-sqlserver-reactjs-application\\backend\\Models\\ChatModels.cs",
+              "RelativeToolTip": "Models\\ChatModels.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABkAAAAsAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-22T15:13:08.815Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "ChatDTOs.cs",
+              "DocumentMoniker": "F:\\Aarkay\\dotnet-sqlserver-reactjs-application\\backend\\DTOs\\ChatDTOs.cs",
+              "RelativeDocumentMoniker": "DTOs\\ChatDTOs.cs",
+              "ToolTip": "F:\\Aarkay\\dotnet-sqlserver-reactjs-application\\backend\\DTOs\\ChatDTOs.cs",
+              "RelativeToolTip": "DTOs\\ChatDTOs.cs",
+              "ViewState": "AgIAAAMAAADgZWZmZiYwwA0AAAAwAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-22T14:10:49.13Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "MLChatbotService.cs",
+              "DocumentMoniker": "F:\\Aarkay\\dotnet-sqlserver-reactjs-application\\backend\\Services\\MLChatbotService.cs",
+              "RelativeDocumentMoniker": "Services\\MLChatbotService.cs",
+              "ToolTip": "F:\\Aarkay\\dotnet-sqlserver-reactjs-application\\backend\\Services\\MLChatbotService.cs",
+              "RelativeToolTip": "Services\\MLChatbotService.cs",
+              "ViewState": "AgIAAOoAAAAAAAAAAAAAAAMBAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-21T15:46:30.573Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "Program.cs",
+              "DocumentMoniker": "F:\\Aarkay\\dotnet-sqlserver-reactjs-application\\backend\\Program.cs",
+              "RelativeDocumentMoniker": "Program.cs",
+              "ToolTip": "F:\\Aarkay\\dotnet-sqlserver-reactjs-application\\backend\\Program.cs",
+              "RelativeToolTip": "Program.cs",
+              "ViewState": "AgIAAIkAAAAAAAAAAAAAAKIAAAAKAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-22T13:31:02.385Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "IChatbotService.cs",
+              "DocumentMoniker": "F:\\Aarkay\\dotnet-sqlserver-reactjs-application\\backend\\Services\\IChatbotService.cs",
+              "RelativeDocumentMoniker": "Services\\IChatbotService.cs",
+              "ToolTip": "F:\\Aarkay\\dotnet-sqlserver-reactjs-application\\backend\\Services\\IChatbotService.cs",
+              "RelativeToolTip": "Services\\IChatbotService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-22T15:01:46.676Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "FAQ.cs",
+              "DocumentMoniker": "F:\\Aarkay\\dotnet-sqlserver-reactjs-application\\backend\\Models\\FAQ.cs",
+              "RelativeDocumentMoniker": "Models\\FAQ.cs",
+              "ToolTip": "F:\\Aarkay\\dotnet-sqlserver-reactjs-application\\backend\\Models\\FAQ.cs",
+              "RelativeToolTip": "Models\\FAQ.cs",
+              "ViewState": "AgIAAAEAAAAAAAAAAAAIwBoAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-22T15:49:36.479Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
               "Title": "ChatbotController.cs",
               "DocumentMoniker": "F:\\Aarkay\\dotnet-sqlserver-reactjs-application\\backend\\Controllers\\ChatbotController.cs",
               "RelativeDocumentMoniker": "Controllers\\ChatbotController.cs",
               "ToolTip": "F:\\Aarkay\\dotnet-sqlserver-reactjs-application\\backend\\Controllers\\ChatbotController.cs",
               "RelativeToolTip": "Controllers\\ChatbotController.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB4AAAABAAAAAAAAAA==",
+              "ViewState": "AgIAAFAAAAAAAAAAAAAAAGkAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-21T15:48:00.314Z"
+              "WhenOpened": "2025-04-21T15:48:00.314Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "ChatbotService.cs",
-              "DocumentMoniker": "F:\\Aarkay\\dotnet-sqlserver-reactjs-application\\backend\\Services\\ChatbotService.cs",
-              "RelativeDocumentMoniker": "Services\\ChatbotService.cs",
-              "ToolTip": "F:\\Aarkay\\dotnet-sqlserver-reactjs-application\\backend\\Services\\ChatbotService.cs",
-              "RelativeToolTip": "Services\\ChatbotService.cs",
-              "ViewState": "AgIAAFMAAAAAAAAAAAAqwIAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-21T15:46:30.573Z",
+              "DocumentIndex": 10,
+              "Title": "backend.csproj",
+              "DocumentMoniker": "F:\\Aarkay\\dotnet-sqlserver-reactjs-application\\backend\\backend.csproj",
+              "RelativeDocumentMoniker": "backend.csproj",
+              "ToolTip": "F:\\Aarkay\\dotnet-sqlserver-reactjs-application\\backend\\backend.csproj",
+              "RelativeToolTip": "backend.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACEAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2025-04-22T14:49:44.314Z",
               "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "ChatbotModels.cs",
+              "DocumentMoniker": "F:\\Aarkay\\dotnet-sqlserver-reactjs-application\\backend\\Models\\ChatbotModels.cs",
+              "RelativeDocumentMoniker": "Models\\ChatbotModels.cs",
+              "ToolTip": "F:\\Aarkay\\dotnet-sqlserver-reactjs-application\\backend\\Models\\ChatbotModels.cs",
+              "RelativeToolTip": "Models\\ChatbotModels.cs",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-22T02:13:10.24Z"
             }
           ]
         }

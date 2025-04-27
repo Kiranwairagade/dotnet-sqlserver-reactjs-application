@@ -3,7 +3,7 @@ const masterModules = [
   "Categories",
   "Brands",
   "Suppliers",
-  "Products"
+  "Products",
 ];
 
 export default masterModules;

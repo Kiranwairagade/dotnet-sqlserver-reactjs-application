@@ -30,20 +30,3 @@
   color: white;
 }
 
-.nav-links {
-  display: flex;
-  align-items: center;
-  gap: 15px; /* Reduced gap for a more compact look */
-}
-
-.nav-links a {
-  color: white;
-  text-decoration: none;
-  font-size: 14px; /* Adjusted font size */
-  padding: 8px 12px; /* Adjusted padding */
-}
-
-.nav-links a:hover {
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 5px;
-}

@@ -154,5 +154,17 @@ namespace backend.Controllers
                 await _context.SaveChangesAsync();
             }
         }
+
+        // Add this GET API to get simple allowed permissions list
+[HttpGet("simple/{userId}")]
+public async Task<ActionResult<List<string>>> GetSimplePermissions(int userId)
+{
+    var user = await _context.Users.FindAsync(userId);
+    if (user == null)
+        return NotFound(new { message = "User not found" });
+
+    return Ok(user.Permissions ?? new List<string>());
+}
+
     }
 }

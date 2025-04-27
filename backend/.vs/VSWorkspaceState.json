@@ -1,10 +1,12 @@
 {
   "ExpandedNodes": [
     "",
+    "\\Data",
     "\\DTOs",
     "\\Models",
-    "\\Services"
+    "\\Services",
+    "\\Tools"
   ],
-  "SelectedNode": "\\Services\\ChatbotService.cs",
+  "SelectedNode": "\\Middleware",
   "PreviewInSolutionExplorer": false
 }

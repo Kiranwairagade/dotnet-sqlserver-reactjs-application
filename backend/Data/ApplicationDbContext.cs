@@ -18,7 +18,7 @@ namespace backend.Data
         public DbSet<Category> Categories { get; set; } = null!;
         public DbSet<Brand> Brands { get; set; }
         public DbSet<Supplier> Suppliers { get; set; }
-        
+   
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -26,8 +26,6 @@ namespace backend.Data
 
             // Ensure 'Category' maps to the correct table name
             modelBuilder.Entity<Category>().ToTable("ProductCategories");
-
-            
 
             // Configure Permissions as a comma-separated string in the database
             modelBuilder.Entity<User>()

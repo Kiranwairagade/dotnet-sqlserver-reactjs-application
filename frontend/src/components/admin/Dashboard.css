@@ -4,16 +4,6 @@
   overflow: hidden; /* Prevents scrolling */
 }
 
-.sidebar {
-  position: fixed;
-  top: 40px; /* Adjusted for reduced navbar height */
-  left: 0;
-  width: 200px; /* Sidebar width */
-  height: calc(100vh - 40px); /* Adjust height after navbar */
-  background: #dff1ff;
-  padding-top: 20px;
-}
-
 .dashboard-content {
   position: fixed;
   top: 40px; /* Starts immediately after navbar */

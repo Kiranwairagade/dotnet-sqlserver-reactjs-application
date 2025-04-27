@@ -20,36 +20,59 @@ const CategoryMaster = () => {
   }, []);
 
   const loadCategories = async () => {
-    const data = await getAllCategories();
-    console.log('Fetched categories:', data);
+    try {
+      const data = await getAllCategories();
+      console.log('Fetched categories:', data);
 
-    // Extract categories from $values
-    if (Array.isArray(data?.$values)) {
-      setCategories(data.$values);
-    } else {
-      setCategories([]); // fallback
+      if (Array.isArray(data?.$values)) {
+        setCategories(data.$values);
+      } else {
+        setCategories([]);
+      }
+    } catch (error) {
+      if (error.response?.status === 401 || error.response?.status === 403) {
+        alert('You do not have permission to view categories.');
+      } else {
+        console.error('Error loading categories:', error);
+      }
     }
   };
 
   const handleAddCategory = async () => {
     if (!newCategoryName.trim()) return;
 
-    const added = await addCategory({
-      categoryName: newCategoryName,
-      description: newCategoryDescription,
-    });
+    try {
+      const added = await addCategory({
+        categoryName: newCategoryName,
+        description: newCategoryDescription,
+      });
 
-    if (added) {
-      setNewCategoryName('');
-      setNewCategoryDescription('');
-      loadCategories();
+      if (added) {
+        setNewCategoryName('');
+        setNewCategoryDescription('');
+        loadCategories();
+      }
+    } catch (error) {
+      if (error.response?.status === 401 || error.response?.status === 403) {
+        alert('You do not have permission to add categories.');
+      } else {
+        console.error('Error adding category:', error);
+      }
     }
   };
 
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this category?')) {
-      await deleteCategory(id);
-      loadCategories();
+      try {
+        await deleteCategory(id);
+        loadCategories();
+      } catch (error) {
+        if (error.response?.status === 401 || error.response?.status === 403) {
+          alert('You do not have permission to delete categories.');
+        } else {
+          console.error('Error deleting category:', error);
+        }
+      }
     }
   };
 
@@ -60,14 +83,22 @@ const CategoryMaster = () => {
   };
 
   const handleUpdate = async (id) => {
-    const updated = await updateCategory(id, {
-      categoryName: editedName,
-      description: editedDescription,
-    });
+    try {
+      const updated = await updateCategory(id, {
+        categoryName: editedName,
+        description: editedDescription,
+      });
 
-    if (updated) {
-      setEditingId(null);
-      loadCategories();
+      if (updated) {
+        setEditingId(null);
+        loadCategories();
+      }
+    } catch (error) {
+      if (error.response?.status === 401 || error.response?.status === 403) {
+        alert('You do not have permission to update categories.');
+      } else {
+        console.error('Error updating category:', error);
+      }
     }
   };
 

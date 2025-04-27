@@ -83,7 +83,7 @@ const Signup = () => {
                     type="text"
                     name="firstName"
                     id="firstName"
-                    className={`input-field small-input ${touched.firstName && errors.firstName ? 'is-invalid' : ''}`}
+                    className={`input-field small-input half-width ${touched.firstName && errors.firstName ? 'is-invalid' : ''}`}
                     placeholder="First Name"
                   />
                   <ErrorMessage name="firstName" component="div" className="invalid-feedback" />

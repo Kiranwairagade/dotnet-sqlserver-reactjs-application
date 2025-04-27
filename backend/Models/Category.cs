@@ -17,7 +17,7 @@ namespace backend.Models
         public string CategoryName { get; set; } = string.Empty;
 
         [StringLength(255)]
-        public string? Description { get; set; }  // ✅ New field for category description
+        public string? Description { get; set; }
 
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }

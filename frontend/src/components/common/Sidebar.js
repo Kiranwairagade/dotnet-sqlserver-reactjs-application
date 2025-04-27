@@ -34,7 +34,7 @@ const Sidebar = () => {
 
   return (
     <div className="sidebar">
-      <h4>Masters</h4>
+      <h2> Masters</h2>
       <ul className="sidebar-list">
         {masterModules.map((module) => (
           <li key={module}>
@@ -45,7 +45,7 @@ const Sidebar = () => {
         ))}
       </ul>
 
-      <h4>Admin</h4>
+      <h2>Admin</h2>
       <ul className="sidebar-list">
         <li>
           <NavLink to="/user-management" className="sidebar-link">

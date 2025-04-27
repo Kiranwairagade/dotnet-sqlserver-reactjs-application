@@ -1,13 +1,11 @@
 .category-management-container {
-    padding: 24px;
-    background-color: #fff;
-    border-radius: 16px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    max-width: 900px;
-    margin: 50px auto;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
+  width: 80%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  margin-left: 200px;
+  margin-top: 100px;
+  background-color: #fff;
   }
   
   .category-management-header {
@@ -20,7 +18,7 @@
   
   .category-management-header h1 {
     font-size: 26px;
-    font-weight: 600;
+    
     color: #333;
     margin: 0;
   }
@@ -70,7 +68,7 @@
     padding: 12px;
     text-align: left;
     border-bottom: 1px solid #dee2e6;
-    font-size: 15px;
+    font-size: 14px;
   }
   
   .category-table th {
@@ -82,26 +80,7 @@
     display: flex;
     gap: 8px;
   }
-  
-  .view-btn,
-  .edit-btn,
-  .delete-btn {
-    padding: 6px 12px;
-    font-size: 13px;
-    border-radius: 6px;
-    border: none;
-    color: white;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-  }
-  
-  .view-btn {
-    background-color: #17a2b8;
-  }
-  .view-btn:hover {
-    background-color: #138496;
-  }
-  
+ 
   .edit-btn {
     background-color: #ffc107;
     color: #212529;
