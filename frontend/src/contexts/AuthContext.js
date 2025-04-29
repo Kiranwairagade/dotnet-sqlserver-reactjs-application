@@ -72,19 +72,16 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const logout = async () => {
-    try {
-      // Call logout endpoint if it exists
-      await api.post('/auth/logout');
-    } catch (error) {
-      console.error('Logout API call failed:', error);
-    } finally {
-      // Clear local auth data regardless of API call success
-      localStorage.removeItem('authToken');
-      api.defaults.headers.common['Authorization'] = '';
-      setCurrentUser(null);
-      setIsAuthenticated(false);
-    }
+  // Updated logout function that doesn't cause 404 errors
+  const logout = () => {
+    // Remove the API call that's causing the 404 error
+    // When you add a logout endpoint to your backend, you can re-add this call
+    
+    // Clear local auth data
+    localStorage.removeItem('authToken');
+    api.defaults.headers.common['Authorization'] = '';
+    setCurrentUser(null);
+    setIsAuthenticated(false);
   };
 
   const register = async (userData) => {

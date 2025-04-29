@@ -64,8 +64,7 @@ namespace backend.Services
                 UserId = user.UserId,
                 Email = user.Email,
                 FirstName = user.FirstName,
-                LastName = user.LastName,
-                Token = token
+                LastName = user.LastName
             };
         }
 
@@ -87,32 +86,9 @@ namespace backend.Services
                 Email = user.Email,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
-                Token = token
+                Token = token  
             };
         }
-
-        public async Task<AuthResponse> RefreshTokenAsync(TokenRequest request)
-        {
-            if (request == null || string.IsNullOrWhiteSpace(request.Email))
-                throw new ArgumentException("Invalid token request.");
-
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email && u.IsActive);
-
-            if (user == null)
-                throw new UnauthorizedAccessException("Invalid refresh token or user not found.");
-
-            var token = GenerateJwtToken(user);
-
-            return new AuthResponse
-            {
-                UserId = user.UserId,
-                Email = user.Email,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Token = token
-            };
-        }
-
         public async Task<UserDto?> GetUserByIdAsync(int userId)
         {
             var user = await _context.Users.FindAsync(userId);

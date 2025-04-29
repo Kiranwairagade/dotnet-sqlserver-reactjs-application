@@ -1,8 +1,6 @@
 // DTOs/UserPermissionDtos.cs
 namespace backend.DTOs
 {
-   
-
     public class CreateUserPermissionDto
     {
         public int UserId { get; set; }

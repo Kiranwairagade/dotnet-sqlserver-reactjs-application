@@ -41,19 +41,35 @@ const getUserById = async (userId) => {
 };
 
 // Get user permissions
+// Get user permissions
 const getUserPermissions = async (userId) => {
   try {
-    const response = await axios.get(`${API_URL}/${userId}/permissions`);
-    return response.data;
+    if (!userId) {
+      console.error('getUserPermissions called with invalid userId:', userId);
+      return null;
+    }
+    
+    console.log(`Fetching permissions for user ID: ${userId}`);
+    const response = await axios.get(`${API_BASE_URL}/api/userpermissions/${userId}`);
+    
+    // Handle the nested structure with $values array
+    const permissions = response.data?.$values || response.data;
+    console.log('User permissions received:', response.data);
+    
+    return { 
+      userPermissions: Array.isArray(permissions) ? permissions : 
+                      (response.data?.$values ? response.data.$values : [])
+    };
   } catch (error) {
-    console.error(`Error fetching permissions for user ${userId}:`, error);
-    throw error;
+    console.error(`Error fetching user ${userId} permissions:`, error);
+    return null;
   }
 };
 
 // Create new user
 const createUser = async (userData) => {
   try {
+    // Make sure the user permissions are formatted correctly
     if (userData.userPermissions) {
       console.log("Submitting userPermissions:", userData.userPermissions);
     }
@@ -69,8 +85,6 @@ const createUser = async (userData) => {
 // Update user info
 const updateUser = async (userId, userData) => {
   try {
-    // Include userPermissions in the main update payload
-    // The backend now expects the permissions in the main payload
     const response = await axios.put(`${API_URL}/${userId}`, userData);
     return response.data;
   } catch (error) {

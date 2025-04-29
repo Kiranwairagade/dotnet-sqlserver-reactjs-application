@@ -12,8 +12,8 @@ using backend.Data;
 namespace backend.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250422163152_CreateFAQsTable")]
-    partial class CreateFAQsTable
+    [Migration("20250428110158_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -76,89 +76,6 @@ namespace backend.Migrations
                     b.HasKey("CategoryId");
 
                     b.ToTable("ProductCategories", (string)null);
-                });
-
-            modelBuilder.Entity("backend.Models.FAQ", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Answer")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Keywords")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("Question")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("FAQs");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Answer = "We offer a 30-day return policy on all items. Items must be in their original condition with tags attached.",
-                            CreatedAt = new DateTime(2025, 4, 22, 16, 31, 51, 880, DateTimeKind.Utc).AddTicks(9357),
-                            IsActive = true,
-                            Keywords = "return refund policy",
-                            Question = "What is your return policy?"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Answer = "You can track your order by logging into your account and going to 'Order History'. You can also use the tracking number sent in your shipping confirmation email.",
-                            CreatedAt = new DateTime(2025, 4, 22, 16, 31, 51, 881, DateTimeKind.Utc).AddTicks(143),
-                            IsActive = true,
-                            Keywords = "track order shipping delivery",
-                            Question = "How do I track my order?"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Answer = "Yes, we ship to most countries worldwide. Shipping costs and delivery times vary by location. You can see shipping options during checkout.",
-                            CreatedAt = new DateTime(2025, 4, 22, 16, 31, 51, 881, DateTimeKind.Utc).AddTicks(145),
-                            IsActive = true,
-                            Keywords = "international shipping worldwide global",
-                            Question = "Do you ship internationally?"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Answer = "We accept all major credit cards (Visa, MasterCard, American Express), PayPal, and Apple Pay.",
-                            CreatedAt = new DateTime(2025, 4, 22, 16, 31, 51, 881, DateTimeKind.Utc).AddTicks(147),
-                            IsActive = true,
-                            Keywords = "payment credit card paypal",
-                            Question = "What payment methods do you accept?"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Answer = "You can reach our customer support team by email at support@example.com or by phone at 1-800-123-4567 between 9 AM and 6 PM EST Monday through Friday.",
-                            CreatedAt = new DateTime(2025, 4, 22, 16, 31, 51, 881, DateTimeKind.Utc).AddTicks(148),
-                            IsActive = true,
-                            Keywords = "contact support help customer service",
-                            Question = "How can I contact customer support?"
-                        });
                 });
 
             modelBuilder.Entity("backend.Models.Product", b =>
@@ -297,12 +214,6 @@ namespace backend.Migrations
 
                     b.Property<bool>("CanUpdate")
                         .HasColumnType("bit");
-
-                    b.Property<int>("Id")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UserPermissionId")
-                        .HasColumnType("int");
 
                     b.HasKey("UserId", "ModuleName");
 

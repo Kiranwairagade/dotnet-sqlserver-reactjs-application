@@ -25,14 +25,8 @@ namespace backend.DTOs
         public string FirstName { get; set; } = string.Empty;
         public string LastName { get; set; } = string.Empty;
         public string Token { get; set; } = string.Empty;
-        public string RefreshToken { get; set; } = string.Empty; // Add this line
-        public List<string> Roles { get; set; } = new List<string>();
         public List<PermissionDto> Permissions { get; set; } = new List<PermissionDto>();
     }
-
-
-
-
     public class PermissionDto
     {
         public string Name { get; set; } = string.Empty;

@@ -7,7 +7,6 @@ namespace backend.Services
     {
         Task<AuthResponse> RegisterAsync(RegisterRequest request);
         Task<AuthResponse> LoginAsync(LoginRequest request);
-        Task<AuthResponse> RefreshTokenAsync(TokenRequest request);
         Task<UserDto?> GetUserByIdAsync(int userId);
         Task<UserDto?> GetUserByEmailAsync(string email);
     }

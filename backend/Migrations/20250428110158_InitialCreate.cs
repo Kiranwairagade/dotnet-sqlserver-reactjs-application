@@ -112,8 +112,6 @@ namespace backend.Migrations
                 {
                     UserId = table.Column<int>(type: "int", nullable: false),
                     ModuleName = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    UserPermissionId = table.Column<int>(type: "int", nullable: false),
-                    Id = table.Column<int>(type: "int", nullable: false),
                     CanCreate = table.Column<bool>(type: "bit", nullable: false),
                     CanRead = table.Column<bool>(type: "bit", nullable: false),
                     CanUpdate = table.Column<bool>(type: "bit", nullable: false),

@@ -5,6 +5,7 @@ import {
   updateProduct,
   deleteProduct,
 } from '../../services/productService';
+import PermissionCheck from '../common/PermissionCheck';
 import './ProductMaster.css';
 
 const ProductMaster = () => {
@@ -157,40 +158,53 @@ const ProductMaster = () => {
   // Check if the products array contains valid data
   const hasValidData = products && products.length > 0 && products[0].productId;
 
+  const permissionDeniedMessage = (action) => (
+    <div className="permission-denied">
+      <p>You don't have permission to {action} products.</p>
+    </div>
+  );
+
   return (
     <div className="product-management-container">
       <div className="product-management-header">
         <h1>Product Master</h1>
-        <div className="add-product-section">
-          <input
-            type="text"
-            value={newName}
-            onChange={(e) => setNewName(e.target.value)}
-            placeholder="Product Name"
-          />
-          <input
-            type="number"
-            value={newPrice}
-            onChange={(e) => setNewPrice(e.target.value)}
-            placeholder="Price"
-            step="0.01"
-          />
-          <input
-            type="text"
-            value={newCategory}
-            onChange={(e) => setNewCategory(e.target.value)}
-            placeholder="Category"
-          />
-          <input
-            type="number"
-            value={newStock}
-            onChange={(e) => setNewStock(e.target.value)}
-            placeholder="Stock"
-          />
-          <button onClick={handleAddProduct} className="add-product-btn">
-            Add
-          </button>
-        </div>
+        
+        <PermissionCheck 
+          moduleName="products" 
+          action="create"
+          fallback={permissionDeniedMessage('add')}
+        >
+          <div className="add-product-section">
+            <input
+              type="text"
+              value={newName}
+              onChange={(e) => setNewName(e.target.value)}
+              placeholder="Product Name"
+            />
+            <input
+              type="number"
+              value={newPrice}
+              onChange={(e) => setNewPrice(e.target.value)}
+              placeholder="Price"
+              step="0.01"
+            />
+            <input
+              type="text"
+              value={newCategory}
+              onChange={(e) => setNewCategory(e.target.value)}
+              placeholder="Category"
+            />
+            <input
+              type="number"
+              value={newStock}
+              onChange={(e) => setNewStock(e.target.value)}
+              placeholder="Stock"
+            />
+            <button onClick={handleAddProduct} className="add-product-btn">
+              Add
+            </button>
+          </div>
+        </PermissionCheck>
       </div>
 
       <div className="product-table">
@@ -264,12 +278,14 @@ const ProductMaster = () => {
                   <td>
                     {editingId === product.productId ? (
                       <>
-                        <button
-                          onClick={() => handleUpdate(product.productId)}
-                          className="save-btn"
-                        >
-                          Save
-                        </button>
+                        <PermissionCheck moduleName="products" action="edit">
+                          <button
+                            onClick={() => handleUpdate(product.productId)}
+                            className="save-btn"
+                          >
+                            Save
+                          </button>
+                        </PermissionCheck>
                         <button
                           onClick={handleCancel}
                           className="cancel-btn"
@@ -279,18 +295,22 @@ const ProductMaster = () => {
                       </>
                     ) : (
                       <>
-                        <button
-                          onClick={() => handleEdit(product)}
-                          className="edit-btn"
-                        >
-                          Edit
-                        </button>
-                        <button
-                          onClick={() => handleDelete(product.productId)}
-                          className="delete-btn"
-                        >
-                          Delete
-                        </button>
+                        <PermissionCheck moduleName="products" action="edit">
+                          <button
+                            onClick={() => handleEdit(product)}
+                            className="edit-btn"
+                          >
+                            Edit
+                          </button>
+                        </PermissionCheck>
+                        <PermissionCheck moduleName="products" action="delete">
+                          <button
+                            onClick={() => handleDelete(product.productId)}
+                            className="delete-btn"
+                          >
+                            Delete
+                          </button>
+                        </PermissionCheck>
                       </>
                     )}
                   </td>

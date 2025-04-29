@@ -17,14 +17,13 @@ body, html {
 
 /* Main form container */
 .user-form-container {
-  width: 100%;
-  max-width: 1000px;
-  margin: 1rem auto;
-  padding: 1.5rem;
+  width: 80%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  margin-left: 200px;
+  margin-top: 100px;
   background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
-  overflow-x: auto;
 }
 
 /* Form heading */

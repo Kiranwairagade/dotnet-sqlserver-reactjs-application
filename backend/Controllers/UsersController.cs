@@ -104,7 +104,6 @@ namespace backend.Controllers
                 .Where(p => p.UserId == id)
                 .Select(p => new UserPermissionDto
                 {
-                    UserPermissionId = p.UserPermissionId,
                     UserId = p.UserId,
                     ModuleName = p.ModuleName,
                     CanCreate = p.CanCreate,

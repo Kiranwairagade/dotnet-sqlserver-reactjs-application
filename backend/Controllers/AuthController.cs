@@ -43,17 +43,6 @@ namespace backend.Controllers
             return Ok(response);
         }
 
-        [HttpPost("refresh-token")]
-        public async Task<IActionResult> RefreshToken([FromBody] TokenRequest request)
-        {
-            var response = await _authService.RefreshTokenAsync(request);
-            if (response == null)
-            {
-                return Unauthorized(new { message = "Invalid refresh token" });
-            }
-            return Ok(response);
-        }
-
         [HttpGet("user-info")]
         public async Task<ActionResult<UserDto>> GetUserInfo()
         {

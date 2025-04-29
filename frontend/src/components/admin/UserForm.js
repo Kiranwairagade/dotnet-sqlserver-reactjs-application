@@ -13,24 +13,11 @@ const UserForm = ({ selectedUser = null, onSubmitForm, onCancel, isLoading, erro
     password: '',
     confirmPassword: '',
     isActive: true,
-    modulePermissions: {},
     userPermissions: [],
   });
 
   useEffect(() => {
     if (selectedUser) {
-      const modulePerms = {};
-      if (selectedUser.userPermissions && Array.isArray(selectedUser.userPermissions)) {
-        selectedUser.userPermissions.forEach(perm => {
-          modulePerms[perm.moduleName] = {
-            Create: perm.canCreate || false,
-            Read: perm.canRead || false,
-            Update: perm.canUpdate || false,
-            Delete: perm.canDelete || false,
-          };
-        });
-      }
-
       setFormData({
         firstName: selectedUser.firstName || '',
         lastName: selectedUser.lastName || '',
@@ -39,7 +26,6 @@ const UserForm = ({ selectedUser = null, onSubmitForm, onCancel, isLoading, erro
         password: '',
         confirmPassword: '',
         isActive: selectedUser.isActive ?? true,
-        modulePermissions: modulePerms,
         userPermissions: selectedUser.userPermissions || [],
       });
     } else {
@@ -51,7 +37,6 @@ const UserForm = ({ selectedUser = null, onSubmitForm, onCancel, isLoading, erro
         password: '',
         confirmPassword: '',
         isActive: true,
-        modulePermissions: {},
         userPermissions: [],
       });
     }
@@ -66,16 +51,45 @@ const UserForm = ({ selectedUser = null, onSubmitForm, onCancel, isLoading, erro
   };
 
   const handleCheckboxChange = (module, action) => {
-    setFormData(prev => ({
-      ...prev,
-      modulePermissions: {
-        ...prev.modulePermissions,
-        [module]: {
-          ...prev.modulePermissions[module],
-          [action]: !prev.modulePermissions[module]?.[action],
-        },
-      },
-    }));
+    setFormData(prev => {
+      // Find if this module permission already exists
+      const existingIndex = prev.userPermissions.findIndex(p => p.moduleName === module);
+      let updatedPermissions = [...prev.userPermissions];
+      
+      if (existingIndex >= 0) {
+        // Update existing permission
+        const updated = {
+          ...updatedPermissions[existingIndex],
+        };
+        
+        // Toggle the specific permission
+        switch (action) {
+          case 'Create': updated.canCreate = !updated.canCreate; break;
+          case 'Read': updated.canRead = !updated.canRead; break;
+          case 'Update': updated.canUpdate = !updated.canUpdate; break;
+          case 'Delete': updated.canDelete = !updated.canDelete; break;
+          default: break;
+        }
+        
+        updatedPermissions[existingIndex] = updated;
+      } else {
+        // Create new permission for this module
+        const newPermission = {
+          moduleName: module,
+          canCreate: action === 'Create' ? true : false,
+          canRead: action === 'Read' ? true : false,
+          canUpdate: action === 'Update' ? true : false,
+          canDelete: action === 'Delete' ? true : false,
+        };
+        
+        updatedPermissions.push(newPermission);
+      }
+      
+      return {
+        ...prev,
+        userPermissions: updatedPermissions
+      };
+    });
   };
 
   const handleSubmit = (e) => {
@@ -86,18 +100,7 @@ const UserForm = ({ selectedUser = null, onSubmitForm, onCancel, isLoading, erro
       return;
     }
 
-    const userPermissions = Object.entries(formData.modulePermissions).map(([moduleName, perms]) => ({
-      moduleName,
-      canCreate: perms.Create || false,
-      canRead: perms.Read || false,
-      canUpdate: perms.Update || false,
-      canDelete: perms.Delete || false,
-    }));
-
-    const payload = {
-      ...formData,
-      userPermissions,
-    };
+    const payload = { ...formData };
 
     if (selectedUser) {
       delete payload.password;
@@ -105,6 +108,20 @@ const UserForm = ({ selectedUser = null, onSubmitForm, onCancel, isLoading, erro
     }
 
     onSubmitForm(payload);
+  };
+
+  // Helper function to check if a permission is checked
+  const isPermissionChecked = (module, action) => {
+    const modulePermission = formData.userPermissions.find(p => p.moduleName === module);
+    if (!modulePermission) return false;
+    
+    switch (action) {
+      case 'Create': return modulePermission.canCreate || false;
+      case 'Read': return modulePermission.canRead || false;
+      case 'Update': return modulePermission.canUpdate || false;
+      case 'Delete': return modulePermission.canDelete || false;
+      default: return false;
+    }
   };
 
   return (
@@ -187,7 +204,7 @@ const UserForm = ({ selectedUser = null, onSubmitForm, onCancel, isLoading, erro
                     <td key={action}>
                       <input
                         type="checkbox"
-                        checked={formData.modulePermissions[module]?.[action] || false}
+                        checked={isPermissionChecked(module, action)}
                         onChange={() => handleCheckboxChange(module, action)}
                       />
                     </td>

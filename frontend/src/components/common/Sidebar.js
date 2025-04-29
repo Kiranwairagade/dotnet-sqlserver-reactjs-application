@@ -1,7 +1,8 @@
-// Sidebar.js
+// src/components/common/Sidebar.js
 import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext'; 
+import { useAuth } from '../../contexts/AuthContext';
+import { usePermission } from '../../contexts/PermissionContext';
 import {
   LayoutDashboard,
   UserCog,
@@ -10,9 +11,10 @@ import {
   Tag,
   Truck,
   PackageSearch,
-  Users
+  Users,
+  Lock
 } from 'lucide-react';
-import masterModules from '../../../src/config/modules';
+import masterModules from '../../config/modules';
 import './Sidebar.css';
 
 const icons = {
@@ -24,25 +26,44 @@ const icons = {
 };
 
 const Sidebar = () => {
-  const { logout } = useAuth();  // use logout function from context
+  const { logout } = useAuth();
+  const { hasPermission, isLoading } = usePermission();
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    logout();           // update auth state
-    navigate('/login'); // redirect to login
+    logout();
+    navigate('/login');
+  };
+
+  // Function to handle click on modules without permission
+  const handleRestrictedClick = (e, module) => {
+    if (!hasPermission(module.toLowerCase(), 'view')) {
+      e.preventDefault();
+      alert(`You don't have permission to access the ${module} module.`);
+    }
   };
 
   return (
     <div className="sidebar">
-      <h2> Masters</h2>
+      <h2>Masters</h2>
       <ul className="sidebar-list">
-        {masterModules.map((module) => (
-          <li key={module}>
-            <NavLink to={`/${module.toLowerCase()}`} className="sidebar-link">
-              {icons[module]} <span>{module}</span>
-            </NavLink>
-          </li>
-        ))}
+        {masterModules.map((module) => {
+          const hasAccess = !isLoading && hasPermission(module.toLowerCase(), 'view');
+          
+          return (
+            <li key={module}>
+              <NavLink 
+                to={`/${module.toLowerCase()}`} 
+                className={`sidebar-link ${!hasAccess ? 'restricted' : ''}`}
+                onClick={(e) => handleRestrictedClick(e, module)}
+              >
+                {icons[module]} 
+                <span>{module}</span>
+                {!hasAccess && <Lock size={14} className="lock-icon" />}
+              </NavLink>
+            </li>
+          );
+        })}
       </ul>
 
       <h2>Admin</h2>

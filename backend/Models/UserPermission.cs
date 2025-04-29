@@ -3,8 +3,6 @@ namespace backend.Models
 {
     public class UserPermission
     {
-        public int UserPermissionId { get; set; }
-        public int Id { get; set; }
         public int UserId { get; set; }
         public string ModuleName { get; set; } = string.Empty;
         public bool CanCreate { get; set; }

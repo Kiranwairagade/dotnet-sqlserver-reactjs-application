@@ -5,6 +5,7 @@ import {
   deleteSupplier,
   updateSupplier,
 } from '../../services/supplierService';
+import PermissionCheck from '../common/PermissionCheck';
 import './SupplierMaster.css';
 
 const SupplierMaster = () => {
@@ -34,6 +35,8 @@ const SupplierMaster = () => {
       
       if (Array.isArray(data)) {
         setSuppliers(data);
+      } else if (Array.isArray(data?.$values)) {
+        setSuppliers(data.$values);
       } else {
         console.error('Expected array but got:', typeof data);
         setSuppliers([]);
@@ -41,6 +44,9 @@ const SupplierMaster = () => {
     } catch (error) {
       console.error('Error loading suppliers:', error);
       setError('Failed to load suppliers');
+      if (error.response?.status === 401 || error.response?.status === 403) {
+        setError('You do not have permission to view suppliers');
+      }
       setSuppliers([]);
     } finally {
       setIsLoading(false);
@@ -77,7 +83,11 @@ const SupplierMaster = () => {
       }
     } catch (error) {
       console.error('Error in handleAddSupplier:', error);
-      alert('An error occurred while adding the supplier.');
+      if (error.response?.status === 401 || error.response?.status === 403) {
+        alert('You do not have permission to add suppliers.');
+      } else {
+        alert('An error occurred while adding the supplier.');
+      }
     }
   };
 
@@ -88,7 +98,11 @@ const SupplierMaster = () => {
         loadSuppliers();
       } catch (error) {
         console.error('Error deleting supplier:', error);
-        alert('Failed to delete supplier.');
+        if (error.response?.status === 401 || error.response?.status === 403) {
+          alert('You do not have permission to delete suppliers.');
+        } else {
+          alert('Failed to delete supplier.');
+        }
       }
     }
   };
@@ -128,7 +142,11 @@ const SupplierMaster = () => {
       }
     } catch (error) {
       console.error('Error updating supplier:', error);
-      alert('An error occurred while updating the supplier.');
+      if (error.response?.status === 401 || error.response?.status === 403) {
+        alert('You do not have permission to update suppliers.');
+      } else {
+        alert('An error occurred while updating the supplier.');
+      }
     }
   };
 
@@ -136,40 +154,51 @@ const SupplierMaster = () => {
     setEditingId(null);
   };
 
+  const permissionDeniedMessage = (action) => (
+    <div className="permission-denied">
+      <p>You don't have permission to {action} suppliers.</p>
+    </div>
+  );
+
   return (
     <div className="supplier-management-container">
       <div className="supplier-management-header">
         <h1>Supplier Master</h1>
-        <div className="add-supplier-section">
-          <input
-            type="text"
-            value={newSupplierName}
-            onChange={(e) => setNewSupplierName(e.target.value)}
-            placeholder="Supplier name"
-          />
-          <input
-            type="email"
-            value={newSupplierEmail}
-            onChange={(e) => setNewSupplierEmail(e.target.value)}
-            placeholder="Supplier email"
-          />
-          <input
-            type="text"
-            value={newSupplierPhone}
-            onChange={(e) => setNewSupplierPhone(e.target.value)}
-            placeholder="Supplier phone"
-          />
-          <input
-            type="text"
-            value={newSupplierAddress}
-            onChange={(e) => setNewSupplierAddress(e.target.value)}
-            placeholder="Supplier address"
-          />
-
-          <button onClick={handleAddSupplier} className="add-supplier-btn">
-            Add
-          </button>
-        </div>
+        <PermissionCheck 
+          moduleName="suppliers" 
+          action="create"
+          fallback={permissionDeniedMessage('add')}
+        >
+          <div className="add-supplier-section">
+            <input
+              type="text"
+              value={newSupplierName}
+              onChange={(e) => setNewSupplierName(e.target.value)}
+              placeholder="Supplier name"
+            />
+            <input
+              type="email"
+              value={newSupplierEmail}
+              onChange={(e) => setNewSupplierEmail(e.target.value)}
+              placeholder="Supplier email"
+            />
+            <input
+              type="text"
+              value={newSupplierPhone}
+              onChange={(e) => setNewSupplierPhone(e.target.value)}
+              placeholder="Supplier phone"
+            />
+            <input
+              type="text"
+              value={newSupplierAddress}
+              onChange={(e) => setNewSupplierAddress(e.target.value)}
+              placeholder="Supplier address"
+            />
+            <button onClick={handleAddSupplier} className="add-supplier-btn">
+              Add
+            </button>
+          </div>
+        </PermissionCheck>
       </div>
 
       <div className="supplier-table">
@@ -241,21 +270,27 @@ const SupplierMaster = () => {
                     <td>
                       {editingId === supplier.supplierId ? (
                         <>
-                          <button className="save-btn" onClick={() => handleUpdate(supplier.supplierId)}>
-                            Save
-                          </button>
+                          <PermissionCheck moduleName="suppliers" action="edit">
+                            <button className="save-btn" onClick={() => handleUpdate(supplier.supplierId)}>
+                              Save
+                            </button>
+                          </PermissionCheck>
                           <button className="cancel-btn" onClick={handleCancel}>
                             Cancel
                           </button>
                         </>
                       ) : (
                         <>
-                          <button className="edit-btn" onClick={() => handleEdit(supplier)}>
-                            Edit
-                          </button>
-                          <button className="delete-btn" onClick={() => handleDelete(supplier.supplierId)}>
-                            Delete
-                          </button>
+                          <PermissionCheck moduleName="suppliers" action="edit">
+                            <button className="edit-btn" onClick={() => handleEdit(supplier)}>
+                              Edit
+                            </button>
+                          </PermissionCheck>
+                          <PermissionCheck moduleName="suppliers" action="delete">
+                            <button className="delete-btn" onClick={() => handleDelete(supplier.supplierId)}>
+                              Delete
+                            </button>
+                          </PermissionCheck>
                         </>
                       )}
                     </td>
