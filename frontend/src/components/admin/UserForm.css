@@ -7,23 +7,26 @@
 
 body, html {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #f8f9fa;
-  color: #212529;
+  background-color: #f5f7fa;
+  color: #333;
   height: 100%;
   width: 100%;
   overflow-x: hidden;
-  font-size: 12px; /* Decreased base font size */
+  font-size: 12px;
+  line-height: 1.4;
 }
 
 /* Main form container */
 .user-form-container {
-  width: 80%;
-  max-width: 1200px;
+  width: 85%;
+  max-width: 980px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 1.2rem;
   margin-left: 200px;
-  margin-top: 100px;
+  margin-top: 80px;
   background-color: #fff;
+  border-radius: 6px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.06);
 }
 
 /* Form heading */
@@ -31,7 +34,10 @@ body, html {
   text-align: center;
   font-size: 1.2rem;
   margin-bottom: 1rem;
-  color: #333;
+  color: #2c3e50;
+  font-weight: 600;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid #f1f1f1;
 }
 
 /* Row with label + input layout */
@@ -45,23 +51,31 @@ body, html {
 /* Group wrapper for label + input */
 .form-group {
   flex: 1;
-  min-width: 200px;
+  min-width: 180px;
   display: flex;
   flex-direction: column;
 }
 
 .form-group label {
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   font-weight: 600;
-  margin-bottom: 0.3rem;
+  margin-bottom: 0.25rem;
+  color: #566573;
 }
 
 .form-group input {
   padding: 0.4rem;
-  font-size: 0.75rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  font-size: 0.8rem;
+  border: 1px solid #dce4ec;
+  border-radius: 3px;
   height: 30px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
 }
 
 /* Checkbox layout */
@@ -69,64 +83,254 @@ body, html {
   display: flex;
   align-items: center;
   gap: 0.4rem;
-  margin: 0.8rem 0;
-  font-size: 0.8rem;
+  margin: 0.6rem 0;
+  font-size: 0.75rem;
+}
+
+.checkbox-group input[type="checkbox"] {
+  width: 14px;
+  height: 14px;
+  accent-color: #3498db;
 }
 
 /* Table container */
 .permissions-table-container {
   width: 100%;
   overflow-x: auto;
-  margin-top: 1rem;
+  margin-top: 0.8rem;
+  border-radius: 4px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
 }
 
 /* Actual table */
 .permissions-table {
   width: 100%;
-  min-width: 600px;
+  min-width: 550px;
   font-size: 0.75rem;
   border-collapse: collapse;
+  border-radius: 4px;
+  overflow: hidden;
 }
 
 .permissions-table th,
 .permissions-table td {
   padding: 0.4rem;
-  border: 1px solid #dee2e6;
+  border: 1px solid #e9ecef;
   text-align: center;
 }
 
 .permissions-table th {
-  background-color: #e9ecef;
+  background-color: #f8f9fa;
   font-weight: 600;
+  color: #2c3e50;
+}
+
+.permissions-table tr:nth-child(even) {
+  background-color: #f5f7fa;
+}
+
+.permissions-table tr:hover {
+  background-color: #ebf5fb;
+}
+
+.permissions-table input[type="checkbox"] {
+  width: 14px;
+  height: 14px;
+  accent-color: #3498db;
+  cursor: pointer;
+}
+
+/* Error message */
+.error {
+  color: #e74c3c;
+  font-size: 0.75rem;
+  margin-top: 0.6rem;
+  padding: 0.4rem;
+  background-color: #fadbd8;
+  border-radius: 3px;
+  text-align: center;
 }
 
 /* Buttons section */
 .form-actions {
   display: flex;
   justify-content: flex-end;
-  gap: 0.8rem;
-  margin-top: 1.5rem;
+  gap: 0.7rem;
+  margin-top: 1.2rem;
 }
 
+.form-actions button {
+  padding: 0.4rem 1rem;
+  font-size: 0.8rem;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+  font-weight: 500;
+}
 
-.btn-cancel {
-  background-color: #6c757d;
+.form-actions button[type="submit"] {
+  background-color: #3498db;
   color: white;
 }
 
-.btn-cancel:hover {
-  background-color: #5a6268;
+.form-actions button[type="submit"]:hover {
+  background-color: #2980b9;
+}
+
+.form-actions button[type="submit"]:active {
+  transform: translateY(1px);
+}
+
+.form-actions button[type="button"] {
+  background-color: #e9ecef;
+  color: #495057;
+}
+
+.form-actions button[type="button"]:hover {
+  background-color: #dee2e6;
+}
+
+.form-actions button:disabled {
+  background-color: #b3b3b3;
+  cursor: not-allowed;
+}
+
+/* Users List Table */
+.users-list-container {
+  margin-bottom: 2rem;
+  border-bottom: 1px solid #f1f1f1;
+  padding-bottom: 1rem;
+}
+
+.users-list-container h3 {
+  font-size: 1rem;
+  margin-bottom: 0.8rem;
+  color: #2c3e50;
+}
+
+.users-list-table {
+  width: 100%;
+  font-size: 0.75rem;
+  border-collapse: collapse;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 1rem;
+}
+
+.users-list-table th,
+.users-list-table td {
+  padding: 0.5rem;
+  border: 1px solid #e9ecef;
+  text-align: left;
+}
+
+.users-list-table th {
+  background-color: #f8f9fa;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.users-list-table tr:nth-child(even) {
+  background-color: #f5f7fa;
+}
+
+.users-list-table tr:hover {
+  background-color: #ebf5fb;
+}
+
+.users-list-table button {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.7rem;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.users-list-table button:hover {
+  background-color: #2980b9;
+}
+
+/* Pagination styles */
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 0.3rem;
+  margin: 1rem 0;
+}
+
+.page-link {
+  padding: 0.3rem 0.6rem;
+  font-size: 0.75rem;
+  border: 1px solid #dce4ec;
+  background-color: #fff;
+  color: #3498db;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.page-link:hover {
+  background-color: #f8f9fa;
+}
+
+.page-link.active {
+  background-color: #3498db;
+  color: white;
+  border-color: #3498db;
+}
+
+.page-link:disabled {
+  color: #b3b3b3;
+  cursor: not-allowed;
+  background-color: #f5f5f5;
 }
 
 /* Responsive tweaks */
+@media (max-width: 992px) {
+  .user-form-container {
+    margin-left: 0;
+    width: 95%;
+  }
+}
+
 @media (max-width: 768px) {
   .form-row {
     flex-direction: column;
+    gap: 0.8rem;
   }
 
   .form-actions {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: stretch;
+    gap: 0.8rem;
   }
+  
+  .user-form-container {
+    padding: 1.5rem;
+    margin-top: 50px;
+  }
+  
+  .pagination {
+    flex-wrap: wrap;
+  }
+}
 
+@media (max-width: 576px) {
+  .user-form-container {
+    width: 100%;
+    padding: 1rem;
+    border-radius: 0;
+  }
+  
+  .users-list-table {
+    font-size: 0.7rem;
+  }
+  
+  .pagination .page-link {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.7rem;
+  }
 }

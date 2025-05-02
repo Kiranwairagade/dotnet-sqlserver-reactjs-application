@@ -1,4 +1,3 @@
-// src/components/common/PermissionCheck.js
 import React from 'react';
 import { usePermission } from '../../contexts/PermissionContext';
 
@@ -10,13 +9,17 @@ import { usePermission } from '../../contexts/PermissionContext';
  * @param {React.ReactNode} props.children - Content to render if permission exists
  * @param {React.ReactNode} props.fallback - Optional content to render if permission denied
  * @param {boolean} props.debug - Whether to show debug information
+ * @param {boolean} props.showAlways - Whether to always show children (for buttons)
+ * @param {function} props.onUnauthorized - Callback for unauthorized actions
  */
 const PermissionCheck = ({ 
   moduleName, 
   action, 
   children, 
   fallback = null,
-  debug = false
+  debug = false,
+  showAlways = true, // Changed default to true to always show buttons
+  onUnauthorized = null
 }) => {
   const { hasPermission, isLoading } = usePermission();
   
@@ -46,6 +49,35 @@ const PermissionCheck = ({
   
   // Check if user has the required permission
   const permitted = hasPermission(moduleName.toLowerCase(), mappedAction);
+  
+  // Always show for buttons, but with click handler that checks permission
+  if (showAlways) {
+    // Create a clone of the child element with an onClick handler that checks permissions
+    return React.Children.map(children, child => {
+      if (React.isValidElement(child)) {
+        return React.cloneElement(child, {
+          onClick: (e) => {
+            if (!permitted) {
+              e.preventDefault();
+              e.stopPropagation();
+              if (onUnauthorized) {
+                onUnauthorized(moduleName, mappedAction);
+              } else {
+                alert(`You don't have permission to ${action} ${moduleName}.`);
+              }
+              return;
+            }
+            
+            // If permitted, call the original onClick if it exists
+            if (child.props.onClick) {
+              child.props.onClick(e);
+            }
+          }
+        });
+      }
+      return child;
+    });
+  }
   
   if (permitted) {
     return children;

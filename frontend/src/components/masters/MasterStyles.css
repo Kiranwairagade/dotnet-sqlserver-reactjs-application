@@ -1,58 +1,4 @@
-/* User Management Styles */
-.user-management-container {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
-.user-management-content {
-  flex: 1;
-}
-
-/* Status Indicators */
-.status-active {
-  background-color: #d4edda;
-  color: #155724;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.status-inactive {
-  background-color: #f8d7da;
-  color: #721c24;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 12px;
-  font-weight: 600;
-}
-
-/* User Details Page */
-.user-detail-content {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.user-detail-content table {
-  margin-bottom: 0;
-}
-
-.user-detail-content h3 {
-  font-size: 16px;
-  color: #333;
-  margin: 10px 0;
-  padding-bottom: 5px;
-  border-bottom: 1px solid #eee;
-}
-
-.permissions-section {
-  margin-top: 20px;
-}
-
-/* Master Component Styles */
+/* Shared Master Component Styles */
 .master-container {
   width: 80%;
   max-width: 1200px;
@@ -92,11 +38,6 @@
   display: flex;
   flex: 2;
   min-width: 250px;
-}
-
-.search-container form {
-  display: flex;
-  width: 100%;
 }
 
 .search-container input {
@@ -305,67 +246,24 @@ table input {
   border-radius: 4px;
 }
 
-.form-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 0.7rem;
-  margin-top: 1.2rem;
-}
-
-.form-actions button {
-  padding: 0.4rem 1rem;
-  font-size: 0.8rem;
-  border: none;
-  border-radius: 3px;
-  cursor: pointer;
-  transition: background-color 0.2s ease, transform 0.1s ease;
-  font-weight: 500;
-}
-
-/* Responsive styles */
-@media (max-width: 992px) {
-  .master-container {
-    margin-left: 0;
-    width: 95%;
-  }
-}
-
 @media (max-width: 768px) {
+  .master-container {
+    width: 95%;
+    margin-left: auto;
+    padding: 15px;
+  }
+  
+  .add-section {
+    flex-direction: column;
+  }
+  
   .search-filter-container {
     flex-direction: column;
   }
   
   .search-container,
-  .filter-container,
-  .add-section {
+  .filter-container {
     width: 100%;
-  }
-  
-  .master-container {
-    padding: 15px;
-  }
-  
-  .pagination {
-    flex-wrap: wrap;
-  }
-  
-  .action-buttons {
-    flex-direction: column;
-    gap: 5px;
-  }
-  
-  .form-actions {
-    flex-direction: column;
-    align-items: stretch;
-  }
-}
-
-@media (max-width: 576px) {
-  .master-container {
-    width: 100%;
-    padding: 10px;
-    margin-top: 20px;
-    border-radius: 0;
   }
   
   table {
@@ -375,5 +273,9 @@ table input {
   table button {
     padding: 4px 8px;
     font-size: 12px;
+  }
+  
+  .pagination {
+    flex-wrap: wrap;
   }
 }

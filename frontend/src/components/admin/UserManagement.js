@@ -3,7 +3,6 @@ import UserTable from './UserTable';
 import UserForm from './UserForm';
 import UserDetail from './UserDetail';
 import { createUser, updateUser } from '../../services/userService';
-import './UserTable.css';
 
 const UserManagement = () => {
   const [activeView, setActiveView] = useState('list'); // 'list', 'create', 'edit', 'view'
@@ -108,7 +107,7 @@ const UserManagement = () => {
   };
 
   return (
-    <div className="user-management-container">          
+    <div className="user-management-container">
       <div className="user-management-content">
         {renderContent()}
       </div>

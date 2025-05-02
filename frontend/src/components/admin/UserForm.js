@@ -4,7 +4,7 @@ import './UserForm.css';
 
 const permissions = ['Create', 'Read', 'Update', 'Delete'];
 
-const UserForm = ({ selectedUser = null, onSubmitForm, onCancel, isLoading, error }) => {
+const UserForm = ({ selectedUser = null, onSubmitForm, onCancel, isLoading, error, users = [], onPageChange, onEditUser }) => {
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -15,6 +15,23 @@ const UserForm = ({ selectedUser = null, onSubmitForm, onCancel, isLoading, erro
     isActive: true,
     userPermissions: [],
   });
+  
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [usersPerPage] = useState(10); // Default page size
+  
+  // Get current users
+  const indexOfLastUser = currentPage * usersPerPage;
+  const indexOfFirstUser = indexOfLastUser - usersPerPage;
+  const currentUsers = users.slice(indexOfFirstUser, indexOfLastUser);
+  
+  // Change page
+  const paginate = (pageNumber) => {
+    setCurrentPage(pageNumber);
+    if (onPageChange) {
+      onPageChange(pageNumber);
+    }
+  };
 
   useEffect(() => {
     if (selectedUser) {
@@ -124,8 +141,84 @@ const UserForm = ({ selectedUser = null, onSubmitForm, onCancel, isLoading, erro
     }
   };
 
+  // Pagination component
+  const Pagination = ({ usersPerPage, totalUsers, paginate, currentPage }) => {
+    const pageNumbers = [];
+    
+    for (let i = 1; i <= Math.ceil(totalUsers / usersPerPage); i++) {
+      pageNumbers.push(i);
+    }
+    
+    return (
+      <div className="pagination">
+        <button 
+          onClick={() => paginate(currentPage - 1)} 
+          disabled={currentPage === 1}
+          className="page-link"
+        >
+          &laquo; Prev
+        </button>
+        
+        {pageNumbers.map(number => (
+          <button
+            key={number}
+            onClick={() => paginate(number)}
+            className={`page-link ${currentPage === number ? 'active' : ''}`}
+          >
+            {number}
+          </button>
+        ))}
+        
+        <button 
+          onClick={() => paginate(currentPage + 1)} 
+          disabled={currentPage === Math.ceil(totalUsers / usersPerPage)}
+          className="page-link"
+        >
+          Next &raquo;
+        </button>
+      </div>
+    );
+  };
+
   return (
     <div className="user-form-container">
+      {users.length > 0 && (
+        <div className="users-list-container">
+          <h3>Users List</h3>
+          <table className="users-list-table">
+            <thead>
+              <tr>
+                <th>Username</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {currentUsers.map((user, index) => (
+                <tr key={user.id || index}>
+                  <td>{user.username}</td>
+                  <td>{user.firstName} {user.lastName}</td>
+                  <td>{user.email}</td>
+                  <td>{user.isActive ? 'Active' : 'Inactive'}</td>
+                  <td>
+                    <button onClick={() => onEditUser(user)}>Edit</button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          
+          <Pagination 
+            usersPerPage={usersPerPage} 
+            totalUsers={users.length} 
+            paginate={paginate} 
+            currentPage={currentPage}
+          />
+        </div>
+      )}
+
       <form className="user-form" onSubmit={handleSubmit}>
         <h2>{selectedUser ? 'Edit User' : 'Add User'}</h2>
 

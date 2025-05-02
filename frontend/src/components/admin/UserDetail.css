@@ -1,54 +1,53 @@
-/* UserDetail.css - Enhanced styling */
-
-/* Main container */
+/* UserDetail.css - Optimized for laptop screens */
+/* Main container - reduced height */
 .user-detail-container {
- height: 550px;
-  max-width: 1200px;
+  height: auto; /* Changed from fixed 550px to auto */
+  max-width: 1000px; /* Reduced from 1200px */
   margin: 0 auto;
-  padding: 20px;
-  margin-left: 200px;
-  margin-top: 50px;
+  padding: 15px; /* Reduced from 20px */
+  margin-left: 180px; /* Reduced from 200px */
+  margin-top: 30px; /* Reduced from 50px */
   background-color: #fff;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 
-/* Header section */
+/* Header section - reduced padding */
 .user-detail-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
-  padding-bottom: 16px;
+  margin-bottom: 16px; /* Reduced from 24px */
+  padding-bottom: 12px; /* Reduced from 16px */
   border-bottom: 1px solid #e0e0e0;
 }
 
 .user-detail-header h2 {
   margin: 0;
   color: #2c3e50;
-  font-size: 1.75rem;
+  font-size: 1.5rem; /* Reduced from 1.75rem */
   font-weight: 600;
 }
 
 .user-detail-actions {
   display: flex;
-  gap: 12px;
+  gap: 8px; /* Reduced from 12px */
 }
 
-/* Button styling */
+/* Button styling - smaller buttons */
 .btn {
-  padding: 10px 18px;
+  padding: 8px 14px; /* Reduced from 10px 18px */
   border: none;
   border-radius: 4px;
   cursor: pointer;
   font-weight: 500;
-  font-size: 0.9rem;
+  font-size: 0.85rem; /* Reduced from 0.9rem */
   transition: all 0.2s ease;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Reduced shadow */
 }
 
 .btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  transform: translateY(-1px); /* Reduced from -2px */
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15); /* Reduced shadow */
 }
 
 .btn-edit {
@@ -75,32 +74,31 @@
   flex-direction: column;
 }
 
-
-/* User profile card */
+/* User profile card - compact sizing */
 .user-profile-card {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  padding: 20px;
+  gap: 12px; /* Reduced from 16px */
+  padding: 12px; /* Reduced from 20px */
   background-color: #f9f9f9;
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-  height: 100%;
+  border-radius: 6px; /* Reduced from 8px */
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  height: auto; /* Changed from 100% to auto */
 }
 
 .user-avatar {
-  width: 50px;
-  height: 50px;
+  width: 40px; /* Reduced from 50px */
+  height: 40px; /* Reduced from 50px */
   border-radius: 50%;
   background-color: #3498db;
   color: white;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.6rem;
+  font-size: 1.4rem; /* Reduced from 1.6rem */
   font-weight: 600;
   flex-shrink: 0;
-  margin-bottom: 6px;
+  margin-bottom: 4px; /* Reduced from 6px */
 }
 
 .user-detail-info {
@@ -109,9 +107,9 @@
 
 .user-detail-info h3 {
   margin-top: 0;
-  margin-bottom: 16px;
+  margin-bottom: 12px; /* Reduced from 16px */
   color: #2c3e50;
-  font-size: 1.4rem;
+  font-size: 1.2rem; /* Reduced from 1.4rem */
   font-weight: 600;
 }
 
@@ -119,23 +117,23 @@
 .info-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 12px;
+  gap: 8px; /* Reduced from 12px */
 }
 
 .info-item {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px; /* Reduced from 4px */
 }
 
 .info-label {
-  font-size: 0.85rem;
+  font-size: 0.8rem; /* Reduced from 0.85rem */
   color: #7f8c8d;
   font-weight: 500;
 }
 
 .info-value {
-  font-size: 1rem;
+  font-size: 0.9rem; /* Reduced from 1rem */
   color: #2c3e50;
 }
 
@@ -153,45 +151,53 @@
 /* Permissions section */
 .user-permissions-section {
   flex: 1;
+  padding: 12px; /* Added smaller padding */
+  background-color: #f9f9f9;
+  border-radius: 6px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .user-permissions-section h3 {
   margin-top: 0;
-  margin-bottom: 16px;
+  margin-bottom: 12px; /* Reduced from 16px */
   color: #2c3e50;
-  font-size: 1.3rem;
+  font-size: 1.1rem; /* Reduced from 1.3rem */
   font-weight: 600;
 }
 
 .permissions-table-container {
   overflow-x: auto;
-  max-width: 600px; /* Limit the container width */
-  margin: 0 auto;   /* Center it nicely */
-  border-radius: 6px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  max-width: 100%; /* Changed from 600px to use full available width */
+  max-height: 250px; /* Added max-height to prevent vertical overflow */
+  overflow-y: auto; /* Added scrolling for vertical overflow */
+  border-radius: 4px; /* Reduced from 6px */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-
-/* Table styling */
+/* Table styling - more compact */
 .permissions-table {
-  width: auto;
+  width: 100%;
   border-collapse: collapse;
-  border-radius: 6px;
+  border-radius: 4px; /* Reduced from 6px */
   overflow: hidden;
 }
 
 .permissions-table th,
 .permissions-table td {
-  padding: 5px 5px;
+  padding: 5px 0px; /* Reduced from 5px 5px */
   text-align: center;
   border: 1px solid #e0e0e0;
+  font-size: 0.85rem; /* Added smaller font size */
 }
 
 .permissions-table th {
   background-color: #f5f7fa;
   color: #34495e;
   font-weight: 600;
-  font-size: 0.95rem;
+  font-size: 0.85rem; /* Reduced from 0.95rem */
+  position: sticky; /* Keep headers visible during scroll */
+  top: 0;
+  z-index: 1;
 }
 
 .permissions-table tr:hover {
@@ -206,62 +212,88 @@
 
 .permission-granted {
   color: #27ae60;
-  font-size: 1.2rem;
+  font-size: 1rem; /* Reduced from 1.2rem */
   font-weight: bold;
 }
 
 .permission-denied {
   color: #e74c3c;
-  font-size: 1.2rem;
+  font-size: 1rem; /* Reduced from 1.2rem */
   font-weight: bold;
 }
 
-/* Loading/Error/Not Found states */
+/* Loading/Error/Not Found states - reduced sizes */
 .loading-container,
 .error-container,
 .not-found-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 300px;
+  min-height: 200px; /* Reduced from 300px */
   background-color: #ffffff;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  border-radius: 6px; /* Reduced from 8px */
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.08);
 }
 
 .loading,
 .error,
 .not-found {
-  padding: 24px;
+  padding: 18px; /* Reduced from 24px */
   text-align: center;
-  border-radius: 6px;
+  border-radius: 4px; /* Reduced from 6px */
 }
 
 .loading {
   color: #3498db;
-  font-size: 1.1rem;
+  font-size: 1rem; /* Reduced from 1.1rem */
   font-weight: 500;
   background-color: rgba(52, 152, 219, 0.1);
 }
 
 .error {
   color: #e74c3c;
-  font-size: 1.1rem;
+  font-size: 1rem; /* Reduced from 1.1rem */
   font-weight: 500;
   background-color: rgba(231, 76, 60, 0.1);
 }
 
 .not-found {
   color: #f39c12;
-  font-size: 1.1rem;
+  font-size: 1rem; /* Reduced from 1.1rem */
   font-weight: 500;
   background-color: rgba(243, 156, 18, 0.1);
 }
 
+/* User detail row layout */
+.user-detail-row {
+  display: flex;
+  flex-direction: row;
+  gap: 15px; /* Reduced from 20px */
+  width: 100%;
+}
+
+.user-detail-column {
+  flex: 1;
+  min-width: 0; /* Prevents flex items from overflowing */
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
+  .user-detail-container {
+    margin-left: 0;
+    padding: 10px;
+  }
+  
   .user-detail-main-layout {
     flex-direction: column;
+  }
+  
+  .user-detail-row {
+    flex-direction: column;
+  }
+  
+  .user-detail-column {
+    width: 100%;
   }
   
   .user-profile-section {
@@ -274,7 +306,7 @@
   
   .user-detail-header {
     flex-direction: column;
-    gap: 16px;
+    gap: 12px; /* Reduced from 16px */
     align-items: flex-start;
   }
   
@@ -283,82 +315,51 @@
     justify-content: space-between;
   }
 }
+/* Two-column layout for user info */
+.info-grid.two-column {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
 
-/* Add these styles to your UserDetail.css file */
-
-.user-detail-row {
-  display: flex;
-  flex-direction: row;
+/* Stack user profile and permissions vertically */
+.user-detail-row.vertical-layout {
+  flex-direction: column;
   gap: 20px;
-  width: 100%;
+}
+.user-avatar-name {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
 }
 
-.user-detail-column {
-  flex: 1;
-  min-width: 0; /* Prevents flex items from overflowing */
+/* Updated avatar and name section */
+.user-avatar-name {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
 }
 
-/* Make sure the user profile card and permissions table are responsive */
-@media (max-width: 768px) {
-  .user-detail-row {
-    flex-direction: column;
-  }
-  
-  .user-detail-column {
-    width: 100%;
-  }
-}
-
-/* Optional: Adjust existing styles for better layout */
-.user-profile-card {
-  height: 100%;
-  padding: 15px;
-  background-color: #f9f9f9;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.user-permissions-section {
-  height: 100%;
-  padding: 15px;
-  background-color: #f9f9f9;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.permissions-table-container {
-  max-height: 300px;
-  overflow-y: auto;
-}
-
-.permissions-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.permissions-table th,
-.permissions-table td {
-  padding: 8px;
-  text-align: center;
-  border-bottom: 1px solid #ddd;
-}
-
-.permissions-table th {
-  background-color: #f2f2f2;
-  position: sticky;
-  top: 0;
-}
-
-.module-name {
-  text-align: left;
-  font-weight: 500;
-}
-
-.permission-granted {
-  color: #2e7d32;
+/* Make avatar slightly compact but centered */
+.user-avatar {
+  background-color: #ccc;
+  color: #333;
+  width: 30px;
+  height: 30px;
+  font-size: 15px;
   font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
 }
 
-.permission-denied {
-  color: #c62828;
+/* User's full name aligned with avatar */
+.user-fullname {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #2c3e50;
 }

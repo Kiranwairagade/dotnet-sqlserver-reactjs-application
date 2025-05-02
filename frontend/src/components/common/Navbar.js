@@ -17,7 +17,7 @@ const Navbar = () => {
     <nav className="navbar">
       <Link to="/" className="navbar-brand">
         <FaShoppingCart className="icon" />
-        <span>ECommerce Manager</span>
+        <span><h4>User Management</h4></span>
       </Link>
     </nav>
   );

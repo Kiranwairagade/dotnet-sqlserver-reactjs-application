@@ -11,7 +11,6 @@ const Chatbot = () => {
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(true);
   const [feedbackMessage, setFeedbackMessage] = useState(null);
-  const [correctResponse, setCorrectResponse] = useState('');
   const [isHistoryLoading, setIsHistoryLoading] = useState(false);
   
   const messagesEndRef = useRef(null);
@@ -19,14 +18,10 @@ const Chatbot = () => {
   
   const apiBaseUrl = 'http://localhost:5000';
 
-  // Fetch initial data when component mounts
   useEffect(() => {
     const initialize = async () => {
       try {
-        // Fetch suggestions first
         await fetchSuggestions();
-        
-        // Then load message history
         await fetchMessageHistory();
       } catch (err) {
         console.error('Error during initialization:', err);
@@ -40,12 +35,10 @@ const Chatbot = () => {
     initialize();
   }, []);
 
-  // Scroll to bottom whenever messages change
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  // Clear feedback message after delay
   useEffect(() => {
     if (feedbackMessage) {
       const timer = setTimeout(() => {
@@ -73,19 +66,16 @@ const Chatbot = () => {
       const response = await axios.get(`${apiBaseUrl}/history?limit=20`);
       
       if (response.data.messages && response.data.messages.length > 0) {
-        // Filter out welcome message if there's history
         setMessages(prevMessages => {
           const welcomeMessage = prevMessages.find(msg => msg.id === 'welcome');
           
-          // Convert timestamps to Date objects
           const formattedMessages = response.data.messages.map(msg => ({
             id: `msg-${msg.id}`,
             text: msg.content,
             isUser: msg.is_user,
             timestamp: new Date(msg.timestamp)
-          })).reverse(); // Reverse to show oldest first
+          })).reverse();
           
-          // Only keep welcome message if no history
           return formattedMessages.length > 0 ? formattedMessages : 
                  (welcomeMessage ? [welcomeMessage] : []);
         });
@@ -115,7 +105,6 @@ const Chatbot = () => {
   };
 
   const sendUserMessage = async (content) => {
-    // Add user message to chat
     const userMessageId = `user-${Date.now()}`;
     const userMessage = { 
       id: userMessageId, 
@@ -129,7 +118,6 @@ const Chatbot = () => {
     setShowSuggestions(false);
 
     try {
-      // Get chatbot response from backend API
       const response = await axios.post(`${apiBaseUrl}/chatbot`, { message: content });
       const botMessageId = `bot-${Date.now()}`;
       const botMessage = { 
@@ -140,9 +128,7 @@ const Chatbot = () => {
       };
       
       setMessages((prev) => [...prev, botMessage]);
-      
-      // Get new suggestions based on bot response
-      const newSuggestions = await fetchSuggestions();
+      await fetchSuggestions();
       setShowSuggestions(true);
       
     } catch (err) {
@@ -169,26 +155,6 @@ const Chatbot = () => {
 
   const handleSuggestionClick = (suggestion) => {
     sendUserMessage(suggestion);
-  };
-  
-  const addCustomSuggestion = async () => {
-    if (!correctResponse.trim()) return;
-    
-    try {
-      await axios.post(`${apiBaseUrl}/add-suggestion`, { message: correctResponse });
-      setFeedbackMessage({
-        type: 'success',
-        text: 'Suggestion added successfully!'
-      });
-      setCorrectResponse('');
-      await fetchSuggestions();
-    } catch (err) {
-      console.error('Error adding suggestion:', err);
-      setFeedbackMessage({
-        type: 'error',
-        text: 'Failed to add suggestion.'
-      });
-    }
   };
   
   const clearChat = () => {
@@ -267,21 +233,6 @@ const Chatbot = () => {
           {isLoading ? 'Sending...' : 'Send'}
         </button>
       </form>
-      
-      <div className="add-suggestion-form">
-        <input
-          type="text"
-          placeholder="Add a new suggestion..."
-          value={correctResponse}
-          onChange={(e) => setCorrectResponse(e.target.value)}
-        />
-        <button 
-          onClick={addCustomSuggestion}
-          disabled={!correctResponse.trim()}
-        >
-          Add Suggestion
-        </button>
-      </div>
     </div>
   );
 };
