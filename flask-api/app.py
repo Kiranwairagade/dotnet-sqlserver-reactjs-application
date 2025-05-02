@@ -10,7 +10,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, Session
 import os
 import re
-from intents import INTENT_PATTERNS  # Import the intents from the separate file
+from intents import INTENT_PATTERNS  
 
 # Initialize FastAPI app
 app = FastAPI()

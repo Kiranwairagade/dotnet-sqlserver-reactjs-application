@@ -77,19 +77,19 @@ const Signup = () => {
           {({ isSubmitting, touched, errors }) => (
             <Form className="login-form">
               <div className="row-group">
-                <div className="input-group half-width">
+                <div className="input-group " style={{ width : '50%' }}>
                   <label htmlFor="firstName">First Name</label>
                   <Field
                     type="text"
                     name="firstName"
                     id="firstName"
-                    className={`input-field small-input half-width ${touched.firstName && errors.firstName ? 'is-invalid' : ''}`}
+                    className={`input-field small-input  ${touched.firstName && errors.firstName ? 'is-invalid' : ''}`}
                     placeholder="First Name"
                   />
                   <ErrorMessage name="firstName" component="div" className="invalid-feedback" />
                 </div>
 
-                <div className="input-group half-width">
+                <div className="input-group " style={{ width : '50%' }}>
                   <label htmlFor="lastName">Last Name</label>
                   <Field
                     type="text"
@@ -158,8 +158,8 @@ const Signup = () => {
           )}
         </Formik>
 
-        <div className="login-links" style={{paddingLeft:'90px'}}>
-        Already have an account?<Link to="/login" style={{paddingRight:'85px'}}>Login</Link>
+        <div className="login-links" >
+        Already have an account?<Link to="/login" style={{paddingRight:'260px'}}>Login</Link>
         </div>
       </div>
     </div>
